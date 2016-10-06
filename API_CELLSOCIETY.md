@@ -1,4 +1,10 @@
 ##API Exercise analyzing cellsociety group 20
+###Group Members:
+* Noah Over
+* Harshil Garg
+* Addison Howenstine
+* Phil Foo
+
 ####Simulation External
 * Simulation
 * Grid
