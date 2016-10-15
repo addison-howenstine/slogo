@@ -16,7 +16,7 @@ public interface SLOGOViewExternal {
 	 */
 	public ResourceBundle getResourceBundle();
 
-	/*
+	/**
 	 * Erases all trails currently showing on the screen
 	 */
 	public void clearTrails();

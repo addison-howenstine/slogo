@@ -8,6 +8,7 @@
 ####Simulation External
 * Simulation
 * Grid
+
 ####Simulation Internal
 * Ant, AntSimulation, GameOfLife
 * GameOfLifeSimulation, etc.
@@ -30,6 +31,7 @@
 * ResourceFile
 * XMLReader
 * XMLSave
+
 ####Configuration Internal
 * XMLFormat
 * XMLSimulationSceneCreator
