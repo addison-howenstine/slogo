@@ -1,5 +1,6 @@
 package slogo_view;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -52,6 +53,7 @@ public interface SLOGOViewInternal {
 	 * @param items - the ObservableList of Strings that the user will choose from when using the 
 	 * ComboBox
 	 */
-	public ComboBox addComboBox(double x, double y, ObservableList<String> items);
+	public ComboBox<String> addComboBox(double x, double y, ObservableList<String> items, String defaultValue, 
+			ChangeListener<String> listener);
 
 }
