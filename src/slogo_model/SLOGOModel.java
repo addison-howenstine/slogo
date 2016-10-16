@@ -1,6 +1,31 @@
 package slogo_model;
 
-public interface SLOGOModelInternal {
+public interface SLOGOModel {
+	
+	/**
+	 * @return - the turtle's X coodrinate from the center of the screen
+	 */
+	public double xCor();
+	
+	/**
+	 * @return - the turtle's Y coodrinate from the center of the screen
+	 */
+	public double yCor();
+	
+	/**
+	 * @return - the turtle's heading in degrees
+	 */
+	public double heading();
+	
+	/**
+	 * @return - the value 1 if pen is down, the value 0 if pen is up
+	 */
+	public int isPenDown();
+	
+	/**
+	 * @return - the value 1 if turtle is showing, the value 0 if turtle is invisible
+	 */
+	public int showing();
 	
 	/**
 	 * moves turtle forward in its current heading

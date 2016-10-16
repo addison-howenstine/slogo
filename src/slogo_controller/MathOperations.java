@@ -1,9 +1,7 @@
-package instructions;
+package slogo_controller;
 
 public class MathOperations {
-
 	public MathOperations() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	protected double sum(double expr1, double expr2){
@@ -34,32 +32,31 @@ public class MathOperations {
 		return Math.random() * max;
 	}
 	
-	protected double sin(double degrees){
+	protected double sine(double degrees){
 		return Math.sin( Math.toRadians(degrees) );
 	}
 	
-	protected double cos(double degrees){
+	protected double cosine(double degrees){
 		return Math.cos( Math.toRadians(degrees) );
 	}
 	
-	protected double tan(double degrees){
+	protected double tangent(double degrees){
 		return Math.tan( Math.toRadians(degrees) );
 	}
 	
-	protected double atan(double degrees){
+	protected double arcTangent(double degrees){
 		return Math.atan( Math.toRadians(degrees) );
 	}
 	
-	protected double log(double expr){
+	protected double naturalLog(double expr){
 		return Math.log(expr);
 	}
 	
-	protected double pow(double base, double exponent){
+	protected double power(double base, double exponent){
 		return Math.pow(base, exponent);
 	}
 	
 	protected double pi(){
 		return Math.PI;
 	}
-
 }

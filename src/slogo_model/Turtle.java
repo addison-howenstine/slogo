@@ -1,22 +1,33 @@
 package slogo_model;
 
-public class Turtle implements SLOGOModelInternal{
-	
+public class Turtle implements SLOGOModel{
+
 	private double xCor;
 	private double yCor;
 	private double heading;
-	private boolean penUp;
+	private boolean penDown;
 	private boolean visible;
-	
+
 
 	public Turtle() {
-		// TODO Auto-generated constructor stub
+		xCor = 0;
+		yCor = 0;
+		heading = 0;
+		penDown = true;
+		visible = true;
 	}
 
 	@Override
 	public double forward(double pixels) {
-		// TODO Auto-generated method stub
-		return pixels;
+		double x0 = xCor;
+		double y0 = yCor;
+		xCor += pixels * Math.sin(Math.toRadians(heading));
+		yCor += pixels * Math.cos(Math.toRadians(heading));
+		return distance(x0, xCor, y0, yCor);
+	}
+
+	private double distance(double x0, double x1, double y0, double y1){
+		return Math.sqrt( Math.pow( (x1 - x0) , 2 ) +  Math.pow( (y1 - y0) , 2 ));
 	}
 
 	@Override
@@ -26,68 +37,94 @@ public class Turtle implements SLOGOModelInternal{
 
 	@Override
 	public double left(double degrees) {
-		// TODO Auto-generated method stub
-		return 0;
+		return right ( (-1) * degrees);
 	}
 
 	@Override
 	public double right(double degrees) {
-		// TODO Auto-generated method stub
-		return 0;
+		heading += degrees;
+		return degrees;
 	}
 
 	@Override
 	public double setHeading(double degrees) {
-		// TODO Auto-generated method stub
-		return 0;
+		double d0 = heading;
+		heading = degrees;
+		return d0 - heading;
 	}
 
 	@Override
 	public double towards(double x, double y) {
-		// TODO Auto-generated method stub
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public double setXY(double x, double y) {
-		// TODO Auto-generated method stub
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public int penDown() {
-		// TODO Auto-generated method stub
-		return 0;
+		penDown = true;
+		return 1;
 	}
 
 	@Override
 	public int penUp() {
-		// TODO Auto-generated method stub
+		penDown = false;
 		return 0;
 	}
 
 	@Override
 	public int showTurtle() {
-		// TODO Auto-generated method stub
-		return 0;
+		visible = true;
+		return 1;
 	}
 
 	@Override
 	public int hideTurtle() {
-		// TODO Auto-generated method stub
+		visible = false;
 		return 0;
 	}
 
 	@Override
 	public double home() {
-		// TODO Auto-generated method stub
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public double clearScreen() {
-		// TODO Auto-generated method stub
+		// TODO
 		return 0;
 	}
 
+	@Override
+	public double xCor() {
+		return xCor;
+	}
+
+	@Override
+	public double yCor() {
+		return yCor;
+	}
+
+	@Override
+	public double heading() {
+		return heading;
+	}
+
+	@Override
+	public int showing() {
+		// TODO
+		return 0;
+	}
+
+	@Override
+	public int isPenDown() {
+		// TODO
+		return 0;
+	}
 }
