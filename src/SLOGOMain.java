@@ -1,12 +1,12 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
-import slogo_view.Playground;
+import slogo_view.LanguageMenu;
 
 public class SLOGOMain extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		new Playground(primaryStage);
+		new LanguageMenu(primaryStage);
 	}
 	
 	public static void main(String[] args) {
