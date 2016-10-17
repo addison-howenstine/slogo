@@ -11,6 +11,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import slogo_controller.SLOGOController;
+import slogo_controller.TurtleController;
+import slogo_model.SLOGOModel;
+import slogo_model.Turtle;
 
 public class LanguageMenu {
 	private static final String START = "Start";
@@ -54,7 +58,7 @@ public class LanguageMenu {
 		builder.addButton(START, BUTTON_LOCATION, BUTTON_LOCATION, new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
 				myStage.close();
-				new Playground(new Stage(), myLanguage);
+				new Playground(myStage, myLanguage);
 			}
 		});
 		return scene;
