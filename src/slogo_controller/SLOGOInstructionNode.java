@@ -26,7 +26,6 @@ public class SLOGOInstructionNode {
 		this.command = command;
 	}
 
-
 	public double evaluate() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 
 		String commandType = ResourceBundle.getBundle("resources/InstructionPaths").getString(command);

@@ -25,13 +25,16 @@ public class TurtleController implements SLOGOController {
 	public void run(String command) {
 		SLOGOInstructionNode root = parser.parse(command);
 		
-		// TODO start from bottom of InstructionTree defined by root and pop all instructions
+		// TODO start from root and call all methods by recursively evaluating root (will call bottom instructions first)
+		// is this true though ^? What if tree is deeper on one end than the other?
 	}
 	
 	private double evaluateNode(SLOGOInstructionNode curr){
 		String command = curr.command;
 		SLOGOInstructionNode left = curr.left;
 		SLOGOInstructionNode right = curr.right;
+		
+		// TODO check for if node is a leaf
 		
 		// get name of class for command instructions
 		String instructionType = ResourceBundle.getBundle("resources/InstructionPaths").getString(command);
@@ -45,7 +48,9 @@ public class TurtleController implements SLOGOController {
 			// give this method view, model, left, and right so it can generically decide what it needs
 			// to complete instruction
 			Method commandMethod = c.getMethod(command);
-			return (double) commandMethod.invoke(o, view, model, left, right);
+			
+			// TODO is it right to be calling evaluateNode() recursively for every node? Should it to this if left or right is null?
+			return (double) commandMethod.invoke(o, view, model, evaluateNode(left), evaluateNode(right));
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
