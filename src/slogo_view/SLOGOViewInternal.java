@@ -30,8 +30,7 @@ public interface SLOGOViewInternal {
 	 * @param handler - the EventHandler that will carry out its handle method when the ENTER 
 	 * button is pressed
 	 */
-	public TextField addTextField(String message, double x, double y, 
-			EventHandler<ActionEvent> handler);
+	public TextField addTextField(String message, double x, double y);
 
 	/**
 	 * adds a Button to the Scene
