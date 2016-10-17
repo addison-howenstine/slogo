@@ -2,6 +2,8 @@ package slogo_view;
 
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ObservableStringValue;
+
 public interface SLOGOViewExternal {
 
 	/**
@@ -20,5 +22,9 @@ public interface SLOGOViewExternal {
 	 * Erases all trails currently showing on the screen
 	 */
 	public void clearTrails();
+	
+	public void addUserCommand(ObservableStringValue userCommand);
+	
+	public void addUserVariable(ObservableStringValue userVariable);
 
 }
