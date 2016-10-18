@@ -38,8 +38,4 @@ public abstract class Instruction {
 		return parameters.size() == getNumRequiredParameters();
 	}
 
-	public void printEvaluationForTesting(){
-		System.out.println("Parameters for " + this.getClass().toString() + " : " + parameters.toString());
-	}
-
 }

@@ -19,11 +19,13 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double forward(double pixels) {
-		double x0 = xCor;
-		double y0 = yCor;
+		// TODO : if pixels is greater than can travel, move to edge, penUP
+		// move to opposite edge, put pen down, call recursively forward(pixels - distanceLeftToMove)
+		// until distanceLeftToMove = 0
+		
 		xCor += pixels * Math.sin(Math.toRadians(heading));
 		yCor += pixels * Math.cos(Math.toRadians(heading));
-		return distance(x0, xCor, y0, yCor);
+		return pixels;
 	}
 
 	private double distance(double x0, double x1, double y0, double y1){
@@ -32,7 +34,7 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double back(double pixels) {
-		return forward( (-1) * pixels);
+		return (-1) * forward( (-1) * pixels);
 	}
 
 	@Override
@@ -50,21 +52,17 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double setHeading(double degrees) {
-		double distanceTurned = orient360(heading - degrees);
+		double distanceTurned = orient360(heading() - degrees);
 		heading = orient360(degrees);
 		// return a positive value between 0 and 180
-		if (distanceTurned <= 180)
-			return distanceTurned;
-		else
-			return 360 - distanceTurned;
+		return distanceTurned180(distanceTurned);
 	}
 
 	@Override
 	public double towards(double x, double y) {
 		double oldHeading = heading();
-		heading = Math.atan( ( x - xCor() ) / ( y - yCor() ) );
-		//orientHeading();
-		return orient360(oldHeading - heading);
+		heading = orient360(Math.atan( ( x - xCor() ) / ( y - yCor() ) ));
+		return distanceTurned180(orient360(oldHeading - heading));
 	}
 
 	@Override
@@ -145,7 +143,22 @@ public class Turtle implements SLOGOModel{
 			return 0;
 	}
 
+	/**
+	 * @param degree - any number
+	 * @return - the equivalent value of degrees between 0 and 360
+	 */
 	private double orient360(double degree){
 		return degree %= 360;
+	}
+	
+	/**
+	 * @param distanceTurned - distance turned in degrees between 0 and 360
+	 * @return - positive distance turned between 0 and 180
+	 */
+	private double distanceTurned180(double distanceTurned){
+		if (distanceTurned <= 180)
+			return distanceTurned;
+		else
+			return 360 - distanceTurned;
 	}
 }

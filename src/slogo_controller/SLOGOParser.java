@@ -58,8 +58,6 @@ public class SLOGOParser {
 		String actualInstruction = getSymbol(typedInstruction);
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
-		System.out.println(typedInstruction);
-		System.out.println(actualInstruction);
 		Instruction instruction = null;
 		try {
 			// instantiate a class and object for command instructions
@@ -68,8 +66,8 @@ public class SLOGOParser {
 			instruction = (Instruction) o;
 			} 
 		catch (ClassNotFoundException e) {
+			// instead of throwing an exception, pass error method
 			instruction = new Error("Method name not found!");
-			//e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -81,12 +79,10 @@ public class SLOGOParser {
 		}
 				
 		if(instruction instanceof Constant){
-			System.out.println("Parsed Constant : " + Integer.parseInt(typedInstruction));
 			((Constant) instruction).setValue(Integer.parseInt(typedInstruction));
 		}
 		List<Instruction> parameters = new ArrayList<Instruction>();
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
-			System.out.println("Adding new param");
 			parameters.add(createNextInstructionFromText(instructionScanner));
 		}
 		instruction.setParameters(parameters);
