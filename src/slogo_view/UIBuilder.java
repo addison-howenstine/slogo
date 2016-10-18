@@ -72,7 +72,7 @@ public class UIBuilder implements SLOGOViewInternal {
 	
 	public Line addLine(double startX, double startY, double endX, double endY, Paint paint){
 		Line line = new Line(startX, startY, endX, endY);
-		line.setFill(paint);
+		line.setStroke(paint);
 		myRoot.getChildren().add(line);
 		return line;
 	}
