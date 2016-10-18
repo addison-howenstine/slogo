@@ -1,7 +1,8 @@
 package slogo_controller;
 
-import instructions.Constant;
 import instructions.*;
+import instructions.Error;
+
 import java.util.Enumeration;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,20 +17,31 @@ public class SLOGOParser {
 	// "types" and the regular expression patterns that recognize those types
 	// note, it is a list because order matters (some patterns may be more generic)
 	private List<Entry<String, Pattern>> mySymbols;
-	private final String ERROR = "NO MATCH";
+	private final String ERROR = "Input text cannot be parsed into instructions";
 
 
 	public SLOGOParser () {
 		mySymbols = new ArrayList<>();
 	}
 
-	// TODO make useless back end Main to test this method
-
+	/**
+	 * Reads command text in line by line, if line is not a comment, 
+	 * the line is split into words and turned into Instruction objects. 
+	 * Unrelated Instructions are returned as a List to be evaluated individually in Controller
+	 * If an Instruction is dependent on the return value of another necessary Instruction,
+	 * the necessary Instruction on which the top level root Instruction is dependent will be linked
+	 * as a parameter child of the root Instruction. This necessary Instruction will
+	 * be evaluated recursively by the Controller when evaluating the root Instruction
+	 * 
+	 * @param command - input text of commands to be parsed into instructions
+	 * @return list of Instructions for Controller to execute
+	 */
 	public List<Instruction> parse(String command){
 		List<Instruction> instructionList = new ArrayList<Instruction>();
 
 		String[] commandLines = command.split("\\n");		
 		for(String line : commandLines){
+			// TODO fix this line, it's not actually catching #'s, maybe char is different somehow?
 			if( ! getSymbol(line).equals("Comment")){
 				Scanner instructionScanner = new Scanner(line).useDelimiter("\\s+");
 				while(instructionScanner.hasNext()){
@@ -41,11 +53,11 @@ public class SLOGOParser {
 		return instructionList;
 	}
 	
-	public Instruction createNextInstructionFromText(Scanner instructionScanner){
+	private Instruction createNextInstructionFromText(Scanner instructionScanner){
 		String typedInstruction = instructionScanner.next();
 		String actualInstruction = getSymbol(typedInstruction);
 		if(actualInstruction.equals(ERROR))
-			;//throw CommandNotFound error
+			;//throw CommandNotFound error?
 		System.out.println(typedInstruction);
 		System.out.println(actualInstruction);
 		Instruction instruction = null;
@@ -53,15 +65,11 @@ public class SLOGOParser {
 			// instantiate a class and object for command instructions
 			Class<?> c = Class.forName("instructions." + actualInstruction);
 			Object o = c.newInstance();
-			// We can do this so long as we ensure getSymbol(String) will return the name of an Instruction subclass for *any* String
-			// TODO ^is that true tho?
 			instruction = (Instruction) o;
-			
-			System.out.println(o.getClass().toString());
-
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			} 
+		catch (ClassNotFoundException e) {
+			instruction = new Error("Method name not found!");
+			//e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

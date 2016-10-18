@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
 
-public class PenUp extends Instruction {
+public class Pi extends Instruction {
 
 	@Override
 	public int getNumRequiredParameters() {
@@ -13,9 +13,8 @@ public class PenUp extends Instruction {
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		if (canEvaluate())
-			return model.penUp();
+			return Math.PI;
 		else
 			return -1;
 	}
-
 }

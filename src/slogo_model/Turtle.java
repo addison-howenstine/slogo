@@ -37,27 +37,34 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double left(double degrees) {
-		return right ( (-1) * degrees);
-	}
-
-	@Override
-	public double right(double degrees) {
-		heading += degrees;
+		heading = orient360(heading - degrees);
 		return degrees;
 	}
 
 	@Override
+	public double right(double degrees) {
+		heading = orient360(heading + degrees);
+		return degrees;
+	}
+
+
+	@Override
 	public double setHeading(double degrees) {
-		double d0 = heading;
-		heading = degrees;
-		return d0 - heading;
+		double distanceTurned = orient360(heading - degrees);
+		heading = orient360(degrees);
+		// return a positive value between 0 and 180
+		if (distanceTurned <= 180)
+			return distanceTurned;
+		else
+			return 360 - distanceTurned;
 	}
 
 	@Override
 	public double towards(double x, double y) {
 		double oldHeading = heading();
 		heading = Math.atan( ( x - xCor() ) / ( y - yCor() ) );
-		return (oldHeading - heading) % 360;
+		//orientHeading();
+		return orient360(oldHeading - heading);
 	}
 
 	@Override
@@ -97,6 +104,7 @@ public class Turtle implements SLOGOModel{
 	public double home() {
 		double oldX = xCor();
 		double oldY = yCor();
+		heading = 0;
 		setXY(0,0);
 		return distance(oldX, xCor(), oldY, yCor());
 	}
@@ -135,5 +143,9 @@ public class Turtle implements SLOGOModel{
 			return 1;
 		else
 			return 0;
+	}
+
+	private double orient360(double degree){
+		return degree %= 360;
 	}
 }

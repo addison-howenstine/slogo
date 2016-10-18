@@ -3,19 +3,25 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
 
-public class Home extends Instruction {
+public class Repeat extends Instruction {
 
 	@Override
 	public int getNumRequiredParameters() {
-		return 0;
+		return 2;
 	}
 
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		if (canEvaluate()){
-			return model.home();
+			
+			int timesToRun = (int) parameters.get(0).evaluate(view, model);
+			for (int i = 0; i < timesToRun - 1; i ++)
+				parameters.get(1).evaluate(view, model);
+			
+			return (parameters.get(0).evaluate(view, model));
 		}
 		else
 			return -1;
 	}
+
 }

@@ -1,5 +1,7 @@
-package slogo_controller;
+package instructions;
 
+import slogo_controller.SLOGOController;
+import slogo_controller.TurtleController;
 import slogo_model.SLOGOModel;
 import slogo_model.Turtle;
 import slogo_view.Playground;
