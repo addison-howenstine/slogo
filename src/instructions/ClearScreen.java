@@ -12,8 +12,10 @@ public class ClearScreen extends Instruction {
 
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
-		if (canEvaluate())
+		if (canEvaluate()){
+			view.clearTrails();
 			return model.clearScreen();
+		}
 		else
 			return -1;
 	}

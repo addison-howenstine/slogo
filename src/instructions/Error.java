@@ -3,7 +3,17 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
 
-public class Home extends Instruction {
+public class Error extends Instruction {
+	
+	String errorMessage;
+	
+	public Error(){
+		errorMessage = "";
+	}
+	
+	public Error(String errorMessage){
+		this.errorMessage = errorMessage;
+	}
 
 	@Override
 	public int getNumRequiredParameters() {
@@ -13,9 +23,9 @@ public class Home extends Instruction {
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		if (canEvaluate()){
-			return model.home();
+			view.showError(errorMessage);
 		}
-		else
-			return -1;
+		return 0;
 	}
+
 }

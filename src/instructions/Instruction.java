@@ -35,13 +35,6 @@ public abstract class Instruction {
 	public abstract double evaluate(SLOGOViewExternal view, SLOGOModel model);
 
 	public boolean canEvaluate(){
-		// delete vvv
-		if(parameters.size() == getNumRequiredParameters())
-			System.out.println("CAN evaluate");
-		else
-			System.out.println("CANNOT evaluate");
-		// delete ^^^
-
 		return parameters.size() == getNumRequiredParameters();
 	}
 

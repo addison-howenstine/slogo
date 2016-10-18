@@ -8,7 +8,6 @@ public class Constant extends Instruction {
 	double value;
 	
 	public Constant(){
-		
 	}
 
 	public Constant(double value) {

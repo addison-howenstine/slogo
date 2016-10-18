@@ -3,17 +3,17 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
 
-public class PenUp extends Instruction {
+public class Not extends Instruction {
 
 	@Override
 	public int getNumRequiredParameters() {
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		if (canEvaluate())
-			return model.penUp();
+			return (parameters.get(0).evaluate(view, model) == 0) ? 1 : 0;
 		else
 			return -1;
 	}

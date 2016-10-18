@@ -17,8 +17,7 @@ public class TurtleController implements SLOGOController {
 		this.model = model;
 		parser = new SLOGOParser();
 		// important that Syntax comes after languages!!!
-		//parser.addPatterns(view.getResourceBundle());
-		parser.addPatterns("resources/English");
+		parser.addPatterns(view.getResourceBundle());
 		parser.addPatterns("resources/Syntax");
 	}
 
@@ -36,8 +35,4 @@ public class TurtleController implements SLOGOController {
 		// TODO observer checking if language is changed
 		//		if language is changed, removes previous language from parser, adds new one
 	}
-	
-	// TODO have observer watching turtle's coordinates, heading, pen, and visibility
-	// TODO alert view if any of the above change
-
 }

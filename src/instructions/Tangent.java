@@ -3,19 +3,18 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
 
-public class PenUp extends Instruction {
+public class Tangent extends Instruction {
 
 	@Override
 	public int getNumRequiredParameters() {
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		if (canEvaluate())
-			return model.penUp();
+			return Math.tan(Math.toRadians( parameters.get(0).evaluate(view, model) ));
 		else
 			return -1;
 	}
-
 }
