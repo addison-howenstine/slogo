@@ -16,15 +16,19 @@ public class TurtleController implements SLOGOController {
 		this.view = view;
 		this.model = model;
 		parser = new SLOGOParser();
+		// important that Syntax comes after languages!!!
+		//parser.addPatterns(view.getResourceBundle());
+		parser.addPatterns("resources/English");
 		parser.addPatterns("resources/Syntax");
-		parser.addPatterns(view.getResourceBundle());
 	}
 
 	@Override
 	public void run(String command) {
 		List<Instruction> instructionList = parser.parse(command);
 		for(Instruction i : instructionList){
+			System.out.println("Evaluating " + i.getClass().toString());
 			i.evaluate(view, model);
+			System.out.println("Turtle xCor: " + model.xCor() + " Turtle yCor: " + model.yCor());
 		}
 	}
 	

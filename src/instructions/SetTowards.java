@@ -3,20 +3,17 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
 
-public class Backward extends Instruction{
-
-	public Backward() {
-	}
+public class SetTowards extends Instruction {
 
 	@Override
 	public int getNumRequiredParameters() {
-		return 1;
+		return 2;
 	}
 
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		if (canEvaluate())
-			return model.back(parameters.get(0).evaluate(view, model));
+			return model.towards(parameters.get(0).evaluate(view, model), parameters.get(1).evaluate(view, model));
 		else
 			return -1;
 	}

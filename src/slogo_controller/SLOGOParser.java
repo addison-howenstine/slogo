@@ -1,8 +1,7 @@
 package slogo_controller;
 
 import instructions.Constant;
-import instructions.Instruction;
-
+import instructions.*;
 import java.util.Enumeration;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,6 @@ public class SLOGOParser {
 	// note, it is a list because order matters (some patterns may be more generic)
 	private List<Entry<String, Pattern>> mySymbols;
 	private final String ERROR = "NO MATCH";
-
 
 
 	public SLOGOParser () {
@@ -48,13 +46,19 @@ public class SLOGOParser {
 		String actualInstruction = getSymbol(typedInstruction);
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error
-		
+		System.out.println(typedInstruction);
+		System.out.println(actualInstruction);
 		Instruction instruction = null;
 		try {
 			// instantiate a class and object for command instructions
-			Class<?> c = Class.forName(actualInstruction);
+			Class<?> c = Class.forName("instructions." + actualInstruction);
 			Object o = c.newInstance();
+			// We can do this so long as we ensure getSymbol(String) will return the name of an Instruction subclass for *any* String
+			// TODO ^is that true tho?
 			instruction = (Instruction) o;
+			
+			System.out.println(o.getClass().toString());
+
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -67,14 +71,17 @@ public class SLOGOParser {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
-		
+				
 		if(instruction instanceof Constant){
+			System.out.println("Parsed Constant : " + Integer.parseInt(typedInstruction));
 			((Constant) instruction).setValue(Integer.parseInt(typedInstruction));
 		}
 		List<Instruction> parameters = new ArrayList<Instruction>();
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
+			System.out.println("Adding new param");
 			parameters.add(createNextInstructionFromText(instructionScanner));
 		}
+		instruction.setParameters(parameters);
 		return instruction;
 	}
 

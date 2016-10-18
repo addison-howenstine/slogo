@@ -3,22 +3,8 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
 
-public class Constant extends Instruction {
-	
-	double value;
-	
-	public Constant(){
-		
-	}
+public class Home extends Instruction {
 
-	public Constant(double value) {
-		this.value = value;
-	}
-	
-	public void setValue(double value){
-		this.value = value;
-	}
-	
 	@Override
 	public int getNumRequiredParameters() {
 		return 0;
@@ -26,7 +12,11 @@ public class Constant extends Instruction {
 
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
-		return value;
+		if (canEvaluate()){
+			view.clearTrails();
+			return model.home();
+		}
+		else
+			return -1;
 	}
-
 }
