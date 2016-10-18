@@ -55,14 +55,18 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double towards(double x, double y) {
-		// TODO
-		return 0;
+		double oldHeading = heading();
+		heading = Math.atan( ( x - xCor() ) / ( y - yCor() ) );
+		return (oldHeading - heading) % 360;
 	}
 
 	@Override
 	public double setXY(double x, double y) {
-		// TODO
-		return 0;
+		double oldX = xCor();
+		double oldY = yCor();
+		xCor = x;
+		yCor = y;
+		return distance(oldX, xCor(), oldY, yCor());
 	}
 
 	@Override
@@ -91,14 +95,15 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double home() {
-		// TODO
-		return 0;
+		double oldX = xCor();
+		double oldY = yCor();
+		setXY(0,0);
+		return distance(oldX, xCor(), oldY, yCor());
 	}
 
 	@Override
 	public double clearScreen() {
-		// TODO
-		return 0;
+		return home();
 	}
 
 	@Override
@@ -118,13 +123,17 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public int showing() {
-		// TODO
-		return 0;
+		if (visible)
+			return 1;
+		else
+			return 0;
 	}
 
 	@Override
 	public int isPenDown() {
-		// TODO
-		return 0;
+		if (penDown)
+			return 1;
+		else
+			return 0;
 	}
 }
