@@ -23,8 +23,8 @@ public interface SLOGOViewExternal {
 	 */
 	public void clearTrails();
 	
-	public void addUserCommand(ObservableStringValue userCommand);
+	public void addUserCommand(String userCommand);
 	
-	public void addUserVariable(ObservableStringValue userVariable);
+	public void addUserVariable(String userVariable);
 
 }

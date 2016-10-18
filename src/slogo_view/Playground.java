@@ -70,8 +70,8 @@ public class Playground implements SLOGOViewExternal {
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
 	private ImageView myTurtle;
-	private ArrayList<ObservableStringValue> myUserCommands;
-	private ArrayList<ObservableStringValue> myUserVariables;
+	private ArrayList<String> myUserCommands;
+	private ArrayList<String> myUserVariables;
 	private ArrayList<Line> myTrails;
 	private double myX = 0;
 	private double myY = 0;
@@ -87,8 +87,8 @@ public class Playground implements SLOGOViewExternal {
 		setUpImagesMap();
 		myImages = FXCollections.observableList(new ArrayList<String>());
 		myImages.addAll(myImagesMap.keySet());
-		myUserCommands = new ArrayList<ObservableStringValue>();
-		myUserVariables = new ArrayList<ObservableStringValue>();
+		myUserCommands = new ArrayList<String>();
+		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
 		Scene scene = init();
 		s.setScene(scene);
@@ -146,6 +146,8 @@ public class Playground implements SLOGOViewExternal {
 				new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myPenColor = myColorsMap.get(t1);
+				System.out.println(t1);
+				System.out.println(myPenColor.toString());
 			}
 		});
 		myBuilder.addText(myResources.getString("Image"), IMAGE_X, MIN_BOUNDARY, FONT_SIZE);
@@ -165,13 +167,13 @@ public class Playground implements SLOGOViewExternal {
 		commandReader.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle (ActionEvent event){
 				myController.run(commandReader.getCharacters().toString());
-				myTurtle.relocate(myModel.xCor() + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myModel.yCor());
+				myTurtle.relocate(myModel.xCor() + TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
+						TURTLE_Y_OFFSET - myModel.yCor() - myTurtle.getBoundsInLocal().getHeight()/2);
 				myTurtle.setRotate(myModel.heading());
 				if (myModel.isPenDown() == 1){
-					Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET + myTurtle.getBoundsInLocal().getWidth()/2, 
-							TURTLE_Y_OFFSET - myY + TURTLE_HEIGHT, 
-							myModel.xCor() + TURTLE_X_OFFSET + myTurtle.getBoundsInLocal().getWidth()/2, 
-							TURTLE_Y_OFFSET - myModel.yCor() + TURTLE_HEIGHT, myPenColor);
+					Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY, 
+							myModel.xCor() + TURTLE_X_OFFSET, 
+							TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
 					myTrails.add(line);
 				}
 				myX = myModel.xCor();
@@ -210,14 +212,13 @@ public class Playground implements SLOGOViewExternal {
 	}
 
 	@Override
-	public void addUserCommand(ObservableStringValue userCommand) {
+	public void addUserCommand(String userCommand) {
 		myUserCommands.add(userCommand);
 	}
 
 	@Override
-	public void addUserVariable(ObservableStringValue userVariable) {
+	public void addUserVariable(String userVariable) {
 		myUserVariables.add(userVariable);
-		
 	}
 
 }
