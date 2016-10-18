@@ -54,7 +54,6 @@ public class Turtle implements SLOGOModel{
 	public double setHeading(double degrees) {
 		double distanceTurned = orient360(heading() - degrees);
 		heading = orient360(degrees);
-		// return a positive value between 0 and 180
 		return distanceTurned180(distanceTurned);
 	}
 
@@ -129,18 +128,12 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public int showing() {
-		if (visible)
-			return 1;
-		else
-			return 0;
+		return (visible) ? 1 : 0;
 	}
 
 	@Override
 	public int isPenDown() {
-		if (penDown)
-			return 1;
-		else
-			return 0;
+		return (penDown) ? 1 : 0;
 	}
 
 	/**
