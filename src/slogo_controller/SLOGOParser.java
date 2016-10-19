@@ -59,7 +59,7 @@ public class SLOGOParser {
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
 		System.out.println("TYPED INSTRUCTION: " + typedInstruction);
-		System.out.println("ACTUAL INSTRUCTION: " + actualInstruction);
+		System.out.println("ACTUAL INSTRUCTION: "+ actualInstruction);
 		Instruction instruction = null;
 		try {
 			// instantiate a class and object for command instructions
