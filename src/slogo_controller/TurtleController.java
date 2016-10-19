@@ -25,7 +25,6 @@ public class TurtleController implements SLOGOController {
 	public void run(String command) {
 		List<Instruction> instructionList = parser.parse(command);
 		for(Instruction i : instructionList){
-			System.out.println("Evaluating " + i.getClass().toString());
 			i.evaluate(view, model);
 			System.out.println("Turtle xCor: " + model.xCor() + " Turtle yCor: " + model.yCor());
 		}
