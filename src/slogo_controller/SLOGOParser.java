@@ -39,10 +39,10 @@ public class SLOGOParser {
 	public List<Instruction> parse(String command){
 		List<Instruction> instructionList = new ArrayList<Instruction>();
 
-		String[] commandLines = command.split("\\n");		
+		String[] commandLines = command.split("\\n");
 		for(String line : commandLines){
 			// TODO fix this line, it's not actually catching #'s, maybe char is different somehow?
-			if( ! getSymbol(line).equals("Comment")){
+			if(!getSymbol(line).equals("Comment")){
 				Scanner instructionScanner = new Scanner(line).useDelimiter("\\s+");
 				while(instructionScanner.hasNext()){
 					instructionList.add(createNextInstructionFromText(instructionScanner));
@@ -58,8 +58,8 @@ public class SLOGOParser {
 		String actualInstruction = getSymbol(typedInstruction);
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
-		System.out.println(typedInstruction);
-		System.out.println(actualInstruction);
+		System.out.println("TYPED INSTRUCTION: " + typedInstruction);
+		System.out.println("ACTUAL INSTRUCTION: " + actualInstruction);
 		Instruction instruction = null;
 		try {
 			// instantiate a class and object for command instructions
