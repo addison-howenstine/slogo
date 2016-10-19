@@ -76,16 +76,33 @@ public class SLOGOParser {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
-				
+			
+		List<Instruction> parameters = new ArrayList<Instruction>();
 		if(instruction instanceof Constant){
 			((Constant) instruction).setValue(Integer.parseInt(typedInstruction));
 		}
-		List<Instruction> parameters = new ArrayList<Instruction>();
+		if(instruction instanceof ListStart)
+			parameters = groupInstructionList(instructionScanner);
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
 			parameters.add(createNextInstructionFromText(instructionScanner));
 		}
 		instruction.setParameters(parameters);
 		return instruction;
+	}
+	
+	private List<Instruction> groupInstructionList(Scanner s){
+		List<Instruction> groupedList = new ArrayList<Instruction>();
+		while (s.hasNext()){
+			Instruction toAdd = createNextInstructionFromText(s);
+			if (toAdd instanceof ListStart)
+				groupedList.addAll(groupInstructionList(s));
+			if (toAdd instanceof ListEnd){
+				System.out.println("does this happen");
+				return groupedList;
+			}
+			groupedList.add(toAdd);
+		}
+		return groupedList;
 	}
 
 	// adds the given resource file to this language's recognized types
