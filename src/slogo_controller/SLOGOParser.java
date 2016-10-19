@@ -58,18 +58,15 @@ public class SLOGOParser {
 		String actualInstruction = getSymbol(typedInstruction);
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
-		System.out.println(typedInstruction);
-		System.out.println(actualInstruction);
 		Instruction instruction = null;
 		try {
 			// instantiate a class and object for command instructions
 			Class<?> c = Class.forName("instructions." + actualInstruction);
-			Object o = c.newInstance();
-			instruction = (Instruction) o;
+			instruction = (Instruction) c.newInstance();
 			} 
 		catch (ClassNotFoundException e) {
+			// instead of throwing an exception, pass error method
 			instruction = new Error("Method name not found!");
-			//e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -79,18 +76,33 @@ public class SLOGOParser {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
-				
+			
+		List<Instruction> parameters = new ArrayList<Instruction>();
 		if(instruction instanceof Constant){
-			System.out.println("Parsed Constant : " + Integer.parseInt(typedInstruction));
 			((Constant) instruction).setValue(Integer.parseInt(typedInstruction));
 		}
-		List<Instruction> parameters = new ArrayList<Instruction>();
+		if(instruction instanceof ListStart)
+			parameters = groupInstructionList(instructionScanner);
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
-			System.out.println("Adding new param");
 			parameters.add(createNextInstructionFromText(instructionScanner));
 		}
 		instruction.setParameters(parameters);
 		return instruction;
+	}
+	
+	private List<Instruction> groupInstructionList(Scanner s){
+		List<Instruction> groupedList = new ArrayList<Instruction>();
+		while (s.hasNext()){
+			Instruction toAdd = createNextInstructionFromText(s);
+			if (toAdd instanceof ListStart)
+				groupedList.addAll(groupInstructionList(s));
+			if (toAdd instanceof ListEnd){
+				System.out.println("does this happen");
+				return groupedList;
+			}
+			groupedList.add(toAdd);
+		}
+		return groupedList;
 	}
 
 	// adds the given resource file to this language's recognized types
