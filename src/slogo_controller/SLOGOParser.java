@@ -84,10 +84,20 @@ public class SLOGOParser {
 		if(instruction instanceof Constant){
 			((Constant) instruction).setValue(Integer.parseInt(typedInstruction));
 		}
-		if(instruction instanceof ListStart)
+		if(instruction instanceof ListStart){
 			parameters = groupInstructionList(instructionScanner);
-		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
-			parameters.add(createNextInstructionFromText(instructionScanner));
+		}
+		if (instruction instanceof MakeVariable){
+			Variable newVar = new Variable(instructionScanner.next());
+			Instruction newVal = createNextInstructionFromText(instructionScanner);
+			//TODO: CREATE THIS MAPPING IN A STORAGE CLASS
+			
+			parameters.add(newVar);
+			parameters.add(newVal);
+		}else{
+			for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
+				parameters.add(createNextInstructionFromText(instructionScanner));
+			}
 		}
 		instruction.setParameters(parameters);
 		return instruction;
