@@ -62,8 +62,7 @@ public class SLOGOParser {
 		try {
 			// instantiate a class and object for command instructions
 			Class<?> c = Class.forName("instructions." + actualInstruction);
-			Object o = c.newInstance();
-			instruction = (Instruction) o;
+			instruction = (Instruction) c.newInstance();
 			} 
 		catch (ClassNotFoundException e) {
 			// instead of throwing an exception, pass error method
