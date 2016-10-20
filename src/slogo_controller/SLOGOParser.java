@@ -37,6 +37,7 @@ public class SLOGOParser {
 	 * 
 	 * @param command - input text of commands to be parsed into instructions
 	 * @return list of Instructions for Controller to execute
+	 * 
 	 */
 	public List<Instruction> parse(String command){
 		List<Instruction> instructionList = new ArrayList<Instruction>();
@@ -61,8 +62,8 @@ public class SLOGOParser {
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
 
-		System.out.println("TYPED INSTRUCTION: " + typedInstruction);
-		System.out.println("ACTUAL INSTRUCTION: "+ actualInstruction);
+		// System.out.println("TYPED INSTRUCTION: " + typedInstruction);
+		// System.out.println("ACTUAL INSTRUCTION: "+ actualInstruction);
 		Instruction instruction = null;
 		try {
 			// instantiate a class and object for command instructions
@@ -106,7 +107,6 @@ public class SLOGOParser {
 			if (toAdd instanceof ListStart)
 				groupedList.addAll(groupInstructionList(s));
 			if (toAdd instanceof ListEnd){
-				System.out.println("does this happen");
 				return groupedList;
 			}
 			groupedList.add(toAdd);

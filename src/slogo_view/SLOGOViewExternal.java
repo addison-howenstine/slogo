@@ -4,6 +4,7 @@ import java.util.ResourceBundle;
 
 import javafx.beans.value.ObservableStringValue;
 import slogo_controller.SLOGOController;
+import slogo_model.SLOGOModel;
 
 public interface SLOGOViewExternal {
 
@@ -37,5 +38,18 @@ public interface SLOGOViewExternal {
 	public void setPenColor(String color);
 	
 	public void setBackgroundColor(String color);
+	
+	public void setController(SLOGOController controller);
+	
+	/**
+	 * @param model - new SLOGOModel to which the view will listen for changes
+	 */
+	public void addModel(SLOGOModel model);
+	
+	/**
+	 * Called by an Observable model to tell an Observer view that
+	 * changes have been made and the screen should update to reflect this
+	 */
+	public void updateScreen();
 
 }
