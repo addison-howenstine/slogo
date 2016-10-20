@@ -79,11 +79,12 @@ public class Playground implements SLOGOViewExternal {
 	private ComboBox myBackgroundSelector;
 	private double myX = 0;
 	private double myY = 0;
+	private Stage myStage;
 	
 	public Playground(Stage s, String language){
+		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		myModel = new Turtle();
-		myController = new TurtleController(this, myModel);
 		setUpColorsMap();
 		myColors = FXCollections.observableList(new ArrayList<String>());
 		myColors.addAll(myColorsMap.keySet());
@@ -94,10 +95,6 @@ public class Playground implements SLOGOViewExternal {
 		myUserCommands = new ArrayList<String>();
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
-		Scene scene = init();
-		s.setScene(scene);
-		s.setTitle(TITLE);
-		s.show();
 	}
 	
 	private void setUpImagesMap(){
@@ -122,7 +119,7 @@ public class Playground implements SLOGOViewExternal {
 		myColorsMap.put(myResources.getString("Yellow"), Color.YELLOW);
 	}
 	
-	private Scene init(){
+	public Scene init(){
 		myRoot = new Group();
 		Scene scene = new Scene(myRoot, WIDTH, HEIGHT);
 		myBuilder = new UIBuilder(myRoot);
@@ -132,11 +129,15 @@ public class Playground implements SLOGOViewExternal {
 		setUpComboBoxes();
 		setUpHelpButton();
 		setUpTextInput();
+//		setUpListeners();
+		myStage.setScene(scene);
+		myStage.setTitle(TITLE);
+		myStage.show();
 		return scene;
 	}
 	
 	private void setUpListeners(){
-		//TODO set up listeners when I get observables
+		
 	}
 
 	private void setUpTextInput() {
@@ -200,7 +201,8 @@ public class Playground implements SLOGOViewExternal {
 	}
 
 	private void setUpTurtle() {
-		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(DEFAULT_IMAGE)));
+		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(
+				myResources.getString(DEFAULT_IMAGE))));
 		myTurtle = new ImageView(image);
 		myTurtle.setFitHeight(TURTLE_HEIGHT);
 		myTurtle.setPreserveRatio(true);
@@ -211,9 +213,9 @@ public class Playground implements SLOGOViewExternal {
 
 	private void setUpTurtleScreen() {
 		myBuilder.addRectangle(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT, 
-				myColorsMap.get(TURTLE_AREA_OUTLINE));
+				myColorsMap.get(myResources.getString(TURTLE_AREA_OUTLINE)));
 		myTurtleScreen = myBuilder.addRectangle(TURTLE_AREA_X + 1, TURTLE_AREA_Y + 1, TURTLE_AREA_WIDTH - 2, 
-				TURTLE_AREA_HEIGHT - 2, myColorsMap.get(DEFAULT_BACKGROUND));
+				TURTLE_AREA_HEIGHT - 2, myColorsMap.get(myResources.getString(DEFAULT_BACKGROUND)));
 	}
 
 	@Override
@@ -273,5 +275,8 @@ public class Playground implements SLOGOViewExternal {
 		myTurtleScreen.setFill(myColorsMap.get(color));
 		myBackgroundSelector.setValue(color);
 	}
-
+	
+	public void setController(SLOGOController controller){
+		myController = controller;
+	}
 }
