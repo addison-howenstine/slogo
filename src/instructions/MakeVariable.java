@@ -15,8 +15,11 @@ public class MakeVariable extends Instruction{
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
 		double variableVal = parameters.get(1).evaluate(view, model);
-		//TODO: store variableVal under parameter 0 in map.
+		String variableName = ((Variable) parameters.get(0)).getName();
 		
-		return variableVal;
+		//TODO: Add to mapping
+		model.getVarMap().addMapping(variableName, variableVal);
+		
+		return variableVal;		
 	}
 }
