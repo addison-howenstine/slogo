@@ -162,6 +162,8 @@ public class Playground implements SLOGOViewExternal {
 				// TODO set up handler
 			}
 		});
+		
+		//Really important functionality here - this is the instruction text input
 		TextField commandReader = myBuilder.addTextField(myResources.getString("TextFieldText"), TEXT_FIELD_X, 
 				TEXT_FIELD_Y);
 		commandReader.setOnAction(new EventHandler<ActionEvent>() {
