@@ -42,7 +42,7 @@ public class LanguageMenu {
 		myLanguage = DEFAULT_LANGUAGE;
 		Scene scene = init();
 		s.setScene(scene);
-		s.show();
+		s.showAndWait();
 	}
 	
 	private Scene init(){
@@ -58,9 +58,12 @@ public class LanguageMenu {
 		builder.addButton(START, BUTTON_LOCATION, BUTTON_LOCATION, new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
 				myStage.close();
-				new Playground(myStage, myLanguage);
 			}
 		});
 		return scene;
+	}
+	
+	public String getLanguage(){
+		return myLanguage;
 	}
 }
