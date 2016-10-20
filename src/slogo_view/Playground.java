@@ -17,13 +17,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.PopupControl;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slogo_controller.SLOGOController;
 import slogo_controller.TurtleController;
@@ -130,14 +137,11 @@ public class Playground implements SLOGOViewExternal {
 		setUpComboBoxes();
 		setUpHelpButton();
 		setUpTextInput();
+		setUpCommandHistoryScreen();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
 		return scene;
-	}
-
-	private void setUpListeners(){
-
 	}
 
 	private void setUpTextInput() {
@@ -154,7 +158,23 @@ public class Playground implements SLOGOViewExternal {
 	private void setUpHelpButton() {
 		myBuilder.addButton(myResources.getString("Help"), HELP_X, HELP_Y, new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
-				// TODO set up handler
+				final Stage dialog = new Stage();
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(myStage);
+                
+                VBox root = new VBox();
+                
+                final WebView browser = new WebView();
+                final WebEngine webEngine = browser.getEngine();
+                ScrollPane dialogPane = new ScrollPane();
+                dialogPane.setContent(browser);
+                webEngine.loadContent("<h1>asdf</h1>");
+                
+                
+                root.getChildren().add(dialogPane);
+                Scene dialogScene = new Scene(root, WIDTH, HEIGHT);
+                dialog.setScene(dialogScene);
+                dialog.show();
 			}
 		});
 	}
@@ -201,6 +221,10 @@ public class Playground implements SLOGOViewExternal {
 				myColorsMap.get(myResources.getString(TURTLE_AREA_OUTLINE)));
 		myTurtleScreen = myBuilder.addRectangle(TURTLE_AREA_X + 1, TURTLE_AREA_Y + 1, TURTLE_AREA_WIDTH - 2, 
 				TURTLE_AREA_HEIGHT - 2, myColorsMap.get(myResources.getString(DEFAULT_BACKGROUND)));
+	}
+	
+	private void setUpCommandHistoryScreen() {
+		myBuilder.addRectangle(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y, 100, 200, myColorsMap.get(myResources.getString("Red")));
 	}
 
 	@Override

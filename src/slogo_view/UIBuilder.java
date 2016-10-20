@@ -17,7 +17,7 @@ import javafx.scene.text.Text;
 
 public class UIBuilder implements SLOGOViewInternal {
 	private static final Paint FONT_COLOR = Color.BLACK;
-	private static final String FONT = "Times New Roman";
+	private static final String FONT = "Helvetica Neue";
 	
 	private Group myRoot;
 	
