@@ -23,8 +23,9 @@ public class Turtle implements SLOGOModel{
 		// move to opposite edge, put pen down, call recursively forward(pixels - distanceLeftToMove)
 		// until distanceLeftToMove = 0
 		
-		xCor += pixels * Math.sin(Math.toRadians(heading));
-		yCor += pixels * Math.cos(Math.toRadians(heading));
+		double x = xCor() + pixels * Math.sin(Math.toRadians(heading));
+		double y = yCor() + pixels * Math.cos(Math.toRadians(heading));
+		setXY(x, y);
 		return pixels;
 	}
 
@@ -39,14 +40,13 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double left(double degrees) {
-		heading = orient360(heading - degrees);
+		setHeading(orient360(heading - degrees));
 		return degrees;
 	}
 
 	@Override
 	public double right(double degrees) {
-		heading = orient360(heading + degrees);
-		return degrees;
+		return (-1) * left( (-1) * degrees);
 	}
 
 
@@ -60,7 +60,7 @@ public class Turtle implements SLOGOModel{
 	@Override
 	public double towards(double x, double y) {
 		double oldHeading = heading();
-		heading = orient360(Math.atan( ( x - xCor() ) / ( y - yCor() ) ));
+		setHeading(orient360(Math.atan( ( x - xCor() ) / ( y - yCor() ) )));
 		return distanceTurned180(orient360(oldHeading - heading));
 	}
 
@@ -101,7 +101,7 @@ public class Turtle implements SLOGOModel{
 	public double home() {
 		double oldX = xCor();
 		double oldY = yCor();
-		heading = 0;
+		setHeading(0);
 		setXY(0,0);
 		return distance(oldX, xCor(), oldY, yCor());
 	}
