@@ -37,5 +37,7 @@ public interface SLOGOViewExternal {
 	public void setPenColor(String color);
 	
 	public void setBackgroundColor(String color);
+	
+	public void updateScreen();
 
 }
