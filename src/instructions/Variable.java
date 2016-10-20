@@ -5,8 +5,8 @@ import slogo_view.SLOGOViewExternal;
 
 public class Variable extends Instruction{
 	private String name;
-	public Variable(String s){
-		this.name = s;
+	public Variable(){
+		
 	}
 	
 	@Override
@@ -16,8 +16,8 @@ public class Variable extends Instruction{
 	
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
-		//NOTE: This should never be called hopefully
-		return 0;
+		//TODO: NEED ERROR CHECKING FOR WHEN VARIABLE DOESN'T EXIST IN MAP
+		return model.getVarMap().getMapping(name);
 	}
 	
 	public void setName(String s){

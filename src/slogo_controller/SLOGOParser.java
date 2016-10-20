@@ -2,6 +2,7 @@ package slogo_controller;
 
 import instructions.*;
 import instructions.Error;
+import slogo_model.SLOGOVariableMap;
 
 import java.util.Enumeration;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class SLOGOParser {
 	// "types" and the regular expression patterns that recognize those types
 	// note, it is a list because order matters (some patterns may be more generic)
 	private List<Entry<String, Pattern>> mySymbols;
+	private SLOGOVariableMap myVarMap = new SLOGOVariableMap();
 	private final String ERROR = "Input text cannot be parsed into instructions";
 
 
@@ -87,17 +89,11 @@ public class SLOGOParser {
 		if(instruction instanceof ListStart){
 			parameters = groupInstructionList(instructionScanner);
 		}
-		if (instruction instanceof MakeVariable){
-			Variable newVar = new Variable(instructionScanner.next());
-			Instruction newVal = createNextInstructionFromText(instructionScanner);
-			//TODO: CREATE THIS MAPPING IN A STORAGE CLASS
-			
-			parameters.add(newVar);
-			parameters.add(newVal);
-		}else{
-			for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
-				parameters.add(createNextInstructionFromText(instructionScanner));
-			}
+		if (instruction instanceof Variable){
+			((Variable) instruction).setName(typedInstruction);
+		}
+		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
+			parameters.add(createNextInstructionFromText(instructionScanner));
 		}
 		instruction.setParameters(parameters);
 		return instruction;

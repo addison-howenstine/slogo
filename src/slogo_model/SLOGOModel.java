@@ -127,4 +127,9 @@ public interface SLOGOModel {
 	 */
 	public double clearScreen();
 	
+	/**
+	 * @return the mapping for all variables and their corresponding ints
+	 */
+	public SLOGOVariableMap getVarMap();
+	
 }
