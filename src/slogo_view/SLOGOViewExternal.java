@@ -3,6 +3,7 @@ package slogo_view;
 import java.util.ResourceBundle;
 
 import javafx.beans.value.ObservableStringValue;
+import slogo_controller.SLOGOController;
 
 public interface SLOGOViewExternal {
 
@@ -26,5 +27,15 @@ public interface SLOGOViewExternal {
 	public void addUserCommand(String userCommand);
 	
 	public void addUserVariable(String userVariable);
+	
+	public SLOGOController getController();
+	
+	public double getMaxX();
+	
+	public double getMaxY();
+	
+	public void setPenColor(String color);
+	
+	public void setBackgroundColor(String color);
 
 }
