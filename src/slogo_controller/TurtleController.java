@@ -31,7 +31,7 @@ public class TurtleController implements SLOGOController {
 			}catch(Exception e){
 				//TODO: EVALUATION FAILED - will happen if variable hasn't been created
 			}
-			System.out.println("Turtle xCor: " + model.xCor() + " Turtle yCor: " + model.yCor());
+			// System.out.println("Turtle xCor: " + model.xCor() + " Turtle yCor: " + model.yCor());
 		}
 	}
 	

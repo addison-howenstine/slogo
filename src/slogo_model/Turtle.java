@@ -75,25 +75,25 @@ public class Turtle implements SLOGOModel{
 	}
 
 	@Override
-	public int penDown() {
+	public double penDown() {
 		penDown = true;
 		return 1;
 	}
 
 	@Override
-	public int penUp() {
+	public double penUp() {
 		penDown = false;
 		return 0;
 	}
 
 	@Override
-	public int showTurtle() {
+	public double showTurtle() {
 		visible = true;
 		return 1;
 	}
 
 	@Override
-	public int hideTurtle() {
+	public double hideTurtle() {
 		visible = false;
 		return 0;
 	}
@@ -128,12 +128,12 @@ public class Turtle implements SLOGOModel{
 	}
 
 	@Override
-	public int showing() {
+	public double showing() {
 		return (visible) ? 1 : 0;
 	}
 
 	@Override
-	public int isPenDown() {
+	public double isPenDown() {
 		return (penDown) ? 1 : 0;
 	}
 	

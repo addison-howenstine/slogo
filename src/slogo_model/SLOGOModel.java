@@ -1,5 +1,16 @@
 package slogo_model;
 
+
+/**
+ * The SLOGOModel is a model that acts without knowledge of any
+ * existing view or controller. A controller, or many controllers,
+ * may call the public methods to control the model, but the model
+ * keeps no record of these other objects.
+ * 
+ * @author Addison
+ *
+ */
+
 public interface SLOGOModel {
 	
 	/**
@@ -20,12 +31,12 @@ public interface SLOGOModel {
 	/**
 	 * @return - the value 1 if pen is down, the value 0 if pen is up
 	 */
-	public int isPenDown();
+	public double isPenDown();
 	
 	/**
 	 * @return - the value 1 if turtle is showing, the value 0 if turtle is invisible
 	 */
-	public int showing();
+	public double showing();
 	
 	/**
 	 * moves turtle forward in its current heading
@@ -90,28 +101,28 @@ public interface SLOGOModel {
 	 * 
 	 * @return - the value 1
 	 */
-	public int penDown();
+	public double penDown();
 
 	/**
 	 * puts pen up such that when the turtle moves, it does not leave a trail
 	 * 
 	 * @return - the value 0
 	 */
-	public int penUp();
+	public double penUp();
 
 	/**
 	 * makes turtle visible
 	 * 
 	 * @return - the value 1
 	 */
-	public int showTurtle();
+	public double showTurtle();
 
 	/**
 	 * makes turtle invisible
 	 * 
 	 * @return - the value 0
 	 */
-	public int hideTurtle();
+	public double hideTurtle();
 
 	/**
 	 * moves turtle to the center of the screen (0 0)

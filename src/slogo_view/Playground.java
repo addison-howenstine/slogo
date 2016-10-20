@@ -84,7 +84,6 @@ public class Playground implements SLOGOViewExternal {
 	public Playground(Stage s, String language){
 		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
-		//myModel = new Turtle();
 		setUpColorsMap();
 		myColors = FXCollections.observableList(new ArrayList<String>());
 		myColors.addAll(myColorsMap.keySet());
@@ -125,11 +124,12 @@ public class Playground implements SLOGOViewExternal {
 		myBuilder = new UIBuilder(myRoot);
 		myBuilder.addText(TITLE, MIN_BOUNDARY, MIN_BOUNDARY, TITLE_SIZE);
 		setUpTurtleScreen();
+		
+		// TODO we should be able to initialize even if there is no model, in which case there is no turtle. set up the turtle when a new turtle is added instead
 		setUpTurtle();
 		setUpComboBoxes();
 		setUpHelpButton();
 		setUpTextInput();
-		//		setUpListeners();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
@@ -146,26 +146,6 @@ public class Playground implements SLOGOViewExternal {
 		commandReader.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle (ActionEvent event){
 				myController.run(commandReader.getCharacters().toString());
-				//				myTurtle.relocate(myModel.xCor() + TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
-				//						TURTLE_Y_OFFSET - myModel.yCor() - myTurtle.getBoundsInLocal().getHeight()/2);
-
-				updateScreen();
-
-				myTurtle.setRotate(myModel.heading());
-				if (myModel.isPenDown() == 1){
-					Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY, 
-							myModel.xCor() + TURTLE_X_OFFSET, 
-							TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
-					myTrails.add(line);
-				}
-				myX = myModel.xCor();
-				myY = myModel.yCor();
-				if (myModel.showing() == 0 && myRoot.getChildren().contains(myTurtle)){
-					myRoot.getChildren().remove(myTurtle);
-				}
-				else if (myModel.showing() == 1 && !(myRoot.getChildren().contains(myTurtle))){
-					myRoot.getChildren().add(myTurtle);
-				}
 			}
 		});
 		commandReader.setMinWidth(TURTLE_AREA_WIDTH);
@@ -209,11 +189,10 @@ public class Playground implements SLOGOViewExternal {
 		myTurtle = new ImageView(image);
 		myTurtle.setFitHeight(TURTLE_HEIGHT);
 		myTurtle.setPreserveRatio(true);
-		//		myTurtle.relocate(TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
-		//				TURTLE_Y_OFFSET - myTurtle.getBoundsInLocal().getHeight()/2);
-
-		updateScreen();
-
+		// TODO let the turtle start from a different position if the model has a different initial position
+		// currently this works because the model and view both happen to start from 0,0, but what if the model told it to start somewhere else?
+		myTurtle.relocate(TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
+				TURTLE_Y_OFFSET - myTurtle.getBoundsInLocal().getHeight()/2);
 		myRoot.getChildren().add(myTurtle);
 	}
 
@@ -282,13 +261,14 @@ public class Playground implements SLOGOViewExternal {
 		myBackgroundSelector.setValue(color);
 	}
 
-	// TODO add this to external API
+	@Override
 	public void setController(SLOGOController controller){
 		myController = controller;
 	}
-	
+
+	@Override
 	public void addModel(SLOGOModel model){
-		// TODO make this a list
+		// TODO make this a list so multiple models can be represented on same view
 		myModel = model;
 	}
 
@@ -296,5 +276,21 @@ public class Playground implements SLOGOViewExternal {
 	public void updateScreen(){
 		myTurtle.relocate(myModel.xCor() + TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
 				TURTLE_Y_OFFSET - myModel.yCor() - myTurtle.getBoundsInLocal().getHeight()/2);
+		myTurtle.setRotate(myModel.heading());
+		if (myModel.isPenDown() == 1){
+			Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY, 
+					myModel.xCor() + TURTLE_X_OFFSET, 
+					TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
+			myTrails.add(line);
+		}
+		myX = myModel.xCor();
+		myY = myModel.yCor();
+		if (myModel.showing() == 0 && myRoot.getChildren().contains(myTurtle)){
+			myRoot.getChildren().remove(myTurtle);
+		}
+		else if (myModel.showing() == 1 && !(myRoot.getChildren().contains(myTurtle))){
+			myRoot.getChildren().add(myTurtle);
+		}
+
 	}
 }
