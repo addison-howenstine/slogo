@@ -7,7 +7,7 @@ public class Turtle implements SLOGOModel{
 	private double heading;
 	private boolean penDown;
 	private boolean visible;
-
+	private SLOGOVariableMap myVarMap;
 
 	public Turtle() {
 		xCor = 0;
@@ -15,6 +15,7 @@ public class Turtle implements SLOGOModel{
 		heading = 0;
 		penDown = true;
 		visible = true;
+		myVarMap = new SLOGOVariableMap();
 	}
 
 	@Override
@@ -134,6 +135,11 @@ public class Turtle implements SLOGOModel{
 	@Override
 	public int isPenDown() {
 		return (penDown) ? 1 : 0;
+	}
+	
+	@Override
+	public SLOGOVariableMap getVarMap(){
+		return myVarMap;
 	}
 
 	/**

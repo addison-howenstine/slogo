@@ -1,6 +1,7 @@
 package slogo_controller;
 
 import instructions.Instruction;
+import instructions.Error;
 import java.util.List;
 
 import slogo_model.SLOGOModel;
@@ -25,7 +26,11 @@ public class TurtleController implements SLOGOController {
 	public void run(String command) {
 		List<Instruction> instructionList = parser.parse(command);
 		for(Instruction i : instructionList){
-			i.evaluate(view, model);
+			try{
+				i.evaluate(view, model);
+			}catch(Exception e){
+				//TODO: EVALUATION FAILED - will happen if variable hasn't been created
+			}
 			System.out.println("Turtle xCor: " + model.xCor() + " Turtle yCor: " + model.yCor());
 		}
 	}
