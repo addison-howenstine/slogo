@@ -24,7 +24,7 @@ public class TurtleController implements SLOGOController {
 
 	@Override
 	public void run(String command) {
-		List<Instruction> instructionList = parser.parse(command);
+		List<Instruction> instructionList = parser.parse(command, model);
 		for(Instruction i : instructionList){
 			try{
 				i.evaluate(view, model);

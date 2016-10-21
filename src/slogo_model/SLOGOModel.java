@@ -1,5 +1,6 @@
 package slogo_model;
-
+import java.util.*;
+import instructions.*;
 
 /**
  * The SLOGOModel is a model that acts without knowledge of any
@@ -141,6 +142,11 @@ public interface SLOGOModel {
 	/**
 	 * @return the mapping for all variables and their corresponding ints
 	 */
-	public SLOGOVariableMap getVarMap();
+	public AbstractMap<String, Double> getVarMap();
+	
+	/**
+	 * 
+	 */
+	public AbstractMap<String, Instruction> getInstructionMap();
 	
 }

@@ -18,7 +18,7 @@ public class MakeVariable extends Instruction{
 		String variableName = ((Variable) parameters.get(0)).getName();
 		
 		//TODO: Add to mapping
-		model.getVarMap().addMapping(variableName, variableVal);
+		model.getVarMap().put(variableName, variableVal);
 		
 		return variableVal;		
 	}
