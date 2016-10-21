@@ -17,7 +17,7 @@ public class UserInstruction extends Instruction{
 	}
 	
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
-		Instruction list = model.getInstructionMap().get(name);
+		Instruction list = view.getController().getInstrMap().get(name);
 		list.evaluate(view, model);
 		
 		return -1;

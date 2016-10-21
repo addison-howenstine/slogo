@@ -7,6 +7,7 @@ import slogo_model.SLOGOModel;
 import java.util.Enumeration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -38,7 +39,7 @@ public class SLOGOParser {
 	 * @return list of Instructions for Controller to execute
 	 * 
 	 */
-	public List<Instruction> parse(String command, SLOGOModel model){
+	public List<Instruction> parse(String command, AbstractMap<String, Instruction> instrMap){
 		List<Instruction> instructionList = new ArrayList<Instruction>();
 
 		String[] commandLines = command.split("\\n");
@@ -54,18 +55,18 @@ public class SLOGOParser {
 		String finalInstructionSet = sb.toString();
 		Scanner instructionScanner = new Scanner(finalInstructionSet).useDelimiter("\\s+");
 		while (instructionScanner.hasNext()){
-			instructionList.add(createNextInstructionFromText(instructionScanner, model));
+			instructionList.add(createNextInstructionFromText(instructionScanner, instrMap));
 		}
 		instructionScanner.close();
 		
 		return instructionList;
 	}
 	
-	private Instruction createNextInstructionFromText(Scanner instructionScanner, SLOGOModel model){
+	private Instruction createNextInstructionFromText(Scanner instructionScanner, AbstractMap<String, Instruction> instrMap){
 		String typedInstruction = instructionScanner.next();
 		//Check if instruction is a custom user instruction
-		if (model.getInstructionMap().containsKey(typedInstruction)){
-			return model.getInstructionMap().get(typedInstruction);
+		if (instrMap.containsKey(typedInstruction)){
+			return instrMap.get(typedInstruction);
 		}
 		
 		String actualInstruction = getSymbol(typedInstruction);
@@ -97,7 +98,7 @@ public class SLOGOParser {
 			((Constant) instruction).setValue(Integer.parseInt(typedInstruction));
 		}
 		if(instruction instanceof ListStart){
-			parameters = groupInstructionList(instructionScanner, model);
+			parameters = groupInstructionList(instructionScanner, instrMap);
 		}
 		if (instruction instanceof Variable){
 			((Variable) instruction).setName(typedInstruction);
@@ -108,19 +109,19 @@ public class SLOGOParser {
 				parameters.add(new UserInstruction(instructionScanner.next()));
 				continue;
 			}
-			parameters.add(createNextInstructionFromText(instructionScanner, model));
+			parameters.add(createNextInstructionFromText(instructionScanner, instrMap));
 		}
 		
 		instruction.setParameters(parameters);
 		return instruction;
 	}
 	
-	private List<Instruction> groupInstructionList(Scanner s, SLOGOModel model){
+	private List<Instruction> groupInstructionList(Scanner s, AbstractMap<String, Instruction> instrMap){
 		List<Instruction> groupedList = new ArrayList<Instruction>();
 		while (s.hasNext()){
-			Instruction toAdd = createNextInstructionFromText(s, model);
+			Instruction toAdd = createNextInstructionFromText(s, instrMap);
 			if (toAdd instanceof ListStart)
-				groupedList.addAll(groupInstructionList(s, model));
+				groupedList.addAll(groupInstructionList(s, instrMap));
 			if (toAdd instanceof ListEnd){
 				return groupedList;
 			}

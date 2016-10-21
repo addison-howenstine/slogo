@@ -9,8 +9,6 @@ public class Turtle implements SLOGOModel{
 	private double heading;
 	private boolean penDown;
 	private boolean visible;
-	private AbstractMap<String, Double> myVarMap;
-	private AbstractMap<String, Instruction> myInstructionMap;
 
 	public Turtle() {
 		xCor = 0;
@@ -18,8 +16,6 @@ public class Turtle implements SLOGOModel{
 		heading = 0;
 		penDown = true;
 		visible = true;
-		myVarMap = new HashMap<String, Double>();
-		myInstructionMap = new HashMap<String, Instruction>();
 	}
 
 	@Override
@@ -139,16 +135,6 @@ public class Turtle implements SLOGOModel{
 	@Override
 	public double isPenDown() {
 		return (penDown) ? 1 : 0;
-	}
-	
-	@Override
-	public AbstractMap<String, Double> getVarMap(){
-		return myVarMap;
-	}
-	
-	@Override
-	public AbstractMap<String, Instruction> getInstructionMap(){
-		return myInstructionMap;
 	}
 
 	/**
