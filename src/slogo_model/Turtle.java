@@ -61,9 +61,7 @@ public class Turtle implements SLOGOModel{
 			}
 		}
 		
-		double x = xCor() + pixels * Math.sin(Math.toRadians(heading));
-		double y = yCor() + pixels * Math.cos(Math.toRadians(heading));
-		setXY(x, y);
+		setXY(desiredX, desiredY);
 		return pixels;
 	}
 	
