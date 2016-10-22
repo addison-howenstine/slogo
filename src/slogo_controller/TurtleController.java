@@ -2,6 +2,9 @@ package slogo_controller;
 
 import instructions.Instruction;
 import instructions.Error;
+
+import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.List;
 
 import slogo_model.SLOGOModel;
@@ -9,13 +12,17 @@ import slogo_view.SLOGOViewExternal;
 
 public class TurtleController implements SLOGOController {
 	
-	SLOGOViewExternal view;
-	SLOGOModel model;
-	SLOGOParser parser;
+	private SLOGOViewExternal view;
+	private SLOGOModel model;
+	private SLOGOParser parser;
+	private AbstractMap<String, Double> myVarMap;
+	private AbstractMap<String, Instruction> myInstructionMap;
 
 	public TurtleController(SLOGOViewExternal view, SLOGOModel model) {
 		this.view = view;
 		this.model = model;
+		this.myVarMap = new HashMap<String, Double>();
+		this.myInstructionMap = new HashMap<String, Instruction>();
 		parser = new SLOGOParser();
 		// important that Syntax comes after languages!!!
 		parser.addPatterns(view.getResourceBundle());
@@ -24,7 +31,7 @@ public class TurtleController implements SLOGOController {
 
 	@Override
 	public void run(String command) {
-		List<Instruction> instructionList = parser.parse(command);
+		List<Instruction> instructionList = parser.parse(command, myInstructionMap);
 		for(Instruction i : instructionList){
 			try{
 				i.evaluate(view, model);
@@ -33,6 +40,16 @@ public class TurtleController implements SLOGOController {
 			}
 			// System.out.println("Turtle xCor: " + model.xCor() + " Turtle yCor: " + model.yCor());
 		}
+	}
+	
+	@Override
+	public AbstractMap<String, Instruction> getInstrMap(){
+		return myInstructionMap;
+	}
+	
+	@Override
+	public AbstractMap<String, Double> getVarMap(){
+		return myVarMap;
 	}
 	
 	private void changeLanguage(){
