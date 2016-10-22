@@ -14,9 +14,9 @@ public class SLOGOMain extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// initialize model, view, controller
-		SLOGOModel model = new ObservableTurtle();
 		LanguageMenu languageMenu = new LanguageMenu(new Stage());
 		SLOGOViewExternal view = new Playground(primaryStage, languageMenu.getLanguage());
+		SLOGOModel model = new ObservableTurtle(view.getMaxX(), view.getMaxY());
 		SLOGOController controller = new TurtleController(view, model);
 		
 		// give model and view necessary pointers

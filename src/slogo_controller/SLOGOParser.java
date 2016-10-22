@@ -27,6 +27,8 @@ public class SLOGOParser {
 	}
 
 	/**
+	 * TODO: Change this javadoc description 
+	 *
 	 * Reads command text in line by line, if line is not a comment, 
 	 * the line is split into words and turned into Instruction objects. 
 	 * Unrelated Instructions are returned as a List to be evaluated individually in Controller
@@ -70,7 +72,6 @@ public class SLOGOParser {
 		}
 		
 		String actualInstruction = getSymbol(typedInstruction);
-		//System.out.println("ACTUAL INSTRUCTION: " + actualInstruction);
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
 

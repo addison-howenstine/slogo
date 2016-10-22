@@ -43,9 +43,10 @@ public interface SLOGOModel {
 	 * moves turtle forward in its current heading
 	 * 
 	 * @param pixels - number of pixels on the screen which to move
+	 * @param backwards - whether the forward method is actually being used by back()
 	 * @return - value of pixels
 	 */
-	public double forward(double pixels);
+	public double forward(double pixels, boolean backwards);
 
 	/**
 	 * moves turtle backward in its current heading
