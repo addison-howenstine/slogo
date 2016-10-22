@@ -1,4 +1,6 @@
 package slogo_controller;
+import instructions.Instruction;
+import java.util.AbstractMap;
 
 public interface SLOGOController {
 	
@@ -11,4 +13,16 @@ public interface SLOGOController {
 	 */
 	public void run(String command);
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public AbstractMap<String, Instruction> getInstrMap();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public AbstractMap<String, Double> getVarMap();
 }

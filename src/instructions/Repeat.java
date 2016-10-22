@@ -15,8 +15,9 @@ public class Repeat extends Instruction {
 		if (canEvaluate()){
 			
 			int timesToRun = (int) parameters.get(0).evaluate(view, model);
-			for (int i = 0; i < timesToRun; i ++)
+			for (int i = 0; i < timesToRun; i ++){
 				parameters.get(1).evaluate(view, model);
+			}
 			
 			return (parameters.get(0).evaluate(view, model));
 		}

@@ -1,33 +1,107 @@
 package slogo_model;
+import java.util.*;
+import instructions.*;
 
 public class Turtle implements SLOGOModel{
 
 	private double xCor;
 	private double yCor;
+	private double maxX;
+	private double maxY;
 	private double heading;
 	private boolean penDown;
 	private boolean visible;
-	private SLOGOVariableMap myVarMap;
 
-	public Turtle() {
-		xCor = 0;
-		yCor = 0;
-		heading = 0;
-		penDown = true;
-		visible = true;
-		myVarMap = new SLOGOVariableMap();
+	public Turtle(double maxX, double maxY) {
+		this.xCor = 0;
+		this.yCor = 0;
+		this.maxX = maxX;
+		this.maxY = maxY;
+		this.heading = 0;
+		this.penDown = true;
+		this.visible = true;
 	}
 
 	@Override
-	public double forward(double pixels) {
+	public double forward(double pixels, boolean backwards) {
 		// TODO : if pixels is greater than can travel, move to edge, penUP
 		// move to opposite edge, put pen down, call recursively forward(pixels - distanceLeftToMove)
 		// until distanceLeftToMove = 0
+		double newHeading = (backwards) ? heading + 180 : heading;
 		
-		double x = xCor() + pixels * Math.sin(Math.toRadians(heading));
-		double y = yCor() + pixels * Math.cos(Math.toRadians(heading));
-		setXY(x, y);
+		int[] directions = getDirection(newHeading);
+		double boundedX = maxX * directions[0];
+		double boundedY = maxY * directions[1];
+		
+		double desiredX = xCor() + pixels * Math.sin(Math.toRadians(heading));
+		double desiredY = yCor() + pixels * Math.cos(Math.toRadians(heading));
+		
+		if (Math.abs(desiredX) > Math.abs(boundedX) || Math.abs(desiredY) > Math.abs(boundedY)){
+//			System.out.println("BOUTTA HIT THIS WALL BETCH");
+			double distanceToWallX = boundedX - xCor();
+			double distanceToWallY = boundedY - yCor();
+			
+			double yShortestDistance = distanceToWallY / (Math.cos(Math.toRadians(heading)));
+			double xShortestDistance = distanceToWallX / (Math.sin(Math.toRadians(heading)));
+			
+			if (Math.abs(xShortestDistance) < Math.abs(yShortestDistance)){
+				double modifiedY = yCor() + xShortestDistance * Math.cos(Math.toRadians(heading));
+				setXY(boundedX, modifiedY);
+				penUp();
+				setXY(-boundedX, modifiedY);
+				penDown();
+				return forward(pixels - xShortestDistance, backwards);
+			}else{
+				double modifiedX = xCor() + yShortestDistance * Math.sin(Math.toRadians(heading));
+				setXY(modifiedX, boundedY);
+				penUp();
+				setXY(modifiedX, -boundedY);
+				penDown();
+				return forward(pixels - yShortestDistance, backwards);
+			}
+		}
+		
+		setXY(desiredX, desiredY);
 		return pixels;
+	}
+	
+	/**
+	 * 
+	 * @return int[] directions where directions[0] is an int representing right/left
+	 * 								  directions[1] is an int representing up/down
+	 */
+	private int[] getDirection(double heading){
+		int[] directions = new int[2];
+		double mod360 = heading % 360;
+		if (heading >= 0){
+			//Set right/left
+			if (mod360 <= 180){
+				directions[0] = 1;
+			}else if (mod360 > 180){
+				directions[0] = -1;
+			}
+			
+			//Set up/down
+			if (mod360 <= 90 || mod360 >= 270){
+				directions[1] = 1;
+			}else if (mod360 > 90 && mod360 < 270){
+				directions[1] = -1;
+			}
+		}else if (heading < 0){
+			if (mod360 <= -180){
+				directions[0] = 1;
+			}else if (mod360 > -180){
+				directions[0] = -1;
+			}
+			
+			if (mod360 >= -90 || mod360 <= -270){
+				directions[1] = 1;
+			}else if(mod360 < -90 && mod360 > -270){
+				directions[1] = -1;
+			}
+		}
+		
+		return directions;
 	}
 
 	private double distance(double x0, double x1, double y0, double y1){
@@ -36,7 +110,7 @@ public class Turtle implements SLOGOModel{
 
 	@Override
 	public double back(double pixels) {
-		return (-1) * forward( (-1) * pixels);
+		return (-1) * forward( (-1) * pixels, true);
 	}
 
 	@Override
@@ -135,11 +209,6 @@ public class Turtle implements SLOGOModel{
 	@Override
 	public double isPenDown() {
 		return (penDown) ? 1 : 0;
-	}
-	
-	@Override
-	public SLOGOVariableMap getVarMap(){
-		return myVarMap;
 	}
 
 	/**

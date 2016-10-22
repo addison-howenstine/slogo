@@ -15,7 +15,7 @@ public class BackEndTesterMain {
 	
 	public static void main(String[] args) {
 		SLOGOViewExternal view = null;
-		SLOGOModel turtle = new Turtle();
+		SLOGOModel turtle = new Turtle(view.getMaxX(), view.getMaxY());
 		SLOGOController control = new TurtleController(view, turtle);
 		control.run("fd 10 back left 20");
 	}

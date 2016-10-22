@@ -22,18 +22,20 @@ public class ObservableTurtle extends Turtle {
 
 	List<SLOGOViewExternal> listeners;
 
-	public ObservableTurtle(){
-		super();
+	public ObservableTurtle(double maxX, double maxY){
+		super(maxX, maxY);
 		listeners = new ArrayList<SLOGOViewExternal>();
 	}
 
 	public ObservableTurtle(SLOGOViewExternal listener){
-		this();
+		this(listener.getMaxX(), listener.getMaxY());
 		listeners.add(listener);
 	}
 
+	//TODO: Talk this over
+	//Not so sure about this code...why does a model have multiple views??
 	public ObservableTurtle(List<SLOGOViewExternal> listeners){
-		this();
+		this(listeners.get(0).getMaxX(), listeners.get(0).getMaxY());
 		this.listeners.addAll(listeners);
 	}
 
