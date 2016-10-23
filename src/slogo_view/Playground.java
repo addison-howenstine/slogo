@@ -145,8 +145,9 @@ public class Playground implements SLOGOViewExternal {
 	}
 
 	private void setUpTextInput() {
-		TextField commandReader = myBuilder.addTextField(myResources.getString("TextFieldText"), TEXT_FIELD_X, 
+		TextField commandReader = myBuilder.addTextField("", TEXT_FIELD_X, 
 				TEXT_FIELD_Y);
+		commandReader.setPromptText(myResources.getString("TextFieldText"));
 		commandReader.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle (ActionEvent event){
 				myController.run(commandReader.getCharacters().toString());
