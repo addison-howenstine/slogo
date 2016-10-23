@@ -19,6 +19,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PopupControl;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,7 +60,8 @@ public class Playground implements SLOGOViewExternal {
 	private static final int CONTROL_X_OFFSET = 150;
 	private static final int PEN_X = BACKGROUND_X + CONTROL_X_OFFSET;
 	private static final int IMAGE_X = PEN_X + CONTROL_X_OFFSET;
-	private static final int HELP_X = IMAGE_X + CONTROL_X_OFFSET;
+	private static final int LANGUAGES_X = IMAGE_X + CONTROL_X_OFFSET;
+	private static final int HELP_X = LANGUAGES_X + CONTROL_X_OFFSET;
 	private static final String DEFAULT_IMAGE = "Turtle";
 	private static final String DEFAULT_BACKGROUND = "White";
 	private static final String DEFAULT_PEN = "Black";
@@ -87,6 +89,9 @@ public class Playground implements SLOGOViewExternal {
 	private double myX = 0;
 	private double myY = 0;
 	private Stage myStage;
+	private TextArea commandHistoryTextArea;
+	
+	private boolean errorReceived = false;
 
 	public Playground(Stage s, String language){
 		myStage = s;
@@ -151,9 +156,16 @@ public class Playground implements SLOGOViewExternal {
 		commandReader.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle (ActionEvent event){
 				myController.run(commandReader.getCharacters().toString());
+				if (errorReceived) {
+					commandReader.setText("");
+					errorReceived = false;
+					return;
+				}
+				commandHistoryTextArea.appendText(commandReader.getCharacters().toString() + "\n");
+				commandReader.setText("");
 			}
 		});
-		commandReader.setMinWidth(TURTLE_AREA_WIDTH);
+		commandReader.setMinWidth(TURTLE_AREA_WIDTH + 360);
 	}
 
 	private void setUpHelpButton() {
@@ -169,7 +181,7 @@ public class Playground implements SLOGOViewExternal {
                 final WebEngine webEngine = browser.getEngine();
                 ScrollPane dialogPane = new ScrollPane();
                 dialogPane.setContent(browser);
-                webEngine.loadContent("<h1>asdf</h1>");
+                webEngine.loadContent("<h1>Enter help content here.</h1>");
                 
                 
                 root.getChildren().add(dialogPane);
@@ -202,6 +214,8 @@ public class Playground implements SLOGOViewExternal {
 				myTurtle.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1))));
 			}
 		});
+		//myBuilder.addText(myResources.getString(""), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
+		//myLanguageSelector = myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, items, "ENGLISH", listener)
 	}
 
 	private void setUpTurtle() {
@@ -225,11 +239,12 @@ public class Playground implements SLOGOViewExternal {
 	}
 	
 	private void setUpCommandHistoryScreen() {
-		myBuilder.addRectangle(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y, 100, 200, myColorsMap.get(myResources.getString("Red")));
+		commandHistoryTextArea = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT);
 	}
 
 	@Override
 	public void showError(String errorMessage) {
+		errorReceived = true;
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle(myResources.getString("ErrorTitle"));
 		alert.setContentText(errorMessage);

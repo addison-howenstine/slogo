@@ -1,12 +1,14 @@
 package slogo_view;
 
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -75,6 +77,24 @@ public class UIBuilder implements SLOGOViewInternal {
 		line.setStroke(paint);
 		myRoot.getChildren().add(line);
 		return line;
+	}
+	
+	public TextArea addTextArea(double startX, double startY, double width, double height) {
+		TextArea textArea = new TextArea();
+		textArea.setLayoutX(startX);
+		textArea.setLayoutY(startY);
+		textArea.setMinWidth(width);
+		textArea.setMaxWidth(width);
+		textArea.setMinHeight(height);
+		textArea.setMaxHeight(height);
+		textArea.textProperty().addListener(new ChangeListener<Object>() {
+			@Override
+			public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+				textArea.setScrollTop(Double.MAX_VALUE);			
+			}
+		});
+		myRoot.getChildren().add(textArea);
+		return textArea;
 	}
 
 }
