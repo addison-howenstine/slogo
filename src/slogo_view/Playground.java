@@ -16,7 +16,9 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -86,8 +88,7 @@ public class Playground implements SLOGOViewExternal {
 	private double myY = 0;
 	private Stage myStage;
 	private TextArea commandHistoryTextArea;
-	private VBox userDefinedCommandsTextArea;
-	private ObservableList<String> userDefinedCommands;
+	private VBox userDefinedCommandsDisplay;
 	
 	private boolean errorReceived = false;
 
@@ -104,7 +105,6 @@ public class Playground implements SLOGOViewExternal {
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
-		userDefinedCommands = FXCollections.observableList(new ArrayList<String>());
 	}
 
 	private void setUpImagesMap(){
@@ -150,16 +150,28 @@ public class Playground implements SLOGOViewExternal {
 	}
 
 	private void setUpUserDefinedCommandsDisplay() {
-		userDefinedCommandsDispay = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y + TURTLE_AREA_HEIGHT/2 + 10, 350, TURTLE_AREA_HEIGHT/2 - 10);
-		
-		userDefinedCommands.addListener(new ListChangeListener<Object>() {
+		userDefinedCommandsDisplay = myBuilder.addScrollableVBox(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y + TURTLE_AREA_HEIGHT/2 + 10, 350, TURTLE_AREA_HEIGHT/2 - 10);
+		myUserCommands.addListener(new ListChangeListener<Object>() {
 
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void onChanged(ListChangeListener.Change change) {
+				System.out.println("In here");
 				while (change.next()) {
 					List<String> list = change.getAddedSubList();
 					for (String s : list) {
-						userDefinedCommandsTextArea.appendText(s + "\n");
+						Button command = new Button(s);
+						command.setOnAction(new EventHandler<ActionEvent>() {
+
+							@Override
+							public void handle(ActionEvent event) {
+								myController.run(s);
+							}
+							
+						});
+						command.setId("button");
+						command.setMinWidth(userDefinedCommandsDisplay.getMinWidth());
+						userDefinedCommandsDisplay.getChildren().add(command);
 					}
 				}
 			}

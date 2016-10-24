@@ -26,8 +26,9 @@ public class UIBuilder implements SLOGOViewInternal {
 	
 	private Group myRoot;
 	
-	public UIBuilder(Group root){
+	public UIBuilder(Group root) { 
 		myRoot = root;
+		myRoot.getStylesheets().add("/style.css");
 	}
 
 	@Override
@@ -100,10 +101,25 @@ public class UIBuilder implements SLOGOViewInternal {
 		return textArea;
 	}
 	
-	public ScrollPane addScrollPane(double startX, double startY, double width, double height, Node content) {
+	public VBox addScrollableVBox(double startX, double startY, double width, double height) {
 		ScrollPane pane = new ScrollPane();
+		pane.setLayoutX(startX);
+		pane.setLayoutY(startY);
+		pane.setMinWidth(width + 5);
+		pane.setMaxWidth(width + 5);
+		pane.setMinHeight(height + 5);
+		pane.setMaxHeight(height + 5);
+		
 		VBox box = new VBox();
+		box.setMinWidth(width);
+		box.setMaxWidth(width);
+		box.setMinHeight(height);
+		box.setMaxHeight(height);
+		
 		pane.setContent(box);
+		myRoot.getChildren().add(pane);
+		
+		return box;
 	}
 
 }
