@@ -2,6 +2,7 @@ package slogo_view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.DoubleProperty;
@@ -9,6 +10,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,10 +35,12 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.collections.ListChangeListener;
 import slogo_controller.SLOGOController;
 import slogo_controller.TurtleController;
 import slogo_model.SLOGOModel;
 import slogo_model.Turtle;
+
 
 public class Playground implements SLOGOViewExternal {
 	private static final String TURTLE_AREA_OUTLINE = "Black";
@@ -90,6 +94,8 @@ public class Playground implements SLOGOViewExternal {
 	private double myY = 0;
 	private Stage myStage;
 	private TextArea commandHistoryTextArea;
+	private TextArea userDefinedCommandsTextArea;
+	private ObservableList<String> userDefinedCommands;
 	
 	private boolean errorReceived = false;
 
@@ -106,6 +112,7 @@ public class Playground implements SLOGOViewExternal {
 		myUserCommands = new ArrayList<String>();
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
+		userDefinedCommands = FXCollections.observableList(new ArrayList<String>());
 	}
 
 	private void setUpImagesMap(){
@@ -143,10 +150,33 @@ public class Playground implements SLOGOViewExternal {
 		setUpHelpButton();
 		setUpTextInput();
 		setUpCommandHistoryScreen();
+		setUpUserDefinedCommandsPanel();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
 		return scene;
+	}
+
+	private void setUpUserDefinedCommandsPanel() {
+		userDefinedCommandsTextArea = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y + TURTLE_AREA_HEIGHT/2 + 10, 350, TURTLE_AREA_HEIGHT/2 - 10);
+		
+		userDefinedCommands.addListener(new ListChangeListener<Object>() {
+
+			@Override
+			public void onChanged(ListChangeListener.Change change) {
+				while (change.next()) {
+					List<String> list = change.getAddedSubList();
+					for (String s : list) {
+						userDefinedCommandsTextArea.appendText(s + "\n");
+					}
+				}
+			}
+		});
+	}
+	
+	@Override
+	public void updateUserDefinedCommands(String name) {
+		userDefinedCommands.add(name);
 	}
 
 	private void setUpTextInput() {
@@ -239,7 +269,7 @@ public class Playground implements SLOGOViewExternal {
 	}
 	
 	private void setUpCommandHistoryScreen() {
-		commandHistoryTextArea = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT);
+		commandHistoryTextArea = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT/2);
 	}
 
 	@Override

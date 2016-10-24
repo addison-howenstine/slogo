@@ -51,5 +51,7 @@ public interface SLOGOViewExternal {
 	 * changes have been made and the screen should update to reflect this
 	 */
 	public void updateScreen();
+	
+	public void updateUserDefinedCommands(String name);
 
 }
