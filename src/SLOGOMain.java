@@ -4,20 +4,24 @@ import slogo_controller.SLOGOController;
 import slogo_controller.TurtleController;
 import slogo_model.ObservableTurtle;
 import slogo_model.SLOGOModel;
-import slogo_model.Turtle;
 import slogo_view.LanguageMenu;
 import slogo_view.Playground;
 import slogo_view.SLOGOViewExternal;
 
 public class SLOGOMain extends Application {
+	
+	LanguageMenu languageMenu;
+	SLOGOViewExternal view;
+	SLOGOModel model;
+	SLOGOController controller;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// initialize model, view, controller
-		SLOGOModel model = new ObservableTurtle();
-		LanguageMenu languageMenu = new LanguageMenu(new Stage());
-		SLOGOViewExternal view = new Playground(primaryStage, languageMenu.getLanguage());
-		SLOGOController controller = new TurtleController(view, model);
+		languageMenu = new LanguageMenu(new Stage());
+		view = new Playground(primaryStage, languageMenu.getLanguage());
+		model = new ObservableTurtle(view.getMaxX(), view.getMaxY());
+		controller = new TurtleController(view, model);
 		
 		// give model and view necessary pointers
 		((ObservableTurtle) model).addListener(view);

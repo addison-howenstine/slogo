@@ -16,7 +16,7 @@ public class Forward extends Instruction {
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		if (canEvaluate())
-			return model.forward(parameters.get(0).evaluate(view, model));
+			return model.forward(parameters.get(0).evaluate(view, model), false);
 		else
 			return -1;
 	}	

@@ -1,5 +1,6 @@
 package slogo_model;
-
+import java.util.*;
+import instructions.*;
 
 /**
  * The SLOGOModel is a model that acts without knowledge of any
@@ -42,9 +43,10 @@ public interface SLOGOModel {
 	 * moves turtle forward in its current heading
 	 * 
 	 * @param pixels - number of pixels on the screen which to move
+	 * @param backwards - whether the forward method is actually being used by back()
 	 * @return - value of pixels
 	 */
-	public double forward(double pixels);
+	public double forward(double pixels, boolean backwards);
 
 	/**
 	 * moves turtle backward in its current heading
@@ -137,10 +139,5 @@ public interface SLOGOModel {
 	 * @return - returns the distance turtle moved
 	 */
 	public double clearScreen();
-	
-	/**
-	 * @return the mapping for all variables and their corresponding ints
-	 */
-	public SLOGOVariableMap getVarMap();
 	
 }
