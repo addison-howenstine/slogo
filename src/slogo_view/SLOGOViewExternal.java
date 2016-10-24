@@ -1,8 +1,6 @@
 package slogo_view;
 
 import java.util.ResourceBundle;
-
-import javafx.beans.value.ObservableStringValue;
 import slogo_controller.SLOGOController;
 import slogo_model.SLOGOModel;
 
@@ -51,7 +49,5 @@ public interface SLOGOViewExternal {
 	 * changes have been made and the screen should update to reflect this
 	 */
 	public void updateScreen();
-	
-	public void updateUserDefinedCommands(String name);
 
 }

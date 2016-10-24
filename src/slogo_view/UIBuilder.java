@@ -6,10 +6,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
@@ -95,6 +98,12 @@ public class UIBuilder implements SLOGOViewInternal {
 		});
 		myRoot.getChildren().add(textArea);
 		return textArea;
+	}
+	
+	public ScrollPane addScrollPane(double startX, double startY, double width, double height, Node content) {
+		ScrollPane pane = new ScrollPane();
+		VBox box = new VBox();
+		pane.setContent(box);
 	}
 
 }

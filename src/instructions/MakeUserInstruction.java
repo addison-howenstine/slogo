@@ -13,7 +13,7 @@ public class MakeUserInstruction extends Instruction{
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
 		UserInstruction instr = (UserInstruction) parameters.get(0);
-		view.updateUserDefinedCommands(instr.getName());
+		view.addUserCommand(instr.getName());
 		view.getController().getInstrMap().put(instr.getName(), parameters.get(2));
 
 		//Shouldn't need to return anything

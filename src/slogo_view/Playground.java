@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -19,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.PopupControl;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -30,17 +27,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.collections.ListChangeListener;
 import slogo_controller.SLOGOController;
-import slogo_controller.TurtleController;
 import slogo_model.SLOGOModel;
-import slogo_model.Turtle;
-
 
 public class Playground implements SLOGOViewExternal {
 	private static final String TURTLE_AREA_OUTLINE = "Black";
@@ -85,7 +77,7 @@ public class Playground implements SLOGOViewExternal {
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
 	private ImageView myTurtle;
-	private ArrayList<String> myUserCommands;
+	private ObservableList<String> myUserCommands;
 	private ArrayList<String> myUserVariables;
 	private ArrayList<Line> myTrails;
 	private ComboBox myPenColorSelector;
@@ -94,12 +86,12 @@ public class Playground implements SLOGOViewExternal {
 	private double myY = 0;
 	private Stage myStage;
 	private TextArea commandHistoryTextArea;
-	private TextArea userDefinedCommandsTextArea;
+	private VBox userDefinedCommandsTextArea;
 	private ObservableList<String> userDefinedCommands;
 	
 	private boolean errorReceived = false;
 
-	public Playground(Stage s, String language){
+	public Playground(Stage s, String language) {
 		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		setUpColorsMap();
@@ -109,7 +101,7 @@ public class Playground implements SLOGOViewExternal {
 		setUpImagesMap();
 		myImages = FXCollections.observableList(new ArrayList<String>());
 		myImages.addAll(myImagesMap.keySet());
-		myUserCommands = new ArrayList<String>();
+		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
 		userDefinedCommands = FXCollections.observableList(new ArrayList<String>());
@@ -150,15 +142,15 @@ public class Playground implements SLOGOViewExternal {
 		setUpHelpButton();
 		setUpTextInput();
 		setUpCommandHistoryScreen();
-		setUpUserDefinedCommandsPanel();
+		setUpUserDefinedCommandsDisplay();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
 		return scene;
 	}
 
-	private void setUpUserDefinedCommandsPanel() {
-		userDefinedCommandsTextArea = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y + TURTLE_AREA_HEIGHT/2 + 10, 350, TURTLE_AREA_HEIGHT/2 - 10);
+	private void setUpUserDefinedCommandsDisplay() {
+		userDefinedCommandsDispay = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y + TURTLE_AREA_HEIGHT/2 + 10, 350, TURTLE_AREA_HEIGHT/2 - 10);
 		
 		userDefinedCommands.addListener(new ListChangeListener<Object>() {
 
@@ -174,11 +166,6 @@ public class Playground implements SLOGOViewExternal {
 		});
 	}
 	
-	@Override
-	public void updateUserDefinedCommands(String name) {
-		userDefinedCommands.add(name);
-	}
-
 	private void setUpTextInput() {
 		TextField commandReader = myBuilder.addTextField("", TEXT_FIELD_X, 
 				TEXT_FIELD_Y);
@@ -240,7 +227,7 @@ public class Playground implements SLOGOViewExternal {
 		myBuilder.addText(myResources.getString("Image"), IMAGE_X, MIN_BOUNDARY, FONT_SIZE);
 		myBackgroundSelector = myBuilder.addComboBox(IMAGE_X, COMBO_BOX_Y, myImages, 
 				myResources.getString(DEFAULT_IMAGE), new ChangeListener<String>() {
-			public void changed(ObservableValue ov, String t, String t1){
+			public void changed(ObservableValue ov, String t, String t1) {
 				myTurtle.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1))));
 			}
 		});
