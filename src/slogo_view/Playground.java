@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -52,14 +53,15 @@ public class Playground implements SLOGOViewExternal {
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
 	private static final int TURTLE_Y_OFFSET = TURTLE_AREA_HEIGHT/2 + TURTLE_AREA_Y;
 	private static final int HELP_Y = 12;
+	private static final int MULTILINE_Y = 12;
 	private static final int COMBO_BOX_Y = 25;
 	private static final int FONT_SIZE = 20;
 	private static final int BACKGROUND_X = 200;
 	private static final int CONTROL_X_OFFSET = 150;
 	private static final int PEN_X = BACKGROUND_X + CONTROL_X_OFFSET;
 	private static final int IMAGE_X = PEN_X + CONTROL_X_OFFSET;
-	private static final int LANGUAGES_X = IMAGE_X + CONTROL_X_OFFSET;
-	private static final int HELP_X = LANGUAGES_X + CONTROL_X_OFFSET;
+	private static final int MULTILINE_X = IMAGE_X + CONTROL_X_OFFSET;
+	private static final int HELP_X = MULTILINE_X + CONTROL_X_OFFSET;
 	private static final String DEFAULT_IMAGE = "Turtle";
 	private static final String DEFAULT_BACKGROUND = "White";
 	private static final String DEFAULT_PEN = "Black";
@@ -147,6 +149,7 @@ public class Playground implements SLOGOViewExternal {
 		setUpTextInput();
 		setUpCommandHistoryScreen();
 		setUpUserDefinedCommandsDisplay();
+		setUpMultilineButton();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
@@ -190,17 +193,22 @@ public class Playground implements SLOGOViewExternal {
 		commandReader.setPromptText(myResources.getString("TextFieldText"));
 		commandReader.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle (ActionEvent event){
-				myController.run(commandReader.getCharacters().toString());
-				if (errorReceived) {
-					commandReader.setText("");
-					errorReceived = false;
-					return;
-				}
-				myCommandHistory.add(commandReader.getCharacters().toString());
-				commandReader.setText("");
+				runCommandFromTextInput(commandReader);
 			}
 		});
 		commandReader.setMinWidth(TURTLE_AREA_WIDTH + 360);
+	}
+	
+	private void runCommandFromTextInput(TextInputControl tic) {
+		tic.getText();
+		myController.run(tic.getText());
+		if (errorReceived) {
+			tic.setText("");
+			errorReceived = false;
+			return;
+		}
+		myCommandHistory.add(tic.getText());
+		tic.setText("");
 	}
 
 	private void setUpHelpButton() {
@@ -223,6 +231,38 @@ public class Playground implements SLOGOViewExternal {
                 Scene dialogScene = new Scene(root, WIDTH, HEIGHT);
                 dialog.setScene(dialogScene);
                 dialog.show();
+			}
+		});
+	}
+	
+	@SuppressWarnings("unused")
+	private void setUpMultilineButton() {
+		myBuilder.addButton("Multiline", MULTILINE_X, MULTILINE_Y, new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				final Stage dialog = new Stage();
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(myStage);
+                
+                VBox root = new VBox();
+                
+                TextArea input = new TextArea();
+                Button submit = new Button("Run");
+                submit.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						runCommandFromTextInput(input);
+					}
+                	
+                });
+                
+                root.getChildren().add(input);
+                root.getChildren().add(submit);
+                Scene dialogScene = new Scene(root, WIDTH/2, HEIGHT/2);
+                dialog.setScene(dialogScene);
+                dialog.show();
+                
+                
 			}
 		});
 	}
