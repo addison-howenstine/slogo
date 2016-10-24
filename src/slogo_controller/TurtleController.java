@@ -6,6 +6,7 @@ import instructions.Error;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOViewExternal;
@@ -17,6 +18,7 @@ public class TurtleController implements SLOGOController {
 	private SLOGOParser parser;
 	private AbstractMap<String, Double> myVarMap;
 	private AbstractMap<String, Instruction> myInstructionMap;
+	private ResourceBundle currentResourceBundle;
 
 	public TurtleController(SLOGOViewExternal view, SLOGOModel model) {
 		this.view = view;
@@ -25,7 +27,8 @@ public class TurtleController implements SLOGOController {
 		this.myInstructionMap = new HashMap<String, Instruction>();
 		parser = new SLOGOParser();
 		// important that Syntax comes after languages!!!
-		parser.addPatterns(view.getResourceBundle());
+		currentResourceBundle = view.getResourceBundle();
+		parser.addPatterns(currentResourceBundle);
 		parser.addPatterns("resources/Syntax");
 	}
 
@@ -53,7 +56,10 @@ public class TurtleController implements SLOGOController {
 	}
 	
 	private void changeLanguage(){
-		// TODO observer checking if language is changed
-		//		if language is changed, removes previous language from parser, adds new one
+		parser.removePatterns(currentResourceBundle);
+		parser.removePatterns("resources/Syntax");
+		currentResourceBundle = view.getResourceBundle();
+		parser.addPatterns(currentResourceBundle);
+		parser.addPatterns("resources/Syntax");
 	}
 }
