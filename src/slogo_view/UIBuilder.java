@@ -107,14 +107,14 @@ public class UIBuilder implements SLOGOViewInternal {
 		pane.setLayoutY(startY);
 		pane.setMinWidth(width + 5);
 		pane.setMaxWidth(width + 5);
-		pane.setMinHeight(height + 5);
 		pane.setMaxHeight(height + 5);
-		
+		pane.setMinHeight(height + 5);
 		VBox box = new VBox();
 		box.setMinWidth(width);
 		box.setMaxWidth(width);
-		box.setMinHeight(height);
-		box.setMaxHeight(height);
+		
+		// Autoscrolls down
+		pane.vvalueProperty().bind(box.heightProperty());
 		
 		pane.setContent(box);
 		myRoot.getChildren().add(pane);

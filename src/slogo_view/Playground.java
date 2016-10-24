@@ -79,7 +79,6 @@ public class Playground implements SLOGOViewExternal {
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
 	private ImageView myTurtle;
-	private ObservableList<String> myUserCommands;
 	private ArrayList<String> myUserVariables;
 	private ArrayList<Line> myTrails;
 	private ComboBox myPenColorSelector;
@@ -87,7 +86,11 @@ public class Playground implements SLOGOViewExternal {
 	private double myX = 0;
 	private double myY = 0;
 	private Stage myStage;
-	private TextArea commandHistoryTextArea;
+	
+	private ObservableList<String> myCommandHistory;
+	private VBox commandHistoryDisplay;
+	
+	private ObservableList<String> myUserCommands;
 	private VBox userDefinedCommandsDisplay;
 	
 	private boolean errorReceived = false;
@@ -103,6 +106,7 @@ public class Playground implements SLOGOViewExternal {
 		myImages = FXCollections.observableList(new ArrayList<String>());
 		myImages.addAll(myImagesMap.keySet());
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
+		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
 	}
@@ -163,19 +167,7 @@ public class Playground implements SLOGOViewExternal {
 							myUserCommands.remove(myUserCommands.indexOf(s));
 							removeButtonDuplicates(s);
 						}
-						// Check if button with exact same string existed before. If so, remove that button.
-						Button command = new Button(s);
-						command.setOnAction(new EventHandler<ActionEvent>() {
-
-							@Override
-							public void handle(ActionEvent event) {
-								myController.run(s);
-							}
-							
-						});
-						command.setId("button");
-						command.setMinWidth(userDefinedCommandsDisplay.getMinWidth());
-						userDefinedCommandsDisplay.getChildren().add(command);
+						configureButtonToRunCommand(s, "user-defined-button", userDefinedCommandsDisplay);
 					}
 				}
 			}
@@ -204,7 +196,7 @@ public class Playground implements SLOGOViewExternal {
 					errorReceived = false;
 					return;
 				}
-				commandHistoryTextArea.appendText(commandReader.getCharacters().toString() + "\n");
+				myCommandHistory.add(commandReader.getCharacters().toString());
 				commandReader.setText("");
 			}
 		});
@@ -282,7 +274,36 @@ public class Playground implements SLOGOViewExternal {
 	}
 	
 	private void setUpCommandHistoryScreen() {
-		commandHistoryTextArea = myBuilder.addTextArea(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT/2);
+		commandHistoryDisplay = myBuilder.addScrollableVBox(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, 
+				TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT/2);
+		myCommandHistory.addListener(new ListChangeListener<Object>() {
+
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void onChanged(ListChangeListener.Change change) {
+				while (change.next()) {
+					List<String> list = change.getAddedSubList();
+					for (String s : list) {
+						configureButtonToRunCommand(s, "command-history-button", commandHistoryDisplay);
+					}
+				}
+			}
+		});
+	}
+	
+	private void configureButtonToRunCommand(String text, String id, VBox display) {
+		Button command = new Button(text);
+		command.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				myController.run(text);
+			}
+			
+		});
+		command.setId(id);
+		command.setMinWidth(display.getMinWidth());
+		display.getChildren().add(command);
 	}
 
 	@Override

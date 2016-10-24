@@ -1,6 +1,17 @@
-#button {
-	-fx-background-color: linear-gradient(#ff5400, #be1d00);
+#user-defined-button {
+	-fx-background-color: #ff5400;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-text-fill: white;
+    -fx-border-color: white white white white;
+    -fx-border-width: 2px 2px 0px 2px;
+}
+
+#command-history-button {
+	-fx-background-color: #4c85dd;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-border-color: white white white white;
+    -fx-border-width: 2px 2px 0px 2px;
 }
