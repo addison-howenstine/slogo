@@ -1,6 +1,7 @@
 package slogo_view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -60,7 +61,8 @@ public class Playground implements SLOGOViewExternal {
 	private static final int CONTROL_X_OFFSET = 150;
 	private static final int PEN_X = BACKGROUND_X + CONTROL_X_OFFSET;
 	private static final int IMAGE_X = PEN_X + CONTROL_X_OFFSET;
-	private static final int MULTILINE_X = IMAGE_X + CONTROL_X_OFFSET;
+	private static final int LANGUAGES_X = IMAGE_X + CONTROL_X_OFFSET;
+	private static final int MULTILINE_X = LANGUAGES_X + CONTROL_X_OFFSET;
 	private static final int HELP_X = MULTILINE_X + CONTROL_X_OFFSET;
 	private static final String DEFAULT_IMAGE = "Turtle";
 	private static final String DEFAULT_BACKGROUND = "White";
@@ -77,6 +79,8 @@ public class Playground implements SLOGOViewExternal {
 	private Paint myPenColor;
 	private HashMap<String, String> myImagesMap;
 	private ObservableList<String> myImages;
+	
+	private ObservableList<String> myLanguages;
 	private SLOGOModel myModel;
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
@@ -98,6 +102,10 @@ public class Playground implements SLOGOViewExternal {
 	private boolean errorReceived = false;
 
 	public Playground(Stage s, String language) {
+		construct(s, language);
+	}
+	
+	private void construct(Stage s, String language) {
 		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		setUpColorsMap();
@@ -107,10 +115,16 @@ public class Playground implements SLOGOViewExternal {
 		setUpImagesMap();
 		myImages = FXCollections.observableList(new ArrayList<String>());
 		myImages.addAll(myImagesMap.keySet());
+		myLanguages = FXCollections.observableList(new ArrayList<String>(Arrays.asList(LanguageMenu.LANGUAGES)));
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
+	}
+	
+	private void reinit(Stage s, String language) {
+		construct(s, language);
+		init();
 	}
 
 	private void setUpImagesMap(){
@@ -224,6 +238,7 @@ public class Playground implements SLOGOViewExternal {
                 final WebEngine webEngine = browser.getEngine();
                 ScrollPane dialogPane = new ScrollPane();
                 dialogPane.setContent(browser);
+                
                 webEngine.loadContent("<h1>Enter help content here.</h1>");
                 
                 
@@ -288,6 +303,14 @@ public class Playground implements SLOGOViewExternal {
 			public void changed(ObservableValue ov, String t, String t1) {
 				myTurtle.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1))));
 			}
+		});
+		myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, myLanguages, LanguageMenu.DEFAULT_LANGUAGE, new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String t, String t1) {
+				reinit(myStage, t1);
+			}
+			
 		});
 		//myBuilder.addText(myResources.getString(""), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
 		//myLanguageSelector = myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, items, "ENGLISH", listener)
