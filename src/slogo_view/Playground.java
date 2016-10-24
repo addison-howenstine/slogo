@@ -156,10 +156,14 @@ public class Playground implements SLOGOViewExternal {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void onChanged(ListChangeListener.Change change) {
-				System.out.println("In here");
 				while (change.next()) {
 					List<String> list = change.getAddedSubList();
 					for (String s : list) {
+						if (myUserCommands.indexOf(s) == myUserCommands.lastIndexOf(s)) {
+							myUserCommands.remove(myUserCommands.indexOf(s));
+							removeButtonDuplicates(s);
+						}
+						// Check if button with exact same string existed before. If so, remove that button.
 						Button command = new Button(s);
 						command.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -176,6 +180,16 @@ public class Playground implements SLOGOViewExternal {
 				}
 			}
 		});
+	}
+	
+	private void removeButtonDuplicates(String s) {
+		for (int i = 0; i < userDefinedCommandsDisplay.getChildren().size(); i++) {
+			Button button = (Button) (userDefinedCommandsDisplay.getChildren().get(i));
+			if (button.getText().equals(s)) {
+				userDefinedCommandsDisplay.getChildren().remove(i);
+				i--;
+			}
+		}
 	}
 	
 	private void setUpTextInput() {
