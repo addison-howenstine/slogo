@@ -41,7 +41,7 @@ public class SLOGOParser {
 	 * @return list of Instructions for Controller to execute
 	 * 
 	 */
-	public List<Instruction> parse(String command, AbstractMap<String, Instruction> instrMap){
+	protected List<Instruction> parse(String command, AbstractMap<String, Instruction> instrMap){
 		List<Instruction> instructionList = new ArrayList<Instruction>();
 
 		String[] commandLines = command.split("\\n");
@@ -132,7 +132,7 @@ public class SLOGOParser {
 	}
 
 	// adds the given resource file to this language's recognized types
-	public void addPatterns (ResourceBundle resources) {
+	protected void addPatterns (ResourceBundle resources) {
 		Enumeration<String> iter = resources.getKeys();
 		while (iter.hasMoreElements()) {
 			String key = iter.nextElement();
@@ -143,13 +143,13 @@ public class SLOGOParser {
 		}
 	}
 
-	public void addPatterns(String syntax){
+	protected void addPatterns(String syntax){
 		ResourceBundle resources = ResourceBundle.getBundle(syntax);
 		addPatterns(resources);
 	}
 
 	// removes the given resource file to this language's recognized types
-	public void removePatterns (ResourceBundle resources) {
+	protected void removePatterns (ResourceBundle resources) {
 		Enumeration<String> iter = resources.getKeys();
 		while (iter.hasMoreElements()) {
 			String key = iter.nextElement();
@@ -158,9 +158,14 @@ public class SLOGOParser {
 					Pattern.compile(regex, Pattern.CASE_INSENSITIVE)));
 		}
 	}
+	
+	protected void removePatterns(String syntax){
+		ResourceBundle resources = ResourceBundle.getBundle(syntax);
+		removePatterns(resources);
+	}
 
 	// returns the language's type associated with the given text if one exists 
-	public String getSymbol (String text) {
+	protected String getSymbol (String text) {
 		for (Entry<String, Pattern> e : mySymbols) {
 			if (match(text, e.getValue())) {
 				return e.getKey();
