@@ -79,7 +79,7 @@ public class Playground implements SLOGOViewExternal {
 	private Paint myPenColor;
 	private HashMap<String, String> myImagesMap;
 	private ObservableList<String> myImages;
-	
+	private String myLanguage;
 	private ObservableList<String> myLanguages;
 	private SLOGOModel myModel;
 	private SLOGOController myController;
@@ -106,6 +106,7 @@ public class Playground implements SLOGOViewExternal {
 	}
 	
 	private void construct(Stage s, String language) {
+		myLanguage = language;
 		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		setUpColorsMap();
@@ -304,7 +305,7 @@ public class Playground implements SLOGOViewExternal {
 				myTurtle.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1))));
 			}
 		});
-		myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, myLanguages, LanguageMenu.DEFAULT_LANGUAGE, new ChangeListener<String>() {
+		myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, myLanguages, myLanguage, new ChangeListener<String>() {
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String t, String t1) {
