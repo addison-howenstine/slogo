@@ -1,13 +1,18 @@
 package slogo_view;
 
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
@@ -21,8 +26,9 @@ public class UIBuilder implements SLOGOViewInternal {
 	
 	private Group myRoot;
 	
-	public UIBuilder(Group root){
+	public UIBuilder(Group root) { 
 		myRoot = root;
+		myRoot.getStylesheets().add("/style.css");
 	}
 
 	@Override
@@ -75,6 +81,45 @@ public class UIBuilder implements SLOGOViewInternal {
 		line.setStroke(paint);
 		myRoot.getChildren().add(line);
 		return line;
+	}
+	
+	public TextArea addTextArea(double startX, double startY, double width, double height) {
+		TextArea textArea = new TextArea();
+		textArea.setLayoutX(startX);
+		textArea.setLayoutY(startY);
+		textArea.setMinWidth(width);
+		textArea.setMaxWidth(width);
+		textArea.setMinHeight(height);
+		textArea.setMaxHeight(height);
+		textArea.textProperty().addListener(new ChangeListener<Object>() {
+			@Override
+			public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+				textArea.setScrollTop(Double.MAX_VALUE);			
+			}
+		});
+		myRoot.getChildren().add(textArea);
+		return textArea;
+	}
+	
+	public VBox addScrollableVBox(double startX, double startY, double width, double height) {
+		ScrollPane pane = new ScrollPane();
+		pane.setLayoutX(startX);
+		pane.setLayoutY(startY);
+		pane.setMinWidth(width + 5);
+		pane.setMaxWidth(width + 5);
+		pane.setMaxHeight(height + 5);
+		pane.setMinHeight(height + 5);
+		VBox box = new VBox();
+		box.setMinWidth(width);
+		box.setMaxWidth(width);
+		
+		// Autoscrolls down
+		pane.vvalueProperty().bind(box.heightProperty());
+		
+		pane.setContent(box);
+		myRoot.getChildren().add(pane);
+		
+		return box;
 	}
 
 }

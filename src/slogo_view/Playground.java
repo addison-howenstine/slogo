@@ -1,14 +1,15 @@
 package slogo_view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,10 +17,13 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.PopupControl;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -27,15 +31,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slogo_controller.SLOGOController;
-import slogo_controller.TurtleController;
 import slogo_model.SLOGOModel;
-import slogo_model.Turtle;
 
 public class Playground implements SLOGOViewExternal {
 	private static final String TURTLE_AREA_OUTLINE = "Black";
@@ -53,13 +54,16 @@ public class Playground implements SLOGOViewExternal {
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
 	private static final int TURTLE_Y_OFFSET = TURTLE_AREA_HEIGHT/2 + TURTLE_AREA_Y;
 	private static final int HELP_Y = 12;
+	private static final int MULTILINE_Y = 12;
 	private static final int COMBO_BOX_Y = 25;
 	private static final int FONT_SIZE = 20;
 	private static final int BACKGROUND_X = 200;
 	private static final int CONTROL_X_OFFSET = 150;
 	private static final int PEN_X = BACKGROUND_X + CONTROL_X_OFFSET;
 	private static final int IMAGE_X = PEN_X + CONTROL_X_OFFSET;
-	private static final int HELP_X = IMAGE_X + CONTROL_X_OFFSET;
+	private static final int LANGUAGES_X = IMAGE_X + CONTROL_X_OFFSET;
+	private static final int MULTILINE_X = LANGUAGES_X + CONTROL_X_OFFSET;
+	private static final int HELP_X = MULTILINE_X + CONTROL_X_OFFSET;
 	private static final String DEFAULT_IMAGE = "Turtle";
 	private static final String DEFAULT_BACKGROUND = "White";
 	private static final String DEFAULT_PEN = "Black";
@@ -75,11 +79,12 @@ public class Playground implements SLOGOViewExternal {
 	private Paint myPenColor;
 	private HashMap<String, String> myImagesMap;
 	private ObservableList<String> myImages;
+	
+	private ObservableList<String> myLanguages;
 	private SLOGOModel myModel;
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
 	private ImageView myTurtle;
-	private ArrayList<String> myUserCommands;
 	private ArrayList<String> myUserVariables;
 	private ArrayList<Line> myTrails;
 	private ComboBox myPenColorSelector;
@@ -87,8 +92,20 @@ public class Playground implements SLOGOViewExternal {
 	private double myX = 0;
 	private double myY = 0;
 	private Stage myStage;
+	
+	private ObservableList<String> myCommandHistory;
+	private VBox commandHistoryDisplay;
+	
+	private ObservableList<String> myUserCommands;
+	private VBox userDefinedCommandsDisplay;
+	
+	private boolean errorReceived = false;
 
-	public Playground(Stage s, String language){
+	public Playground(Stage s, String language) {
+		construct(s, language);
+	}
+	
+	private void construct(Stage s, String language) {
 		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		setUpColorsMap();
@@ -98,9 +115,16 @@ public class Playground implements SLOGOViewExternal {
 		setUpImagesMap();
 		myImages = FXCollections.observableList(new ArrayList<String>());
 		myImages.addAll(myImagesMap.keySet());
-		myUserCommands = new ArrayList<String>();
+		myLanguages = FXCollections.observableList(new ArrayList<String>(Arrays.asList(LanguageMenu.LANGUAGES)));
+		myUserCommands = FXCollections.observableList(new ArrayList<String>());
+		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
+	}
+	
+	private void reinit(Stage s, String language) {
+		construct(s, language);
+		init();
 	}
 
 	private void setUpImagesMap(){
@@ -138,21 +162,67 @@ public class Playground implements SLOGOViewExternal {
 		setUpHelpButton();
 		setUpTextInput();
 		setUpCommandHistoryScreen();
+		setUpUserDefinedCommandsDisplay();
+		setUpMultilineButton();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
 		return scene;
 	}
 
-	private void setUpTextInput() {
-		TextField commandReader = myBuilder.addTextField(myResources.getString("TextFieldText"), TEXT_FIELD_X, 
-				TEXT_FIELD_Y);
-		commandReader.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle (ActionEvent event){
-				myController.run(commandReader.getCharacters().toString());
+	private void setUpUserDefinedCommandsDisplay() {
+		userDefinedCommandsDisplay = myBuilder.addScrollableVBox(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y + TURTLE_AREA_HEIGHT/2 + 10, 350, TURTLE_AREA_HEIGHT/2 - 10);
+		myUserCommands.addListener(new ListChangeListener<Object>() {
+
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void onChanged(ListChangeListener.Change change) {
+				while (change.next()) {
+					List<String> list = change.getAddedSubList();
+					for (String s : list) {
+						if (myUserCommands.indexOf(s) == myUserCommands.lastIndexOf(s)) {
+							myUserCommands.remove(myUserCommands.indexOf(s));
+							removeButtonDuplicates(s);
+						}
+						configureButtonToRunCommand(s, "user-defined-button", userDefinedCommandsDisplay);
+					}
+				}
 			}
 		});
-		commandReader.setMinWidth(TURTLE_AREA_WIDTH);
+	}
+	
+	private void removeButtonDuplicates(String s) {
+		for (int i = 0; i < userDefinedCommandsDisplay.getChildren().size(); i++) {
+			Button button = (Button) (userDefinedCommandsDisplay.getChildren().get(i));
+			if (button.getText().equals(s)) {
+				userDefinedCommandsDisplay.getChildren().remove(i);
+				i--;
+			}
+		}
+	}
+	
+	private void setUpTextInput() {
+		TextField commandReader = myBuilder.addTextField("", TEXT_FIELD_X, 
+				TEXT_FIELD_Y);
+		commandReader.setPromptText(myResources.getString("TextFieldText"));
+		commandReader.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle (ActionEvent event){
+				runCommandFromTextInput(commandReader);
+			}
+		});
+		commandReader.setMinWidth(TURTLE_AREA_WIDTH + 360);
+	}
+	
+	private void runCommandFromTextInput(TextInputControl tic) {
+		tic.getText();
+		myController.run(tic.getText());
+		if (errorReceived) {
+			tic.setText("");
+			errorReceived = false;
+			return;
+		}
+		myCommandHistory.add(tic.getText());
+		tic.setText("");
 	}
 
 	private void setUpHelpButton() {
@@ -168,13 +238,46 @@ public class Playground implements SLOGOViewExternal {
                 final WebEngine webEngine = browser.getEngine();
                 ScrollPane dialogPane = new ScrollPane();
                 dialogPane.setContent(browser);
-                webEngine.loadContent("<h1>asdf</h1>");
+                
+                webEngine.loadContent("<h1>Enter help content here.</h1>");
                 
                 
                 root.getChildren().add(dialogPane);
                 Scene dialogScene = new Scene(root, WIDTH, HEIGHT);
                 dialog.setScene(dialogScene);
                 dialog.show();
+			}
+		});
+	}
+	
+	@SuppressWarnings("unused")
+	private void setUpMultilineButton() {
+		myBuilder.addButton("Multiline", MULTILINE_X, MULTILINE_Y, new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				final Stage dialog = new Stage();
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(myStage);
+                
+                VBox root = new VBox();
+                
+                TextArea input = new TextArea();
+                Button submit = new Button("Run");
+                submit.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						runCommandFromTextInput(input);
+					}
+                	
+                });
+                
+                root.getChildren().add(input);
+                root.getChildren().add(submit);
+                Scene dialogScene = new Scene(root, WIDTH/2, HEIGHT/2);
+                dialog.setScene(dialogScene);
+                dialog.show();
+                
+                
 			}
 		});
 	}
@@ -197,10 +300,20 @@ public class Playground implements SLOGOViewExternal {
 		myBuilder.addText(myResources.getString("Image"), IMAGE_X, MIN_BOUNDARY, FONT_SIZE);
 		myBackgroundSelector = myBuilder.addComboBox(IMAGE_X, COMBO_BOX_Y, myImages, 
 				myResources.getString(DEFAULT_IMAGE), new ChangeListener<String>() {
-			public void changed(ObservableValue ov, String t, String t1){
+			public void changed(ObservableValue ov, String t, String t1) {
 				myTurtle.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1))));
 			}
 		});
+		myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, myLanguages, LanguageMenu.DEFAULT_LANGUAGE, new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String t, String t1) {
+				reinit(myStage, t1);
+			}
+			
+		});
+		//myBuilder.addText(myResources.getString(""), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
+		//myLanguageSelector = myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, items, "ENGLISH", listener)
 	}
 
 	private void setUpTurtle() {
@@ -224,11 +337,41 @@ public class Playground implements SLOGOViewExternal {
 	}
 	
 	private void setUpCommandHistoryScreen() {
-		myBuilder.addRectangle(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y, 100, 200, myColorsMap.get(myResources.getString("Red")));
+		commandHistoryDisplay = myBuilder.addScrollableVBox(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, 
+				TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT/2);
+		myCommandHistory.addListener(new ListChangeListener<Object>() {
+
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void onChanged(ListChangeListener.Change change) {
+				while (change.next()) {
+					List<String> list = change.getAddedSubList();
+					for (String s : list) {
+						configureButtonToRunCommand(s, "command-history-button", commandHistoryDisplay);
+					}
+				}
+			}
+		});
+	}
+	
+	private void configureButtonToRunCommand(String text, String id, VBox display) {
+		Button command = new Button(text);
+		command.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				myController.run(text);
+			}
+			
+		});
+		command.setId(id);
+		command.setMinWidth(display.getMinWidth());
+		display.getChildren().add(command);
 	}
 
 	@Override
 	public void showError(String errorMessage) {
+		errorReceived = true;
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle(myResources.getString("ErrorTitle"));
 		alert.setContentText(errorMessage);

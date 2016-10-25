@@ -1,8 +1,6 @@
 package slogo_view;
 
 import java.util.ResourceBundle;
-
-import javafx.beans.value.ObservableStringValue;
 import slogo_controller.SLOGOController;
 import slogo_model.SLOGOModel;
 
