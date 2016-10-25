@@ -12,22 +12,18 @@ public class SLOGOMain extends Application {
 	
 	LanguageMenu languageMenu;
 	SLOGOViewExternal view;
-	SLOGOModel model;
 	SLOGOController controller;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// initialize model, view, controller
 		languageMenu = new LanguageMenu(new Stage());
-		view = new Playground(primaryStage, languageMenu.getLanguage());
-		model = new Turtle(view.getMaxX(), view.getMaxY());
-		
-		controller = new TurtleController(view, model);
+		view = new Playground(primaryStage, languageMenu.getLanguage());		
+		controller = new TurtleController(view);
 		
 		// give model and view necessary pointers
-		((Turtle) model).addObserver((Playground) view);
 		view.setController(controller);
-		view.addModel(model);
+		controller.getModels().forEach( m -> view.addModel(m) );
 		
 		((Playground) view).init();
 	}
