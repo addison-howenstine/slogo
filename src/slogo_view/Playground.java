@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
@@ -38,7 +40,7 @@ import javafx.stage.Stage;
 import slogo_controller.SLOGOController;
 import slogo_model.SLOGOModel;
 
-public class Playground implements SLOGOViewExternal {
+public class Playground implements SLOGOViewExternal, Observer{
 	private static final String TURTLE_AREA_OUTLINE = "Black";
 	private static final int TITLE_SIZE = 50;
 	private static final int MIN_BOUNDARY = 0;
@@ -460,5 +462,10 @@ public class Playground implements SLOGOViewExternal {
 			myRoot.getChildren().add(myTurtle);
 		}
 
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		updateScreen();
 	}
 }
