@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import slogo_model.SLOGOModel;
 import slogo_model.Turtle;
+import slogo_view.Playground;
 import slogo_view.SLOGOViewExternal;
 
 public class TurtleController implements SLOGOController {
@@ -23,12 +24,12 @@ public class TurtleController implements SLOGOController {
 	private AbstractMap<String, Instruction> myInstructionMap;
 	private ResourceBundle currentResourceBundle;
 
-	public TurtleController(SLOGOViewExternal view, SLOGOModel model) {
+	public TurtleController(SLOGOViewExternal view) {
 		this.view = view;
 		models = new ArrayList<SLOGOModel>();
-		models.add(model);
 		activeModels = new ArrayList<SLOGOModel>();
-		activeModels.add(model);
+		addModel(0);
+		activeModels.add(models.get(0));
 		this.myVarMap = new HashMap<String, Double>();
 		this.myInstructionMap = new HashMap<String, Instruction>();
 		parser = new SLOGOParser();
@@ -70,8 +71,12 @@ public class TurtleController implements SLOGOController {
 	}
 
 	private void addModel(int ID) {
-		for(int i = models.size(); i <= ID; i++)
-			models.add(new Turtle(view.getMaxX(), view.getMaxY()));
+		for(int i = models.size(); i <= ID; i++){
+			SLOGOModel newTurtle = new Turtle(view.getMaxX(), view.getMaxY());
+			((Turtle) newTurtle).addObserver((Playground) view); 
+			view.addModel(newTurtle);
+			models.add(newTurtle);
+		}
 	}
 
 	@Override
@@ -104,5 +109,10 @@ public class TurtleController implements SLOGOController {
 		instructions.remove(instructions.size() - 1);
 		tempActives.forEach(t -> instructions.forEach(i -> i.evaluate(view, models.get(t))));
 		return last.evaluate(view, models.get(tempActives.get(tempActives.size() - 1)));
+	}
+
+	@Override
+	public List<SLOGOModel> getModels() {
+		return models;
 	}
 }

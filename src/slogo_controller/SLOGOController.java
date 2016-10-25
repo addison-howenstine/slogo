@@ -37,4 +37,6 @@ public interface SLOGOController {
 	public double tell(List<Integer> newActives);
 	
 	public double ask(List<Integer> tempActives, List<Instruction> instructions);
+	
+	public List<SLOGOModel> getModels();
 }
