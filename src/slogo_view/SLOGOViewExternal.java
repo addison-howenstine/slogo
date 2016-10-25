@@ -33,7 +33,7 @@ public interface SLOGOViewExternal {
 	
 	public double getMaxY();
 	
-	public void setPenColor(String color);
+	public void setPenColor(int index);
 	
 	public void setBackgroundColor(String color);
 	

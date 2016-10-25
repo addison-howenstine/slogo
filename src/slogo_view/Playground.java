@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -76,10 +77,10 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private ResourceBundle myResources;
 	private Group myRoot;
 	private UIBuilder myBuilder;
-	private HashMap<String, Paint> myColorsMap;
+	private TreeMap<String, Paint> myColorsMap;
 	private ObservableList<String> myColors;
 	private Paint myPenColor;
-	private HashMap<String, String> myImagesMap;
+	private TreeMap<String, String> myImagesMap;
 	private ObservableList<String> myImages;
 	private String myLanguage;
 	private ObservableList<String> myLanguages;
@@ -131,7 +132,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 	}
 
 	private void setUpImagesMap(){
-		myImagesMap = new HashMap<String, String>();
+		myImagesMap = new TreeMap<String, String>();
 		myImagesMap.put(myResources.getString(DEFAULT_IMAGE), "turtle.png");
 		myImagesMap.put(myResources.getString("Rocket"), "rocket.png");
 		myImagesMap.put(myResources.getString("Frog"), "frog.png");
@@ -140,16 +141,16 @@ public class Playground implements SLOGOViewExternal, Observer{
 	}
 
 	private void setUpColorsMap(){
-		myColorsMap = new HashMap<String, Paint>();
-		myColorsMap.put(myResources.getString(DEFAULT_PEN), Color.BLACK);
-		myColorsMap.put(myResources.getString("Blue"), Color.BLUE);
-		myColorsMap.put(myResources.getString("Brown"), Color.BROWN);
-		myColorsMap.put(myResources.getString("Green"), Color.GREEN);
-		myColorsMap.put(myResources.getString("Orange"), Color.ORANGE);
-		myColorsMap.put(myResources.getString("Purple"), Color.PURPLE);
-		myColorsMap.put(myResources.getString("Red"), Color.RED);
-		myColorsMap.put(myResources.getString(DEFAULT_BACKGROUND), Color.WHITE);
-		myColorsMap.put(myResources.getString("Yellow"), Color.YELLOW);
+		myColorsMap = new TreeMap<String, Paint>();
+		myColorsMap.put("1. " + myResources.getString(DEFAULT_PEN), Color.BLACK);
+		myColorsMap.put("2. " + myResources.getString("Blue"), Color.BLUE);
+		myColorsMap.put("3. " + myResources.getString("Brown"), Color.BROWN);
+		myColorsMap.put("4. " + myResources.getString("Green"), Color.GREEN);
+		myColorsMap.put("5. " + myResources.getString("Orange"), Color.ORANGE);
+		myColorsMap.put("6. " + myResources.getString("Purple"), Color.PURPLE);
+		myColorsMap.put("7. " + myResources.getString("Red"), Color.RED);
+		myColorsMap.put("8. " + myResources.getString(DEFAULT_BACKGROUND), Color.WHITE);
+		myColorsMap.put("9. " + myResources.getString("Yellow"), Color.YELLOW);
 	}
 
 	public Scene init(){
@@ -287,7 +288,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 
 	private void setUpComboBoxes() {
 		myBuilder.addText(myResources.getString("Background"), BACKGROUND_X, MIN_BOUNDARY, FONT_SIZE);
-		myBuilder.addComboBox(BACKGROUND_X, COMBO_BOX_Y, myColors, myResources.getString(DEFAULT_BACKGROUND), 
+		myBuilder.addComboBox(BACKGROUND_X, COMBO_BOX_Y, myColors, "8. " + myResources.getString(DEFAULT_BACKGROUND), 
 				new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myTurtleScreen.setFill(myColorsMap.get(t1));
@@ -295,7 +296,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 		});
 		myBuilder.addText(myResources.getString("Pen"), PEN_X, MIN_BOUNDARY, FONT_SIZE);
 		myPenColorSelector = myBuilder.addComboBox(PEN_X, COMBO_BOX_Y, myColors, 
-				myResources.getString(DEFAULT_PEN), new ChangeListener<String>() {
+				"1. " + myResources.getString(DEFAULT_PEN), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myPenColor = myColorsMap.get(t1);
 			}
@@ -420,15 +421,15 @@ public class Playground implements SLOGOViewExternal, Observer{
 	}
 
 	@Override
-	public void setPenColor(String color){
-		myPenColor = myColorsMap.get(color);
-		myPenColorSelector.setValue(color);
+	public void setPenColor(int index){
+		myPenColor = myColorsMap.get(myColors.get(index - 1));
+		myPenColorSelector.setValue(myColors.get(index - 1));
 	}
 
 	@Override
-	public void setBackgroundColor(String color){
-		myTurtleScreen.setFill(myColorsMap.get(color));
-		myBackgroundSelector.setValue(color);
+	public void setBackgroundColor(int index){
+		myTurtleScreen.setFill(myColorsMap.get(myColors.get(index)));
+		myBackgroundSelector.setValue(myColors.get(index));
 	}
 
 	@Override
