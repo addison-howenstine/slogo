@@ -12,7 +12,7 @@ public class Turtles extends Instruction {
 
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
-		return view.getController().numModels();
+		return view.getController().getModels().size();
 	}
 
 }
