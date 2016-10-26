@@ -20,11 +20,7 @@ public class SLOGOMain extends Application {
 		languageMenu = new LanguageMenu(new Stage());
 		view = new Playground(primaryStage, languageMenu.getLanguage());		
 		controller = new TurtleController(view);
-		
-		// give model and view necessary pointers
 		view.setController(controller);
-		controller.getModels().forEach( m -> view.addModel(m) );
-		
 		((Playground) view).init();
 	}
 	

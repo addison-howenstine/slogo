@@ -38,12 +38,7 @@ public interface SLOGOViewExternal {
 	public void setBackgroundColor(int index);
 	
 	public void setController(SLOGOController controller);
-	
-	/**
-	 * @param model - new SLOGOModel to which the view will listen for changes
-	 */
-	public void addModel(SLOGOModel model);
-	
+		
 	/**
 	 * Called by an Observable model to tell an Observer view that
 	 * changes have been made and the screen should update to reflect this

@@ -18,7 +18,8 @@ public class TurtleController implements SLOGOController {
 
 	private SLOGOViewExternal view;
 	private List<SLOGOModel> models;
-	private List<SLOGOModel> activeModels;
+	private List<Integer> activeModels;
+	private int activeModelID;
 	private SLOGOParser parser;
 	private AbstractMap<String, Double> myVarMap;
 	private AbstractMap<String, Instruction> myInstructionMap;
@@ -27,9 +28,9 @@ public class TurtleController implements SLOGOController {
 	public TurtleController(SLOGOViewExternal view) {
 		this.view = view;
 		models = new ArrayList<SLOGOModel>();
-		activeModels = new ArrayList<SLOGOModel>();
-		addModel(0);
-		activeModels.add(models.get(0));
+		activeModels = new ArrayList<Integer>();
+		createNewModel();
+		activeModels.add(0);
 		this.myVarMap = new HashMap<String, Double>();
 		this.myInstructionMap = new HashMap<String, Instruction>();
 		parser = new SLOGOParser();
@@ -44,11 +45,13 @@ public class TurtleController implements SLOGOController {
 		List<Instruction> instructionList = parser.parse(command, myInstructionMap);
 		for(Instruction inst : instructionList){
 			try{
-				activeModels.forEach( model -> inst.evaluate(view, model) );
+				activeModels.forEach( model -> {
+					activeModelID = model;
+					inst.evaluate(view, models.get(activeModelID));
+				});
 			}catch(Exception e){
 				//TODO: EVALUATION FAILED - will happen if variable hasn't been created
 			}
-			// System.out.println("Turtle xCor: " + model.xCor() + " Turtle yCor: " + model.yCor());
 		}
 	}
 
@@ -71,35 +74,34 @@ public class TurtleController implements SLOGOController {
 	}
 
 	private void addModel(int ID) {
+		// create as many new models as are needed
 		for(int i = models.size(); i <= ID; i++){
-			SLOGOModel newTurtle = new Turtle(view.getMaxX(), view.getMaxY());
-			((Turtle) newTurtle).addObserver((Playground) view); 
-			view.addModel(newTurtle);
-			models.add(newTurtle);
+			createNewModel();
 		}
+		view.updateScreen();
+	}
+	
+	private void createNewModel(){
+		SLOGOModel newTurtle = new Turtle(view.getMaxX(), view.getMaxY());
+		models.add(newTurtle);
+		((Turtle) newTurtle).addObserver((Playground) view);
 	}
 
 	@Override
 	public double tell(List<Integer> newActives) {
 		activeModels.clear();
-		double last = 0;
 		for ( Integer a : newActives ){
-			if (a >= models.size() )
-				addModel(a);
-			activeModels.add(models.get(a));
-			last = a;
+			activeModelID = a;
+			if (activeModelID >= models.size() )
+				addModel(activeModelID);
+			activeModels.add(activeModelID);
 		}
-		return last;
+		return activeModelID;
 	}
 
 	@Override
 	public double modelID() {
-		return models.indexOf(activeModels.get(0));
-	}
-
-	@Override
-	public double numModels() {
-		return models.size();
+		return activeModelID;
 	}
 
 	@Override
@@ -107,12 +109,17 @@ public class TurtleController implements SLOGOController {
 		// TODO it would be great to pass a lambda instead of a List of instructions
 		Instruction last = instructions.get(instructions.size() - 1);
 		instructions.remove(instructions.size() - 1);
-		tempActives.forEach(t -> instructions.forEach(i -> i.evaluate(view, models.get(t))));
-		return last.evaluate(view, models.get(tempActives.get(tempActives.size() - 1)));
+		tempActives.forEach(t -> {
+			activeModelID = t;
+			instructions.forEach(i -> i.evaluate(view, models.get(activeModelID)));
+		});
+		activeModelID = tempActives.get(tempActives.size() - 1);
+		return last.evaluate(view, models.get(activeModelID));
 	}
 
 	@Override
 	public List<SLOGOModel> getModels() {
+		// TODO it would be great to get rid of this method and replace with functional programming so we don't give away pointer to models
 		return models;
 	}
 }

@@ -14,7 +14,6 @@ public class ListEnd extends Instruction {
 	@Override
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
 		// do nothing, this object should never be evaluated
-		System.out.println("THS SHOULD NOT BE EVALUATED");
 		return 0;
 	}
 
