@@ -2,7 +2,7 @@ package slogo_model;
 import java.util.*;
 import instructions.*;
 
-public class Turtle implements SLOGOModel{
+public class Turtle extends Observable implements SLOGOModel{
 
 	private double xCor;
 	private double yCor;
@@ -129,6 +129,8 @@ public class Turtle implements SLOGOModel{
 	public double setHeading(double degrees) {
 		double distanceTurned = orient360(heading() - degrees);
 		heading = orient360(degrees);
+		setChanged();
+		notifyObservers();
 		return distanceTurned180(distanceTurned);
 	}
 
@@ -145,30 +147,40 @@ public class Turtle implements SLOGOModel{
 		double oldY = yCor();
 		xCor = x;
 		yCor = y;
+		setChanged();
+		notifyObservers();
 		return distance(oldX, xCor(), oldY, yCor());
 	}
 
 	@Override
 	public double penDown() {
 		penDown = true;
+		setChanged();
+		notifyObservers();
 		return 1;
 	}
 
 	@Override
 	public double penUp() {
 		penDown = false;
+		setChanged();
+		notifyObservers();
 		return 0;
 	}
 
 	@Override
 	public double showTurtle() {
 		visible = true;
+		setChanged();
+		notifyObservers();
 		return 1;
 	}
 
 	@Override
 	public double hideTurtle() {
 		visible = false;
+		setChanged();
+		notifyObservers();
 		return 0;
 	}
 

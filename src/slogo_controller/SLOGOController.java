@@ -1,6 +1,10 @@
 package slogo_controller;
 import instructions.Instruction;
+
 import java.util.AbstractMap;
+import java.util.List;
+
+import slogo_model.SLOGOModel;
 
 public interface SLOGOController {
 	
@@ -25,4 +29,14 @@ public interface SLOGOController {
 	 * @return
 	 */
 	public AbstractMap<String, Double> getVarMap();
+	
+	public double modelID();
+	
+	public double numModels();
+		
+	public double tell(List<Integer> newActives);
+	
+	public double ask(List<Integer> tempActives, List<Instruction> instructions);
+	
+	public List<SLOGOModel> getModels();
 }
