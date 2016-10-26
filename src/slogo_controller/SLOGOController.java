@@ -31,9 +31,7 @@ public interface SLOGOController {
 	public AbstractMap<String, Double> getVarMap();
 	
 	public double modelID();
-	
-	public double numModels();
-		
+			
 	public double tell(List<Integer> newActives);
 	
 	public double ask(List<Integer> tempActives, List<Instruction> instructions);

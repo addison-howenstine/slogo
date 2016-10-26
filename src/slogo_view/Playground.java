@@ -81,12 +81,11 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private Paint myPenColor;
 	private HashMap<String, String> myImagesMap;
 	private ObservableList<String> myImages;
-	
+
 	private ObservableList<String> myLanguages;
-	private SLOGOModel myModel;
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
-	private ImageView myTurtle;
+	private List<ImageView> visualTurtles;
 	private ArrayList<String> myUserVariables;
 	private ArrayList<Line> myTrails;
 	private ComboBox myPenColorSelector;
@@ -94,19 +93,19 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private double myX = 0;
 	private double myY = 0;
 	private Stage myStage;
-	
+
 	private ObservableList<String> myCommandHistory;
 	private VBox commandHistoryDisplay;
-	
+
 	private ObservableList<String> myUserCommands;
 	private VBox userDefinedCommandsDisplay;
-	
+
 	private boolean errorReceived = false;
 
 	public Playground(Stage s, String language) {
 		construct(s, language);
 	}
-	
+
 	private void construct(Stage s, String language) {
 		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
@@ -122,8 +121,9 @@ public class Playground implements SLOGOViewExternal, Observer{
 		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = new ArrayList<String>();
 		myTrails = new ArrayList<Line>();
+		visualTurtles = new ArrayList<ImageView>();
 	}
-	
+
 	private void reinit(Stage s, String language) {
 		construct(s, language);
 		init();
@@ -157,9 +157,6 @@ public class Playground implements SLOGOViewExternal, Observer{
 		myBuilder = new UIBuilder(myRoot);
 		myBuilder.addText(TITLE, MIN_BOUNDARY, MIN_BOUNDARY, TITLE_SIZE);
 		setUpTurtleScreen();
-		
-		// TODO we should be able to initialize even if there is no model, in which case there is no turtle. set up the turtle when a new turtle is added instead
-		setUpTurtle();
 		setUpComboBoxes();
 		setUpHelpButton();
 		setUpTextInput();
@@ -169,6 +166,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
+		updateScreen();
 		return scene;
 	}
 
@@ -192,7 +190,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 		});
 	}
-	
+
 	private void removeButtonDuplicates(String s) {
 		for (int i = 0; i < userDefinedCommandsDisplay.getChildren().size(); i++) {
 			Button button = (Button) (userDefinedCommandsDisplay.getChildren().get(i));
@@ -202,7 +200,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 		}
 	}
-	
+
 	private void setUpTextInput() {
 		TextField commandReader = myBuilder.addTextField("", TEXT_FIELD_X, 
 				TEXT_FIELD_Y);
@@ -214,7 +212,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 		});
 		commandReader.setMinWidth(TURTLE_AREA_WIDTH + 360);
 	}
-	
+
 	private void runCommandFromTextInput(TextInputControl tic) {
 		tic.getText();
 		myController.run(tic.getText());
@@ -231,55 +229,55 @@ public class Playground implements SLOGOViewExternal, Observer{
 		myBuilder.addButton(myResources.getString("Help"), HELP_X, HELP_Y, new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
 				final Stage dialog = new Stage();
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.initOwner(myStage);
-                
-                VBox root = new VBox();
-                
-                final WebView browser = new WebView();
-                final WebEngine webEngine = browser.getEngine();
-                ScrollPane dialogPane = new ScrollPane();
-                dialogPane.setContent(browser);
-                
-                webEngine.loadContent("<h1>Enter help content here.</h1>");
-                
-                
-                root.getChildren().add(dialogPane);
-                Scene dialogScene = new Scene(root, WIDTH, HEIGHT);
-                dialog.setScene(dialogScene);
-                dialog.show();
+				dialog.initModality(Modality.APPLICATION_MODAL);
+				dialog.initOwner(myStage);
+
+				VBox root = new VBox();
+
+				final WebView browser = new WebView();
+				final WebEngine webEngine = browser.getEngine();
+				ScrollPane dialogPane = new ScrollPane();
+				dialogPane.setContent(browser);
+
+				webEngine.loadContent("<h1>Enter help content here.</h1>");
+
+
+				root.getChildren().add(dialogPane);
+				Scene dialogScene = new Scene(root, WIDTH, HEIGHT);
+				dialog.setScene(dialogScene);
+				dialog.show();
 			}
 		});
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void setUpMultilineButton() {
 		myBuilder.addButton("Multiline", MULTILINE_X, MULTILINE_Y, new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				final Stage dialog = new Stage();
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.initOwner(myStage);
-                
-                VBox root = new VBox();
-                
-                TextArea input = new TextArea();
-                Button submit = new Button("Run");
-                submit.setOnAction(new EventHandler<ActionEvent>() {
+				dialog.initModality(Modality.APPLICATION_MODAL);
+				dialog.initOwner(myStage);
+
+				VBox root = new VBox();
+
+				TextArea input = new TextArea();
+				Button submit = new Button("Run");
+				submit.setOnAction(new EventHandler<ActionEvent>() {
 
 					@Override
 					public void handle(ActionEvent event) {
 						runCommandFromTextInput(input);
 					}
-                	
-                });
-                
-                root.getChildren().add(input);
-                root.getChildren().add(submit);
-                Scene dialogScene = new Scene(root, WIDTH/2, HEIGHT/2);
-                dialog.setScene(dialogScene);
-                dialog.show();
-                
-                
+
+				});
+
+				root.getChildren().add(input);
+				root.getChildren().add(submit);
+				Scene dialogScene = new Scene(root, WIDTH/2, HEIGHT/2);
+				dialog.setScene(dialogScene);
+				dialog.show();
+
+
 			}
 		});
 	}
@@ -303,7 +301,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 		myBackgroundSelector = myBuilder.addComboBox(IMAGE_X, COMBO_BOX_Y, myImages, 
 				myResources.getString(DEFAULT_IMAGE), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1) {
-				myTurtle.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1))));
+				visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1)))));
 			}
 		});
 		myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, myLanguages, LanguageMenu.DEFAULT_LANGUAGE, new ChangeListener<String>() {
@@ -312,7 +310,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 			public void changed(ObservableValue<? extends String> observable, String t, String t1) {
 				reinit(myStage, t1);
 			}
-			
+
 		});
 		//myBuilder.addText(myResources.getString(""), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
 		//myLanguageSelector = myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, items, "ENGLISH", listener)
@@ -321,14 +319,11 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private void setUpTurtle() {
 		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(
 				myResources.getString(DEFAULT_IMAGE))));
-		myTurtle = new ImageView(image);
-		myTurtle.setFitHeight(TURTLE_HEIGHT);
-		myTurtle.setPreserveRatio(true);
-		// TODO let the turtle start from a different position if the model has a different initial position
-		// currently this works because the model and view both happen to start from 0,0, but what if the model told it to start somewhere else?
-		myTurtle.relocate(TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
-				TURTLE_Y_OFFSET - myTurtle.getBoundsInLocal().getHeight()/2);
-		myRoot.getChildren().add(myTurtle);
+		ImageView visT = new ImageView(image);
+		visT.setFitHeight(TURTLE_HEIGHT);
+		visT.setPreserveRatio(true);
+		myRoot.getChildren().add(visT);
+		visualTurtles.add(visT);
 	}
 
 	private void setUpTurtleScreen() {
@@ -337,7 +332,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 		myTurtleScreen = myBuilder.addRectangle(TURTLE_AREA_X + 1, TURTLE_AREA_Y + 1, TURTLE_AREA_WIDTH - 2, 
 				TURTLE_AREA_HEIGHT - 2, myColorsMap.get(myResources.getString(DEFAULT_BACKGROUND)));
 	}
-	
+
 	private void setUpCommandHistoryScreen() {
 		commandHistoryDisplay = myBuilder.addScrollableVBox(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, 
 				TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT/2);
@@ -355,7 +350,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 		});
 	}
-	
+
 	private void configureButtonToRunCommand(String text, String id, VBox display) {
 		Button command = new Button(text);
 		command.setOnAction(new EventHandler<ActionEvent>() {
@@ -364,7 +359,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 			public void handle(ActionEvent event) {
 				myController.run(text);
 			}
-			
+
 		});
 		command.setId(id);
 		command.setMinWidth(display.getMinWidth());
@@ -436,31 +431,34 @@ public class Playground implements SLOGOViewExternal, Observer{
 	}
 
 	@Override
-	public void addModel(SLOGOModel model){
-		// TODO make this a list so multiple models can be represented on same view
-		myModel = model;
-	}
-
-	@Override
 	public void updateScreen(){
-		myTurtle.relocate(myModel.xCor() + TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
-				TURTLE_Y_OFFSET - myModel.yCor() - myTurtle.getBoundsInLocal().getHeight()/2);
-		myTurtle.setRotate(myModel.heading());
-		if (myModel.isPenDown() == 1){
-			Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY, 
-					myModel.xCor() + TURTLE_X_OFFSET, 
-					TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
-			myTrails.add(line);
+		int numModels = myController.getModels().size();
+		while(visualTurtles.size() < numModels){
+			setUpTurtle();
 		}
-		myX = myModel.xCor();
-		myY = myModel.yCor();
-		if (myModel.showing() == 0 && myRoot.getChildren().contains(myTurtle)){
-			myRoot.getChildren().remove(myTurtle);
+		
+		for(int i = 0; i < numModels; i++){
+			ImageView myTurtle = visualTurtles.get(i);
+			SLOGOModel myModel = myController.getModels().get(i);
+			
+			myTurtle.relocate(myModel.xCor() + TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
+					TURTLE_Y_OFFSET - myModel.yCor() - myTurtle.getBoundsInLocal().getHeight()/2);
+			myTurtle.setRotate(myModel.heading());
+			if (myModel.isPenDown() == 1){
+				Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY, 
+						myModel.xCor() + TURTLE_X_OFFSET, 
+						TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
+				myTrails.add(line);
+			}
+			myX = myModel.xCor();
+			myY = myModel.yCor();
+			if (myModel.showing() == 0 && myRoot.getChildren().contains(myTurtle)){
+				myRoot.getChildren().remove(myTurtle);
+			}
+			else if (myModel.showing() == 1 && !(myRoot.getChildren().contains(myTurtle))){
+				myRoot.getChildren().add(myTurtle);
+			}
 		}
-		else if (myModel.showing() == 1 && !(myRoot.getChildren().contains(myTurtle))){
-			myRoot.getChildren().add(myTurtle);
-		}
-
 	}
 
 	@Override

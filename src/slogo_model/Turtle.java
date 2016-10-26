@@ -37,7 +37,6 @@ public class Turtle extends Observable implements SLOGOModel{
 		double desiredY = yCor() + pixels * Math.cos(Math.toRadians(heading));
 		
 		if (Math.abs(desiredX) > Math.abs(boundedX) || Math.abs(desiredY) > Math.abs(boundedY)){
-//			System.out.println("BOUTTA HIT THIS WALL BETCH");
 			double distanceToWallX = boundedX - xCor();
 			double distanceToWallY = boundedY - yCor();
 			
