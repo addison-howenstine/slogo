@@ -37,6 +37,8 @@ public interface SLOGOViewExternal {
 	
 	public void setBackgroundColor(int index);
 	
+	public void setImage(int index);
+	
 	public void setController(SLOGOController controller);
 		
 	/**
