@@ -104,6 +104,9 @@ public class SLOGOParser {
 		if (instruction instanceof Variable){
 			((Variable) instruction).setName(typedInstruction);
 		}
+		if (instruction instanceof DoTimes){
+			instructionScanner.next(); //skip the bracket
+		}
 		
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
 			if (instruction instanceof MakeUserInstruction && i == 0){
