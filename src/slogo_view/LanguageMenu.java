@@ -29,8 +29,8 @@ public class LanguageMenu {
 	private static final int WIDTH = 300;
 	
 	static final String DEFAULT_LANGUAGE = "English";
-	static final String[] LANGUAGES = {"Chinese", "English", "French", "German", "Italian", "Portuguese", 
-			"Russian", "Spanish"};
+	static final String[] LANGUAGES = {"Deutsche", "English", "Espanol", "Francais", "Italiano", "Portugues", 
+			"Russkiy", "Zhongwen"};
 	
 	private ObservableList<String> myLanguages;
 	private String myLanguage;

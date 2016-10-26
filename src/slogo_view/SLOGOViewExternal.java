@@ -25,7 +25,7 @@ public interface SLOGOViewExternal {
 	
 	public void addUserCommand(String userCommand);
 	
-	public void addUserVariable(String userVariable);
+	public void addUserVariable(String userVariable, double value);
 	
 	public SLOGOController getController();
 	
