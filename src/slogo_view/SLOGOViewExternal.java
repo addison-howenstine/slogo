@@ -33,9 +33,9 @@ public interface SLOGOViewExternal {
 	
 	public double getMaxY();
 	
-	public void setPenColor(String color);
+	public void setPenColor(int index);
 	
-	public void setBackgroundColor(String color);
+	public void setBackgroundColor(int index);
 	
 	public void setController(SLOGOController controller);
 		
