@@ -37,4 +37,6 @@ public interface SLOGOController {
 	public double ask(List<Integer> tempActives, List<Instruction> instructions);
 	
 	public List<SLOGOModel> getModels();
+	
+	public void changeLanguage();
 }

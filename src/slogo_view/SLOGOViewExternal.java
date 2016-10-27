@@ -25,7 +25,7 @@ public interface SLOGOViewExternal {
 	
 	public void addUserCommand(String userCommand);
 	
-	public void addUserVariable(String userVariable);
+	public void addUserVariable(String userVariable, double value);
 	
 	public SLOGOController getController();
 	
@@ -36,6 +36,8 @@ public interface SLOGOViewExternal {
 	public void setPenColor(int index);
 	
 	public void setBackgroundColor(int index);
+	
+	public void setImage(int index);
 	
 	public void setController(SLOGOController controller);
 		

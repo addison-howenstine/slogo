@@ -2,7 +2,6 @@ package slogo_view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -22,7 +21,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -39,9 +37,11 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slogo_controller.SLOGOController;
+import slogo_controller.TurtleController;
 import slogo_model.SLOGOModel;
 
 public class Playground implements SLOGOViewExternal, Observer{
+	private static final int DISPLAY_WIDTH = 350;
 	private static final String TURTLE_AREA_OUTLINE = "Black";
 	private static final int TITLE_SIZE = 50;
 	private static final int MIN_BOUNDARY = 0;
@@ -49,15 +49,16 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private static final int TURTLE_AREA_X = MIN_BOUNDARY + 5;
 	private static final int TURTLE_HEIGHT = 25;
 	private static final int TURTLE_AREA_WIDTH = 800;
+	private static final int DISPLAY_AREA_X = TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10;
 	private static final int TURTLE_X_OFFSET = TURTLE_AREA_WIDTH/2 + TURTLE_AREA_X;
 	private static final int HEIGHT = 700;
 	private static final int WIDTH = 1200;
 	private static final int TEXT_FIELD_X = 5;
 	private static final int TEXT_FIELD_Y = HEIGHT - 30;
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
+	private static final int DISPLAY_HEIGHT = TURTLE_AREA_HEIGHT/3;
 	private static final int TURTLE_Y_OFFSET = TURTLE_AREA_HEIGHT/2 + TURTLE_AREA_Y;
-	private static final int HELP_Y = 12;
-	private static final int MULTILINE_Y = 12;
+	private static final int BUTTON_Y = 12;
 	private static final int COMBO_BOX_Y = 25;
 	private static final int FONT_SIZE = 20;
 	private static final int BACKGROUND_X = 200;
@@ -66,7 +67,8 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private static final int IMAGE_X = PEN_X + CONTROL_X_OFFSET;
 	private static final int LANGUAGES_X = IMAGE_X + CONTROL_X_OFFSET;
 	private static final int MULTILINE_X = LANGUAGES_X + CONTROL_X_OFFSET;
-	private static final int HELP_X = MULTILINE_X + CONTROL_X_OFFSET;
+	private static final int HELP_X = MULTILINE_X + CONTROL_X_OFFSET - 40;
+	private static final int NEW_WINDOW_X = HELP_X + CONTROL_X_OFFSET - 40;
 	private static final String DEFAULT_IMAGE = "Turtle";
 	private static final String DEFAULT_BACKGROUND = "White";
 	private static final String DEFAULT_PEN = "Black";
@@ -87,10 +89,11 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
 	private List<ImageView> visualTurtles;
-	private ArrayList<String> myUserVariables;
+	private ObservableList<String> myUserVariables;
 	private ArrayList<Line> myTrails;
-	private ComboBox myPenColorSelector;
-	private ComboBox myBackgroundSelector;
+	private ComboBox<String> myPenColorSelector;
+	private ComboBox<String> myBackgroundSelector;
+	private ComboBox<String> myImageSelector;
 	private double myX = 0;
 	private double myY = 0;
 	private Stage myStage;
@@ -121,23 +124,24 @@ public class Playground implements SLOGOViewExternal, Observer{
 		myLanguages = FXCollections.observableList(new ArrayList<String>(Arrays.asList(LanguageMenu.LANGUAGES)));
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
-		myUserVariables = new ArrayList<String>();
+		myUserVariables = FXCollections.observableList(new ArrayList<String>());
 		myTrails = new ArrayList<Line>();
 		visualTurtles = new ArrayList<ImageView>();
 	}
 
 	private void reinit(Stage s, String language) {
 		construct(s, language);
+		myController.changeLanguage();
 		init();
 	}
 
 	private void setUpImagesMap(){
 		myImagesMap = new TreeMap<String, String>();
-		myImagesMap.put(myResources.getString(DEFAULT_IMAGE), "turtle.png");
-		myImagesMap.put(myResources.getString("Rocket"), "rocket.png");
-		myImagesMap.put(myResources.getString("Frog"), "frog.png");
-		myImagesMap.put(myResources.getString("Pencil"), "pencil.png");
-		myImagesMap.put(myResources.getString("Duke"), "duke.png");
+		myImagesMap.put("1. " + myResources.getString(DEFAULT_IMAGE), "turtle.png");
+		myImagesMap.put("2. " + myResources.getString("Rocket"), "rocket.png");
+		myImagesMap.put("3. " + myResources.getString("Frog"), "frog.png");
+		myImagesMap.put("4. " + myResources.getString("Pencil"), "pencil.png");
+		myImagesMap.put("5. " + myResources.getString("Duke"), "duke.png");
 	}
 
 	private void setUpColorsMap(){
@@ -162,9 +166,11 @@ public class Playground implements SLOGOViewExternal, Observer{
 		setUpComboBoxes();
 		setUpHelpButton();
 		setUpTextInput();
-		setUpCommandHistoryScreen();
+		setUpCommandHistoryDisplay();
 		setUpUserDefinedCommandsDisplay();
+		setUpVariableDisplay();
 		setUpMultilineButton();
+		setUpNewWindowButton();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
@@ -173,7 +179,8 @@ public class Playground implements SLOGOViewExternal, Observer{
 	}
 
 	private void setUpUserDefinedCommandsDisplay() {
-		userDefinedCommandsDisplay = myBuilder.addScrollableVBox(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, TURTLE_AREA_Y + TURTLE_AREA_HEIGHT/2 + 10, 350, TURTLE_AREA_HEIGHT/2 - 10);
+		userDefinedCommandsDisplay = myBuilder.addScrollableVBox(DISPLAY_AREA_X, TURTLE_AREA_Y +DISPLAY_HEIGHT + 10,
+				DISPLAY_WIDTH, DISPLAY_HEIGHT - 10);
 		myUserCommands.addListener(new ListChangeListener<Object>() {
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -228,7 +235,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 	}
 
 	private void setUpHelpButton() {
-		myBuilder.addButton(myResources.getString("Help"), HELP_X, HELP_Y, new EventHandler<ActionEvent>() {
+		myBuilder.addButton(myResources.getString("Help"), HELP_X, BUTTON_Y, new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
 				final Stage dialog = new Stage();
 				dialog.initModality(Modality.APPLICATION_MODAL);
@@ -252,9 +259,9 @@ public class Playground implements SLOGOViewExternal, Observer{
 		});
 	}
 
-	@SuppressWarnings("unused")
 	private void setUpMultilineButton() {
-		myBuilder.addButton("Multiline", MULTILINE_X, MULTILINE_Y, new EventHandler<ActionEvent>() {
+		myBuilder.addButton(myResources.getString("Multiline"), MULTILINE_X, BUTTON_Y, 
+				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				final Stage dialog = new Stage();
 				dialog.initModality(Modality.APPLICATION_MODAL);
@@ -283,11 +290,22 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 		});
 	}
+	
+	private void setUpNewWindowButton(){
+		myBuilder.addButton(myResources.getString("NewWindow"), NEW_WINDOW_X, BUTTON_Y, new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event){
+				Playground playground = new Playground(new Stage(), myLanguage);
+				TurtleController controller = new TurtleController(playground);
+				playground.setController(controller);
+				playground.init();
+			}
+		});
+	}
 
 	private void setUpComboBoxes() {
 		myBuilder.addText(myResources.getString("Background"), BACKGROUND_X, MIN_BOUNDARY, FONT_SIZE);
-		myBuilder.addComboBox(BACKGROUND_X, COMBO_BOX_Y, myColors, "8. " + myResources.getString(DEFAULT_BACKGROUND), 
-				new ChangeListener<String>() {
+		myBackgroundSelector = myBuilder.addComboBox(BACKGROUND_X, COMBO_BOX_Y, myColors, 
+				"8. " + myResources.getString(DEFAULT_BACKGROUND), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myTurtleScreen.setFill(myColorsMap.get(t1));
 			}
@@ -300,12 +318,14 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 		});
 		myBuilder.addText(myResources.getString("Image"), IMAGE_X, MIN_BOUNDARY, FONT_SIZE);
-		myBackgroundSelector = myBuilder.addComboBox(IMAGE_X, COMBO_BOX_Y, myImages, 
-				myResources.getString(DEFAULT_IMAGE), new ChangeListener<String>() {
+		myImageSelector = myBuilder.addComboBox(IMAGE_X, COMBO_BOX_Y, myImages, 
+				"1. " + myResources.getString(DEFAULT_IMAGE), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1) {
-				visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(t1)))));
+				visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader()
+						.getResourceAsStream(myImagesMap.get(t1)))));
 			}
 		});
+		myBuilder.addText(myResources.getString("Languages"), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
 		myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, myLanguages, myLanguage, new ChangeListener<String>() {
 
 			@Override
@@ -314,13 +334,11 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 
 		});
-		//myBuilder.addText(myResources.getString(""), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
-		//myLanguageSelector = myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, items, "ENGLISH", listener)
 	}
 
 	private void setUpTurtle() {
-		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap.get(
-				myResources.getString(DEFAULT_IMAGE))));
+		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myImagesMap
+				.get(myImageSelector.getValue())));
 		ImageView visT = new ImageView(image);
 		visT.setFitHeight(TURTLE_HEIGHT);
 		visT.setPreserveRatio(true);
@@ -330,14 +348,14 @@ public class Playground implements SLOGOViewExternal, Observer{
 
 	private void setUpTurtleScreen() {
 		myBuilder.addRectangle(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT, 
-				myColorsMap.get(myResources.getString(TURTLE_AREA_OUTLINE)));
+				myColorsMap.get("1. " + myResources.getString(TURTLE_AREA_OUTLINE)));
 		myTurtleScreen = myBuilder.addRectangle(TURTLE_AREA_X + 1, TURTLE_AREA_Y + 1, TURTLE_AREA_WIDTH - 2, 
-				TURTLE_AREA_HEIGHT - 2, myColorsMap.get(myResources.getString(DEFAULT_BACKGROUND)));
+				TURTLE_AREA_HEIGHT - 2, myColorsMap.get("8. " + myResources.getString(DEFAULT_BACKGROUND)));
 	}
 
-	private void setUpCommandHistoryScreen() {
-		commandHistoryDisplay = myBuilder.addScrollableVBox(TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10, 
-				TURTLE_AREA_Y, 350, TURTLE_AREA_HEIGHT/2);
+	private void setUpCommandHistoryDisplay() {
+		commandHistoryDisplay = myBuilder.addScrollableVBox(DISPLAY_AREA_X, 
+				TURTLE_AREA_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 		myCommandHistory.addListener(new ListChangeListener<Object>() {
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -352,9 +370,27 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 		});
 	}
+	
+	private void setUpVariableDisplay(){
+		VBox variableDisplay = myBuilder.addScrollableVBox(DISPLAY_AREA_X, 
+				TURTLE_AREA_Y + 2*TURTLE_AREA_HEIGHT/3 + 10, DISPLAY_WIDTH, DISPLAY_HEIGHT - 10);
+		myUserVariables.addListener(new ListChangeListener<Object>() {
+			
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void onChanged(ListChangeListener.Change change){
+				while (change.next()){
+					List<String> list = change.getAddedSubList();
+					for (String s : list) {
+						addButtonToDisplay(s, "command-history-button", variableDisplay);
+					}
+				}
+			}
+		});
+	}
 
 	private void configureButtonToRunCommand(String text, String id, VBox display) {
-		Button command = new Button(text);
+		Button command = addButtonToDisplay(text, id, display);
 		command.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -363,9 +399,14 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 
 		});
+	}
+
+	private Button addButtonToDisplay(String text, String id, VBox display) {
+		Button command = new Button(text);
 		command.setId(id);
 		command.setMinWidth(display.getMinWidth());
 		display.getChildren().add(command);
+		return command;
 	}
 
 	@Override
@@ -396,8 +437,11 @@ public class Playground implements SLOGOViewExternal, Observer{
 	}
 
 	@Override
-	public void addUserVariable(String userVariable) {
-		myUserVariables.add(userVariable);
+	public void addUserVariable(String userVariable, double value) {
+		StringBuilder sb = new StringBuilder(userVariable);
+		sb.append(" = ");
+		sb.append(value);
+		myUserVariables.add(sb.toString());
 	}
 
 	@Override
@@ -425,6 +469,13 @@ public class Playground implements SLOGOViewExternal, Observer{
 	public void setBackgroundColor(int index){
 		myTurtleScreen.setFill(myColorsMap.get(myColors.get(index)));
 		myBackgroundSelector.setValue(myColors.get(index));
+	}
+	
+	@Override
+	public void setImage(int index){
+		visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader()
+				.getResourceAsStream(myImagesMap.get(myImages.get(index))))));
+		myImageSelector.setValue(myImages.get(index));
 	}
 
 	@Override
