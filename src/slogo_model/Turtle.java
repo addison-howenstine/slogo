@@ -69,37 +69,35 @@ public class Turtle extends Observable implements SLOGOModel{
 	 * @return int[] directions where directions[0] is an int representing right/left
 	 * 								  directions[1] is an int representing up/down
 	 */
-	private int[] getDirection(double heading){
+	private int[] getDirection(double newHeading){
 		int[] directions = new int[2];
-		double mod360 = heading % 360;
-		if (heading >= 0){
+		if (newHeading >= 0){
 			//Set right/left
-			if (mod360 <= 180){
+			if (newHeading <= 180){
 				directions[0] = 1;
-			}else if (mod360 > 180){
+			}else if (newHeading > 180){
 				directions[0] = -1;
 			}
 			
 			//Set up/down
-			if (mod360 <= 90 || mod360 >= 270){
+			if (newHeading <= 90 || newHeading >= 270){
 				directions[1] = 1;
-			}else if (mod360 > 90 && mod360 < 270){
+			}else if (newHeading > 90 && newHeading < 270){
 				directions[1] = -1;
 			}
-		}else if (heading < 0){
-			if (mod360 <= -180){
+		}else if (newHeading < 0){
+			if (newHeading <= -180){
 				directions[0] = 1;
-			}else if (mod360 > -180){
+			}else if (newHeading > -180){
 				directions[0] = -1;
 			}
 			
-			if (mod360 >= -90 || mod360 <= -270){
+			if (newHeading >= -90 || newHeading <= -270){
 				directions[1] = 1;
-			}else if(mod360 < -90 && mod360 > -270){
+			}else if(newHeading < -90 && newHeading > -270){
 				directions[1] = -1;
 			}
 		}
-		
 		return directions;
 	}
 
