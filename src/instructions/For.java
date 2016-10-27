@@ -24,6 +24,8 @@ public class For extends Instruction{
 		
 		for (double i = start; i <= end; i += increment){
 			view.getController().getVarMap().put(var.getName(), i);
+			view.addUserVariable(var.getName(), view.getController().getVarMap().get(var.getName()));
+			
 			parameters.get(5).evaluate(view, model);
 		}
 		
