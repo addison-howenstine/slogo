@@ -16,8 +16,12 @@ public class DoTimes extends Instruction{
 	
 	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
 		double numTimesToRepeat = parameters.get(1).evaluate(view, model);
+		Variable var = (Variable) parameters.get(0);
+		
 		for (int i = 1; i <= numTimesToRepeat; i++){
-			view.getController().getVarMap().put(((Variable)parameters.get(0)).getName(), (double) i);
+			view.getController().getVarMap().put(var.getName(), (double) i);
+			view.addUserVariable(var.getName(), view.getController().getVarMap().get(var.getName()));
+			
 			parameters.get(3).evaluate(view, model);
 		}
 		return view.getController().getVarMap().get(((Variable) parameters.get(0)).getName());

@@ -17,7 +17,7 @@ public class MakeVariable extends Instruction{
 		double variableVal = parameters.get(1).evaluate(view, model);
 		String variableName = ((Variable) parameters.get(0)).getName();
 		view.addUserVariable(variableName, variableVal);
-		//TODO: Add to mapping
+		
 		view.getController().getVarMap().put(variableName, variableVal);
 		
 		return variableVal;		
