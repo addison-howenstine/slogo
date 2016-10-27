@@ -65,7 +65,7 @@ public class TurtleController implements SLOGOController {
 		return myVarMap;
 	}
 
-	private void changeLanguage(){
+	public void changeLanguage(){
 		parser.removePatterns(currentResourceBundle);
 		parser.removePatterns("resources/Syntax");
 		currentResourceBundle = view.getResourceBundle();
