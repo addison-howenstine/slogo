@@ -76,9 +76,11 @@ public class UIBuilder implements SLOGOViewInternal {
 		return rectangle;
 	}
 	
-	public Line addLine(double startX, double startY, double endX, double endY, Paint paint){
+	public Line addLine(double startX, double startY, double endX, double endY, PenOptions options){
 		Line line = new Line(startX, startY, endX, endY);
-		line.setStroke(paint);
+		line.setStroke(options.getColor());
+		line.setStrokeWidth(options.getWidth());
+		line.getStrokeDashArray().addAll(options.getDashLength(), options.getDashSpace());
 		myRoot.getChildren().add(line);
 		return line;
 	}

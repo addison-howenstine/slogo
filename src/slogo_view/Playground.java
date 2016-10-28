@@ -97,6 +97,9 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private double myX = 0;
 	private double myY = 0;
 	private Stage myStage;
+	
+	private PenOptions myPenOptions;
+	private List<String> strokeTypes;
 
 	private ObservableList<String> myCommandHistory;
 	private VBox commandHistoryDisplay;
@@ -106,13 +109,13 @@ public class Playground implements SLOGOViewExternal, Observer{
 
 	private boolean errorReceived = false;
 
-	public Playground(Stage s, String language) {
-		construct(s, language);
+	public Playground(Stage stage, String language) {
+		construct(stage, language);
 	}
 
-	private void construct(Stage s, String language) {
+	private void construct(Stage stage, String language) {
+		myStage = stage;
 		myLanguage = language;
-		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		setUpColorsMap();
 		myColors = FXCollections.observableList(new ArrayList<String>());
@@ -171,11 +174,22 @@ public class Playground implements SLOGOViewExternal, Observer{
 		setUpVariableDisplay();
 		setUpMultilineButton();
 		setUpNewWindowButton();
+		setUpPenOptions();
+		setUpOptionsButton();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
 		updateScreen();
 		return scene;
+	}
+	
+	private void setUpPenOptions() {
+		myPenOptions = new PenOptions(Color.BLACK, 2, 1d, 0d);
+		
+		strokeTypes = new ArrayList<String>();
+		strokeTypes.add("dashed");
+		strokeTypes.add("dotted");
+		strokeTypes.add("solid");
 	}
 
 	private void setUpUserDefinedCommandsDisplay() {
@@ -258,13 +272,63 @@ public class Playground implements SLOGOViewExternal, Observer{
 			}
 		});
 	}
+	
+	private void setUpOptionsButton() {
+		myBuilder.addButton("More options", 400, BUTTON_Y, new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				final Stage options = new Stage();
+				options.initModality(Modality.APPLICATION_MODAL);
+				options.initOwner(myStage);
+				
+				VBox root = new VBox();
+				ComboBox<String> stroke_types = new ComboBox<String>(FXCollections.observableList(strokeTypes));
+				stroke_types.setValue("solid");
+				stroke_types.valueProperty().addListener(new ChangeListener<String>() {
+
+					@Override
+					public void changed(ObservableValue<? extends String> observable, String oldValue,
+							String newValue) {
+						if (newValue.equals("solid")) {
+							myPenOptions.setDashLength(1d);
+							myPenOptions.setDashSpace(0d);
+						} else if (newValue.equals("dashed")) {
+							myPenOptions.setDashLength(5d);
+							myPenOptions.setDashSpace(5d);
+							
+						} else if (newValue.equals("dotted")) {
+							myPenOptions.setDashLength(0.01d);
+							myPenOptions.setDashSpace(5d);
+						}
+					}
+					
+				});
+				Button button = new Button("make pen dashed");
+				button.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						myPenColor = myColorsMap.get("5. Orange");
+					}
+				});
+				
+				root.getChildren().add(stroke_types);
+				Scene scene = new Scene(root, 200, 200);
+				options.setScene(scene);
+				options.show();
+				
+			}
+			
+		});
+	}
 
 	private void setUpMultilineButton() {
 		myBuilder.addButton(myResources.getString("Multiline"), MULTILINE_X, BUTTON_Y, 
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				final Stage dialog = new Stage();
-				dialog.initModality(Modality.APPLICATION_MODAL);
+				dialog.initModality(Modality.WINDOW_MODAL);
 				dialog.initOwner(myStage);
 
 				VBox root = new VBox();
@@ -500,7 +564,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 			if (myModel.isPenDown() == 1){
 				Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY, 
 						myModel.xCor() + TURTLE_X_OFFSET, 
-						TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
+						TURTLE_Y_OFFSET - myModel.yCor(), myPenOptions);
 				myTrails.add(line);
 			}
 			myX = myModel.xCor();
