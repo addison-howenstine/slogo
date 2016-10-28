@@ -1,7 +1,7 @@
 package instructions;
 
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class MakeVariable extends Instruction{
 	public MakeVariable(){
@@ -13,7 +13,7 @@ public class MakeVariable extends Instruction{
 	}
 	
 	@Override
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
+	public double evaluate(SLOGOView view, SLOGOModel model){
 		double variableVal = parameters.get(1).evaluate(view, model);
 		String variableName = ((Variable) parameters.get(0)).getName();
 		view.addUserVariable(variableName, variableVal);

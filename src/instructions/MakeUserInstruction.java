@@ -1,6 +1,6 @@
 package instructions;
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class MakeUserInstruction extends Instruction{
 	
@@ -11,7 +11,7 @@ public class MakeUserInstruction extends Instruction{
 	}
 	
 	@Override
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
+	public double evaluate(SLOGOView view, SLOGOModel model){
 		UserInstruction instr = (UserInstruction) parameters.get(0);
 		view.addUserCommand(instr.getName());
 		view.getController().getInstrMap().put(instr.getName(), parameters.get(2));

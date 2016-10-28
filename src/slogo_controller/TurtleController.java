@@ -12,11 +12,11 @@ import java.util.ResourceBundle;
 import slogo_model.SLOGOModel;
 import slogo_model.Turtle;
 import slogo_view.Playground;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class TurtleController implements SLOGOController {
 
-	private SLOGOViewExternal view;
+	private SLOGOView view;
 	private List<SLOGOModel> models;
 	private List<Integer> activeModels;
 	private int activeModelID;
@@ -25,7 +25,7 @@ public class TurtleController implements SLOGOController {
 	private AbstractMap<String, Instruction> myInstructionMap;
 	private ResourceBundle currentResourceBundle;
 
-	public TurtleController(SLOGOViewExternal view) {
+	public TurtleController(SLOGOView view) {
 		this.view = view;
 		models = new ArrayList<SLOGOModel>();
 		activeModels = new ArrayList<Integer>();

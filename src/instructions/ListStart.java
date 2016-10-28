@@ -1,7 +1,7 @@
 package instructions;
 
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class ListStart extends Instruction {
 
@@ -12,7 +12,7 @@ public class ListStart extends Instruction {
 	}
 
 	@Override
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
+	public double evaluate(SLOGOView view, SLOGOModel model) {
 		int numParams = parameters.size();
 		// evaluate each parameter
 		for (int i = 0; i < numParams - 1; i++)

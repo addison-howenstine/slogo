@@ -20,19 +20,18 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class UIBuilder implements SLOGOViewInternal {
+public class UIBuilder {
 	private static final Paint FONT_COLOR = Color.BLACK;
 	private static final String FONT = "Helvetica Neue";
 	
 	private Group myRoot;
 	
-	public UIBuilder(Group root) { 
+	protected UIBuilder(Group root) { 
 		myRoot = root;
 		myRoot.getStylesheets().add("/style.css");
 	}
 
-	@Override
-	public Text addText(String message, double x, double y, int fontSize) {
+	protected Text addText(String message, double x, double y, int fontSize) {
 		Text text = new Text(message);
 		text.setFont(new Font(FONT, fontSize));
 		text.relocate(x, y);
@@ -41,16 +40,14 @@ public class UIBuilder implements SLOGOViewInternal {
 		return text;
 	}
 
-	@Override
-	public TextField addTextField(String message, double x, double y) {
+	protected TextField addTextField(String message, double x, double y) {
 		TextField textField = new TextField(message);
 		textField.relocate(x, y);
 		myRoot.getChildren().add(textField);
 		return textField;
 	}
 
-	@Override
-	public Button addButton(String message, double x, double y, EventHandler<ActionEvent> handler) {
+	protected Button addButton(String message, double x, double y, EventHandler<ActionEvent> handler) {
 		Button button = new Button(message);
 		button.relocate(x, y);
 		button.setOnAction(handler);
@@ -58,8 +55,7 @@ public class UIBuilder implements SLOGOViewInternal {
 		return button;
 	}
 
-	@Override
-	public ComboBox<String> addComboBox(double x, double y, ObservableList<String> items, String defaultValue, 
+	protected ComboBox<String> addComboBox(double x, double y, ObservableList<String> items, String defaultValue, 
 			ChangeListener<String> listener) {
 		ComboBox<String> comboBox = new ComboBox<String>(items);
 		comboBox.relocate(x, y);
@@ -69,14 +65,14 @@ public class UIBuilder implements SLOGOViewInternal {
 		return comboBox;
 	}
 	
-	public Rectangle addRectangle(double x, double y, double width, double height, Paint paint){
+	protected Rectangle addRectangle(double x, double y, double width, double height, Paint paint){
 		Rectangle rectangle = new Rectangle(x, y, width, height);
 		rectangle.setFill(paint);
 		myRoot.getChildren().add(rectangle);
 		return rectangle;
 	}
 	
-	public Line addLine(double startX, double startY, double endX, double endY, PenOptions options){
+	protected Line addLine(double startX, double startY, double endX, double endY, PenOptions options){
 		Line line = new Line(startX, startY, endX, endY);
 		line.setStroke(options.getColor());
 		line.setStrokeWidth(options.getWidth());
@@ -85,7 +81,7 @@ public class UIBuilder implements SLOGOViewInternal {
 		return line;
 	}
 	
-	public TextArea addTextArea(double startX, double startY, double width, double height) {
+	protected TextArea addTextArea(double startX, double startY, double width, double height) {
 		TextArea textArea = new TextArea();
 		textArea.setLayoutX(startX);
 		textArea.setLayoutY(startY);
@@ -103,7 +99,7 @@ public class UIBuilder implements SLOGOViewInternal {
 		return textArea;
 	}
 	
-	public VBox addScrollableVBox(double startX, double startY, double width, double height) {
+	protected VBox addScrollableVBox(double startX, double startY, double width, double height) {
 		ScrollPane pane = new ScrollPane();
 		pane.setLayoutX(startX);
 		pane.setLayoutY(startY);
