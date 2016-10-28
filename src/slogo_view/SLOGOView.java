@@ -4,7 +4,7 @@ import java.util.ResourceBundle;
 import slogo_controller.SLOGOController;
 import slogo_model.SLOGOModel;
 
-public interface SLOGOViewExternal {
+public interface SLOGOView {
 
 	/**
 	 * Brings up an Alert that informs the user of an error (e.g., bad input)

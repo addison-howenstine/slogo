@@ -1,7 +1,7 @@
 package instructions;
 
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class Variable extends Instruction{
 	private String name;
@@ -15,7 +15,7 @@ public class Variable extends Instruction{
 	}
 	
 	@Override
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
+	public double evaluate(SLOGOView view, SLOGOModel model){
 		//TODO: NEED ERROR CHECKING FOR WHEN VARIABLE DOESN'T EXIST IN MAP
 		return view.getController().getVarMap().get(name);
 	}

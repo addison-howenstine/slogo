@@ -40,7 +40,7 @@ import slogo_controller.SLOGOController;
 import slogo_controller.TurtleController;
 import slogo_model.SLOGOModel;
 
-public class Playground implements SLOGOViewExternal, Observer{
+public class Playground implements SLOGOView, Observer{
 	private static final int DISPLAY_WIDTH = 350;
 	private static final String TURTLE_AREA_OUTLINE = "Black";
 	private static final int TITLE_SIZE = 50;
@@ -74,6 +74,8 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private static final String DEFAULT_PEN = "Black";
 	private static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
 	private static final String TITLE = "SLOGO";
+	static final String[] LANGUAGES = {"Deutsche", "English", "Espanol", "Francais", "Italiano", "Portugues", 
+			"Russkiy", "Zhongwen"};
 
 
 	private ResourceBundle myResources;
@@ -94,8 +96,8 @@ public class Playground implements SLOGOViewExternal, Observer{
 	private ComboBox<String> myPenColorSelector;
 	private ComboBox<String> myBackgroundSelector;
 	private ComboBox<String> myImageSelector;
-	private double myX = 0;
-	private double myY = 0;
+	private ArrayList<Double> myX = new ArrayList<Double>();
+	private ArrayList<Double> myY = new ArrayList<Double>();
 	private Stage myStage;
 
 	private ObservableList<String> myCommandHistory;
@@ -121,7 +123,7 @@ public class Playground implements SLOGOViewExternal, Observer{
 		setUpImagesMap();
 		myImages = FXCollections.observableList(new ArrayList<String>());
 		myImages.addAll(myImagesMap.keySet());
-		myLanguages = FXCollections.observableList(new ArrayList<String>(Arrays.asList(LanguageMenu.LANGUAGES)));
+		myLanguages = FXCollections.observableList(new ArrayList<String>(Arrays.asList(LANGUAGES)));
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = FXCollections.observableList(new ArrayList<String>());
@@ -342,6 +344,8 @@ public class Playground implements SLOGOViewExternal, Observer{
 		ImageView visT = new ImageView(image);
 		visT.setFitHeight(TURTLE_HEIGHT);
 		visT.setPreserveRatio(true);
+		myX.add(0.0);
+		myY.add(0.0);
 		myRoot.getChildren().add(visT);
 		visualTurtles.add(visT);
 	}
@@ -498,13 +502,13 @@ public class Playground implements SLOGOViewExternal, Observer{
 					TURTLE_Y_OFFSET - myModel.yCor() - myTurtle.getBoundsInLocal().getHeight()/2);
 			myTurtle.setRotate(myModel.heading());
 			if (myModel.isPenDown() == 1){
-				Line line = myBuilder.addLine(myX + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY, 
+				Line line = myBuilder.addLine(myX.get(i) + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY.get(i), 
 						myModel.xCor() + TURTLE_X_OFFSET, 
 						TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
 				myTrails.add(line);
 			}
-			myX = myModel.xCor();
-			myY = myModel.yCor();
+			myX.set(i, myModel.xCor());
+			myY.set(i, myModel.yCor());
 			if (myModel.showing() == 0 && myRoot.getChildren().contains(myTurtle)){
 				myRoot.getChildren().remove(myTurtle);
 			}

@@ -1,7 +1,7 @@
 package instructions;
 
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class IsShowing extends Instruction {
 
@@ -11,7 +11,7 @@ public class IsShowing extends Instruction {
 	}
 
 	@Override
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
+	public double evaluate(SLOGOView view, SLOGOModel model) {
 		if (canEvaluate())
 			return model.showing();
 		else

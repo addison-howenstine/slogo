@@ -1,6 +1,6 @@
 package instructions;
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class For extends Instruction{
 	/**
@@ -15,7 +15,7 @@ public class For extends Instruction{
 		return 6;
 	}
 	
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
+	public double evaluate(SLOGOView view, SLOGOModel model){
 		double start = parameters.get(1).evaluate(view, model);
 		double end = parameters.get(2).evaluate(view, model);
 		double increment = parameters.get(3).evaluate(view, model);

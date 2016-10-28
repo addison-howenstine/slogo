@@ -1,7 +1,7 @@
 package instructions;
 
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class Repeat extends Instruction {
 
@@ -11,7 +11,7 @@ public class Repeat extends Instruction {
 	}
 
 	@Override
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
+	public double evaluate(SLOGOView view, SLOGOModel model) {
 		if (canEvaluate()){
 			
 			int timesToRun = (int) parameters.get(0).evaluate(view, model);

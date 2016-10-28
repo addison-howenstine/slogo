@@ -1,6 +1,6 @@
 package instructions;
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class DoTimes extends Instruction{
 	/**
@@ -14,7 +14,7 @@ public class DoTimes extends Instruction{
 		return 4;
 	}
 	
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model){
+	public double evaluate(SLOGOView view, SLOGOModel model){
 		double numTimesToRepeat = parameters.get(1).evaluate(view, model);
 		Variable var = (Variable) parameters.get(0);
 		

@@ -20,7 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class UIBuilder implements SLOGOViewInternal {
+public class UIBuilder {
 	private static final Paint FONT_COLOR = Color.BLACK;
 	private static final String FONT = "Helvetica Neue";
 	
@@ -31,7 +31,6 @@ public class UIBuilder implements SLOGOViewInternal {
 		myRoot.getStylesheets().add("/style.css");
 	}
 
-	@Override
 	public Text addText(String message, double x, double y, int fontSize) {
 		Text text = new Text(message);
 		text.setFont(new Font(FONT, fontSize));
@@ -41,7 +40,6 @@ public class UIBuilder implements SLOGOViewInternal {
 		return text;
 	}
 
-	@Override
 	public TextField addTextField(String message, double x, double y) {
 		TextField textField = new TextField(message);
 		textField.relocate(x, y);
@@ -49,7 +47,6 @@ public class UIBuilder implements SLOGOViewInternal {
 		return textField;
 	}
 
-	@Override
 	public Button addButton(String message, double x, double y, EventHandler<ActionEvent> handler) {
 		Button button = new Button(message);
 		button.relocate(x, y);
@@ -58,7 +55,6 @@ public class UIBuilder implements SLOGOViewInternal {
 		return button;
 	}
 
-	@Override
 	public ComboBox<String> addComboBox(double x, double y, ObservableList<String> items, String defaultValue, 
 			ChangeListener<String> listener) {
 		ComboBox<String> comboBox = new ComboBox<String>(items);

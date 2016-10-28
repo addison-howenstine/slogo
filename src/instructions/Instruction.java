@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public abstract class Instruction {
 
@@ -32,7 +32,7 @@ public abstract class Instruction {
 	 * @param model - model to which current Control is pointing
 	 * @return value returned by the method associated with Instruction
 	 */
-	public abstract double evaluate(SLOGOViewExternal view, SLOGOModel model);
+	public abstract double evaluate(SLOGOView view, SLOGOModel model);
 
 	public boolean canEvaluate(){
 		return parameters.size() == getNumRequiredParameters();

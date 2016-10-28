@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import slogo_model.SLOGOModel;
-import slogo_view.SLOGOViewExternal;
+import slogo_view.SLOGOView;
 
 public class Ask extends Instruction {
 
@@ -14,7 +14,7 @@ public class Ask extends Instruction {
 	}
 
 	@Override
-	public double evaluate(SLOGOViewExternal view, SLOGOModel model) {
+	public double evaluate(SLOGOView view, SLOGOModel model) {
 		List<Integer> toAsk = new ArrayList<Integer>();
 		parameters.get(0).parameters.forEach(p -> toAsk.add((int) p.evaluate(view, model)));
 		return view.getController().ask(toAsk, parameters.get(1).parameters);
