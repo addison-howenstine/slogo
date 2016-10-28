@@ -1,6 +1,7 @@
 package slogo_view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -9,6 +10,7 @@ import java.util.TreeMap;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -44,7 +46,6 @@ public class Playground implements SLOGOView, Observer{
 	private ResourceBundle myResources;
 	private Group myRoot;
 	private UIBuilder myBuilder;
-	private Paint myPenColor;
 	private SLOGOController myController;
 	private Rectangle myTurtleScreen;
 	private List<ImageView> visualTurtles;
@@ -58,8 +59,9 @@ public class Playground implements SLOGOView, Observer{
 	private Stage myStage;
 	private SLOGOScreen myScreen;
 	private ObservableList<String> myCommandHistory;
-
 	private ObservableList<String> myUserCommands;
+	private HashMap<String, Double> myVariableMap = new HashMap<String, Double>();
+	private ArrayList<String> myOldVariables = new ArrayList<String>();
 
 	private boolean errorReceived = false;
 
@@ -70,7 +72,6 @@ public class Playground implements SLOGOView, Observer{
 	private void construct(Stage s, String language) {
 		myStage = s;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
-		myPenColor = Color.BLACK;
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = FXCollections.observableList(new ArrayList<String>());
@@ -121,10 +122,18 @@ public class Playground implements SLOGOView, Observer{
 
 	@Override
 	public void addUserVariable(String userVariable, double value) {
-		StringBuilder sb = new StringBuilder(userVariable);
-		sb.append(" = ");
-		sb.append(value);
-		myUserVariables.add(sb.toString());
+		if (myVariableMap.containsKey(userVariable)){
+			Double oldValue = myVariableMap.get(userVariable);
+			StringBuilder sb = new StringBuilder(userVariable);
+			sb.append(" = ");
+			sb.append(oldValue);
+			myOldVariables.add(sb.toString());
+		}
+		myVariableMap.put(userVariable, value);
+		StringBuilder sb2 = new StringBuilder(userVariable);
+		sb2.append(" = ");
+		sb2.append(value);
+		myUserVariables.add(sb2.toString());
 	}
 
 	@Override
@@ -235,6 +244,10 @@ public class Playground implements SLOGOView, Observer{
 	
 	protected ObservableList<String> getUserVariables(){
 		return myUserVariables;
+	}
+	
+	protected ArrayList<String> getOldVariables(){
+		return myOldVariables;
 	}
 	
 	protected ObservableList<String> getHistory(){

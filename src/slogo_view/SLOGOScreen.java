@@ -42,6 +42,7 @@ public class SLOGOScreen {
 	private static final int TURTLE_AREA_WIDTH = 800;
 	private static final int DISPLAY_AREA_X = TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10;
 	private static final int TEXT_FIELD_X = 5;
+	private static final int RUN_X = TEXT_FIELD_X + TURTLE_AREA_WIDTH + 10;
 	private static final int BUTTON_Y = 12;
 	private static final int COMBO_BOX_Y = 25;
 	private static final int FONT_SIZE = 20;
@@ -83,7 +84,7 @@ public class SLOGOScreen {
 	private VBox userDefinedCommandsDisplay;
 	private VBox commandHistoryDisplay;
 	private ComboBox myImageSelector;
-	
+	private ArrayList<Button> myVariableButtons = new ArrayList<Button>();
 	private PenOptions myPenOptions;
 	private List<String> strokeTypes;
 	
@@ -157,15 +158,19 @@ public class SLOGOScreen {
 	}
 
 	private void setUpTextInput() {
-		TextField commandReader = myBuilder.addTextField("", TEXT_FIELD_X, 
+		TextField commandReader = myBuilder.addTextField(myResources.getString("TextFieldText"), TEXT_FIELD_X, 
 				TEXT_FIELD_Y);
-		commandReader.setPromptText(myResources.getString("TextFieldText"));
 		commandReader.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle (ActionEvent event){
 				myPlayground.runCommandFromTextInput(commandReader);
 			}
 		});
-		commandReader.setMinWidth(TURTLE_AREA_WIDTH + 360);
+		commandReader.setMinWidth(TURTLE_AREA_WIDTH);
+		myBuilder.addButton(myResources.getString("Run"), RUN_X, TEXT_FIELD_Y, new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event){
+				myPlayground.runCommandFromTextInput(commandReader);
+			}
+		});
 	}
 
 	private void setUpHelpButton() {
@@ -204,7 +209,7 @@ public class SLOGOScreen {
 				VBox root = new VBox();
 
 				TextArea input = new TextArea();
-				Button submit = new Button("Run");
+				Button submit = new Button(myResources.getString("Run"));
 				submit.setOnAction(new EventHandler<ActionEvent>() {
 
 					@Override
@@ -355,8 +360,24 @@ public class SLOGOScreen {
 			public void onChanged(ListChangeListener.Change change){
 				while (change.next()){
 					List<String> list = change.getAddedSubList();
+					boolean checker = false;
+					for (String oldVariable: myPlayground.getOldVariables()){
+						for (Button currButton: myVariableButtons){
+							if (currButton.getText().equals(oldVariable)){
+								variableDisplay.getChildren().remove(currButton);
+								myVariableButtons.remove(currButton);
+								myPlayground.getOldVariables().remove(oldVariable);
+								checker = true;
+								break;
+							}
+						}
+						if (checker){
+							break;
+						}
+					}
 					for (String s : list) {
-						addButtonToDisplay(s, "command-history-button", variableDisplay);
+						Button button = addButtonToDisplay(s, "command-history-button", variableDisplay);
+						myVariableButtons.add(button);
 					}
 				}
 			}
