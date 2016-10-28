@@ -72,9 +72,11 @@ public class UIBuilder {
 		return rectangle;
 	}
 	
-	protected Line addLine(double startX, double startY, double endX, double endY, Paint paint){
+	protected Line addLine(double startX, double startY, double endX, double endY, PenOptions options){
 		Line line = new Line(startX, startY, endX, endY);
-		line.setStroke(paint);
+		line.setStroke(options.getColor());
+		line.setStrokeWidth(options.getWidth());
+		line.getStrokeDashArray().addAll(options.getDashLength(), options.getDashSpace());
 		myRoot.getChildren().add(line);
 		return line;
 	}

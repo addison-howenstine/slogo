@@ -63,8 +63,8 @@ public class Playground implements SLOGOView, Observer{
 
 	private boolean errorReceived = false;
 
-	public Playground(Stage s, String language) {
-		construct(s, language);
+	public Playground(Stage stage, String language) {
+		construct(stage, language);
 	}
 
 	private void construct(Stage s, String language) {
@@ -80,6 +80,7 @@ public class Playground implements SLOGOView, Observer{
 		myBuilder = new UIBuilder(myRoot);
 		myScreen = new SLOGOScreen(this, myStage, myResources, myRoot, language);
 	}
+
 	
 	public void init(){
 		myScreen.init();
@@ -148,7 +149,7 @@ public class Playground implements SLOGOView, Observer{
 	}
 	
 	protected void setPenColor(String color){
-		myPenColor = myScreen.getColorsMap().get(color);
+		myScreen.getPenOptions().setColor(myScreen.getColorsMap().get(color));
 	}
 
 	@Override
@@ -197,7 +198,7 @@ public class Playground implements SLOGOView, Observer{
 			if (myModel.isPenDown() == 1){
 				Line line = myBuilder.addLine(myX.get(i) + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY.get(i), 
 						myModel.xCor() + TURTLE_X_OFFSET, 
-						TURTLE_Y_OFFSET - myModel.yCor(), myPenColor);
+						TURTLE_Y_OFFSET - myModel.yCor(), myScreen.getPenOptions());
 				myTrails.add(line);
 			}
 			myX.set(i, myModel.xCor());

@@ -34,7 +34,6 @@ import slogo_controller.SLOGOController;
 import slogo_controller.TurtleController;
 
 public class SLOGOScreen {
-	private static final int DISPLAY_WIDTH = 350;
 	private static final String TURTLE_AREA_OUTLINE = "Black";
 	private static final int TITLE_SIZE = 50;
 	private static final int MIN_BOUNDARY = 0;
@@ -54,6 +53,7 @@ public class SLOGOScreen {
 	private static final int MULTILINE_X = LANGUAGES_X + CONTROL_X_OFFSET;
 	private static final int HELP_X = MULTILINE_X + CONTROL_X_OFFSET - 40;
 	private static final int NEW_WINDOW_X = HELP_X + CONTROL_X_OFFSET - 40;
+	private static final int PEN_OPTIONS_X = NEW_WINDOW_X + CONTROL_X_OFFSET - 40;
 	private static final String DEFAULT_IMAGE = "Turtle";
 	private static final String DEFAULT_BACKGROUND = "White";
 	private static final String DEFAULT_PEN = "Black";
@@ -64,7 +64,8 @@ public class SLOGOScreen {
 	private static final int TEXT_FIELD_Y = HEIGHT - 30;
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
 	private static final int DISPLAY_HEIGHT = TURTLE_AREA_HEIGHT/3;
-	private static final int WIDTH = 1200;
+	private static final int WIDTH = 1300;
+	private static final int DISPLAY_WIDTH = WIDTH - TURTLE_AREA_WIDTH - 50;
 	
 	private ResourceBundle myResources;
 	private Group myRoot;
@@ -82,6 +83,9 @@ public class SLOGOScreen {
 	private VBox userDefinedCommandsDisplay;
 	private VBox commandHistoryDisplay;
 	private ComboBox myImageSelector;
+	
+	private PenOptions myPenOptions;
+	private List<String> strokeTypes;
 	
 	protected SLOGOScreen(Playground playground, Stage stage, ResourceBundle resources, Group root, String language){
 		myPlayground = playground;
@@ -111,6 +115,8 @@ public class SLOGOScreen {
 		setUpVariableDisplay();
 		setUpMultilineButton();
 		setUpNewWindowButton();
+		setUpPenOptions();
+		setUpOptionsButton();
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
@@ -227,6 +233,57 @@ public class SLOGOScreen {
 				playground.setController(controller);
 				playground.init();
 			}
+		});
+	}
+	
+	
+	private void setUpPenOptions() {
+		myPenOptions = new PenOptions(Color.BLACK, 2, 1d, 0d);
+		
+		strokeTypes = new ArrayList<String>();
+		strokeTypes.add(myResources.getString("Dashed"));
+		strokeTypes.add(myResources.getString("Dotted"));
+		strokeTypes.add(myResources.getString("Solid"));
+	}
+	
+	private void setUpOptionsButton() {
+		myBuilder.addButton(myResources.getString("MorePenOptions"), PEN_OPTIONS_X, BUTTON_Y, new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				final Stage options = new Stage();
+				options.initModality(Modality.APPLICATION_MODAL);
+				options.initOwner(myStage);
+				
+				VBox root = new VBox();
+				ComboBox<String> stroke_types = new ComboBox<String>(FXCollections.observableList(strokeTypes));
+				stroke_types.setValue(myResources.getString("Solid"));
+				stroke_types.valueProperty().addListener(new ChangeListener<String>() {
+
+					@Override
+					public void changed(ObservableValue<? extends String> observable, String oldValue,
+							String newValue) {
+						if (newValue.equals(myResources.getString("Solid"))) {
+							myPenOptions.setDashLength(1d);
+							myPenOptions.setDashSpace(0d);
+						} else if (newValue.equals(myResources.getString("Dashed"))) {
+							myPenOptions.setDashLength(5d);
+							myPenOptions.setDashSpace(5d);
+							
+						} else if (newValue.equals(myResources.getString("Dotted"))) {
+							myPenOptions.setDashLength(0.01d);
+							myPenOptions.setDashSpace(5d);
+						}
+					}
+					
+				});
+				root.getChildren().add(stroke_types);
+				Scene scene = new Scene(root, 200, 200);
+				options.setScene(scene);
+				options.show();
+				
+			}
+			
 		});
 	}
 
@@ -366,5 +423,9 @@ public class SLOGOScreen {
 	
 	protected ObservableList<String> getImages(){
 		return myImages;
+	}
+	
+	protected PenOptions getPenOptions(){
+		return myPenOptions;
 	}
 }
