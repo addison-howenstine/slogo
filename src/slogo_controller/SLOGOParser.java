@@ -153,21 +153,10 @@ public class SLOGOParser {
 	}
 
 	// removes the given resource file to this language's recognized types
-	protected void removePatterns (ResourceBundle resources) {
-		Enumeration<String> iter = resources.getKeys();
-		while (iter.hasMoreElements()) {
-			String key = iter.nextElement();
-			String regex = resources.getString(key);
-			mySymbols.remove(new SimpleEntry<>(key,
-					Pattern.compile(regex, Pattern.CASE_INSENSITIVE)));
-		}
+	protected void clearPatterns () {
+		mySymbols.clear();
 	}
 	
-	protected void removePatterns(String syntax){
-		ResourceBundle resources = ResourceBundle.getBundle(syntax);
-		removePatterns(resources);
-	}
-
 	// returns the language's type associated with the given text if one exists 
 	protected String getSymbol (String text) {
 		for (Entry<String, Pattern> e : mySymbols) {
