@@ -106,7 +106,6 @@ public class SLOGOParser {
 		}
 		if (instruction instanceof DoTimes || instruction instanceof For){
 			instructionScanner.next(); //skip the bracket
-			System.out.println("FOR");
 		}
 		
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){

@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Cosine extends Instruction {
+public class Cosine extends MathOperation {
 
 	@Override
 	public int getNumRequiredParameters() {

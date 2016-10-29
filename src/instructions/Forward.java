@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Forward extends Instruction {
+public class Forward extends TurtleCommand {
 
 	public Forward() {
 	}

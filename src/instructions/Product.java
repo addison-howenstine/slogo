@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Product extends Instruction {
+public class Product extends MathOperation {
 
 	@Override
 	public int getNumRequiredParameters() {

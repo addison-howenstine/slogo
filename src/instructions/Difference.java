@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Difference extends Instruction {
+public class Difference extends MathOperation {
 
 	@Override
 	public int getNumRequiredParameters() {

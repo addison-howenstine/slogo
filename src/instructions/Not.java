@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Not extends Instruction {
+public class Not extends BooleanOperation {
 
 	@Override
 	public int getNumRequiredParameters() {
