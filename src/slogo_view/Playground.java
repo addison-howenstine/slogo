@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -18,7 +16,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -85,12 +82,6 @@ public class Playground implements SLOGOView, Observer{
 	
 	public void init(){
 		myScreen.init();
-	}
-
-	protected void reinit(Stage s, String language) {
-		construct(s, language);
-		myController.changeLanguage();
-		init();
 	}
 
 	@Override
@@ -257,5 +248,10 @@ public class Playground implements SLOGOView, Observer{
 	protected void changeTurtleImages(String image){
 		visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader()
 				.getResourceAsStream(myScreen.getImagesMap().get(image)))));
+	}
+	
+	protected void changeLanguage(String language){
+		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
+		myController.changeLanguage();
 	}
 }
