@@ -66,10 +66,8 @@ public class TurtleController implements SLOGOController {
 	}
 
 	public void changeLanguage(){
-		parser.removePatterns(currentResourceBundle);
-		parser.removePatterns("resources/Syntax");
-		currentResourceBundle = view.getResourceBundle();
-		parser.addPatterns(currentResourceBundle);
+		parser.clearPatterns();
+		parser.addPatterns(view.getResourceBundle());
 		parser.addPatterns("resources/Syntax");
 	}
 
