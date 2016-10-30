@@ -1,6 +1,7 @@
 package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
+import java.util.AbstractMap;
 
 public class MakeUserInstruction extends ControlStructureCommand{
 	
@@ -17,6 +18,11 @@ public class MakeUserInstruction extends ControlStructureCommand{
 		view.getController().getInstrMap().put(instr.getName(), parameters.get(2));
 
 		//Shouldn't need to return anything
+		return -1;
+	}
+	
+	public double evaluate(SLOGOView view){
+		evaluate(view, null);
 		return -1;
 	}
 }

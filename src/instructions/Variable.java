@@ -15,9 +15,13 @@ public class Variable extends Instruction{
 	}
 	
 	@Override
-	public double evaluate(SLOGOView view, SLOGOModel model){
+	public double evaluate(SLOGOView view, SLOGOModel model) throws RuntimeException{
 		//TODO: NEED ERROR CHECKING FOR WHEN VARIABLE DOESN'T EXIST IN MAP
+		if (!view.getController().getVarMap().containsKey(name)){
+			throw new NullPointerException("Variable " + name + " hasn't been created yet.");
+		}
 		return view.getController().getVarMap().get(name);
+		
 	}
 	
 	public void setName(String s){
