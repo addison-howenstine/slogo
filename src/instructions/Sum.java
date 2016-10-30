@@ -1,9 +1,10 @@
 package instructions;
 
+import java.util.List;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Sum extends MathOperation {
+public class Sum extends MathOperation implements UnlimitedParametersInstruction{
 
 	@Override
 	public int getNumRequiredParameters() {
@@ -17,6 +18,15 @@ public class Sum extends MathOperation {
 					parameters.get(1).evaluate(view, model);
 		else
 			return -1;
+	}
+
+	@Override
+	public double evaluateUnlimitedParameters(SLOGOView view, SLOGOModel model) {
+		double toReturn = parameters.get(0).evaluate(view, model);
+		for (int i = 1; i < parameters.size(); i++){
+			toReturn += parameters.get(i).evaluate(view, model);
+		}
+		return toReturn;
 	}
 
 }

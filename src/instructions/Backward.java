@@ -3,10 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Backward extends TurtleCommand{
-
-	public Backward() {
-	}
+public class Backward extends TurtleCommand implements UnlimitedParametersInstruction{
 
 	@Override
 	public int getNumRequiredParameters() {
@@ -20,5 +17,16 @@ public class Backward extends TurtleCommand{
 		else
 			return -1;
 	}
+
+	@Override
+	public double evaluateUnlimitedParameters(SLOGOView view, SLOGOModel model) {
+		double toReturn = 0;
+		for(Instruction i : parameters ){
+			toReturn = model.back(i.evaluate(view, model));
+		}
+		return toReturn;	
+	}
+
+
 
 }
