@@ -82,23 +82,13 @@ public class SLOGOParser {
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
 
-		Instruction instruction = null;
+		Instruction instruction;
 		try {
-			// instantiate a class and object for command instructions
-			Class<?> c = Class.forName("instructions." + actualInstruction);
-			instruction = (Instruction) c.newInstance();
-		} catch (ClassNotFoundException e) {
-			throw new ClassNotFoundException("Method name not recognized: " + typedInstruction);
-		} catch (InstantiationException e) {
-			throw new InstantiationException("Instantiation Exception!");
-		} catch (IllegalAccessException e) {
-			throw new IllegalAccessException("Illegal Access Exception!");
-		} catch (SecurityException e) {
-			throw new SecurityException("Security Exception!");
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Illegal Argument Exception!");
+			instruction = getInstructionType(actualInstruction, typedInstruction);
+		}catch (Exception e){
+			throw e;
 		}
-			
+
 		List<Instruction> parameters = new ArrayList<Instruction>();
 		if(instruction instanceof Constant){
 			((Constant) instruction).setValue(Integer.parseInt(typedInstruction));
@@ -106,6 +96,10 @@ public class SLOGOParser {
 		if(instruction instanceof ListStart){
 			checkBracketSpace(typedInstruction);
 			parameters = groupInstructionList(instructionScanner, instrMap);
+		}
+		if(instruction instanceof GroupStart){
+			((GroupStart) instruction).setCommand(getInstructionType(getSymbol(instructionScanner.next()), typedInstruction));
+			parameters = groupUnlimitedParameterGroup(instructionScanner, instrMap);
 		}
 		if (instruction instanceof Variable){
 			((Variable) instruction).setName(typedInstruction);
@@ -133,6 +127,30 @@ public class SLOGOParser {
 		return instruction;
 	}
 	
+	
+	private Instruction getInstructionType(String instructionClassName, String typedInstruction) throws Exception{
+		
+		Instruction instruction = null;
+		try {
+			// instantiate a class and object for command instructions
+			Class<?> c = Class.forName("instructions." + instructionClassName);
+			instruction = (Instruction) c.newInstance();
+		} catch (ClassNotFoundException e) {
+			throw new ClassNotFoundException("Method name not recognized: " + typedInstruction);
+		} catch (InstantiationException e) {
+			throw new InstantiationException("Instantiation Exception!");
+		} catch (IllegalAccessException e) {
+			throw new IllegalAccessException("Illegal Access Exception!");
+		} catch (SecurityException e) {
+			throw new SecurityException("Security Exception!");
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Illegal Argument Exception!");
+		}
+		
+		return instruction;
+	}
+	
+	
 	private List<Instruction> groupInstructionList(Scanner s, AbstractMap<String, Instruction> instrMap) throws Exception{
 		List<Instruction> groupedList = new ArrayList<Instruction>();
 		while (s.hasNext()){
@@ -147,6 +165,23 @@ public class SLOGOParser {
 			}catch(Exception e){
 				throw e;
 			}
+		}
+		return groupedList;
+	}
+	
+	private List<Instruction> groupUnlimitedParameterGroup(Scanner s, AbstractMap<String, Instruction> instrMap) throws Exception{
+		List<Instruction> groupedList = new ArrayList<Instruction>();
+		while (s.hasNext()){
+			Instruction toAdd;
+			try {
+				toAdd = createNextInstructionFromText(s, instrMap);
+			}catch (Exception e){
+				throw e;
+			}
+			if (toAdd instanceof GroupEnd){
+				return groupedList;
+			}
+			groupedList.add(toAdd);
 		}
 		return groupedList;
 	}

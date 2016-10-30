@@ -49,6 +49,7 @@ public class TurtleController implements SLOGOController {
 			view.showError(e.getMessage());
 			return;
 		}
+		
 		for(Instruction inst : instructionList){
 			if (inst == null){
 				continue;
@@ -59,8 +60,8 @@ public class TurtleController implements SLOGOController {
 					inst.evaluate(view, models.get(activeModelID));
 				});
 			}catch(Exception e){
-				//TODO: EVALUATION FAILED - will happen if variable hasn't been created
-				System.out.println(e);
+				view.showError(e.getMessage());
+				return;
 			}
 		}
 	}

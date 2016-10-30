@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class MakeVariable extends Instruction{
+public class MakeVariable extends ControlStructureCommand{
 	public MakeVariable(){
 	}
 	

@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Tangent extends Instruction {
+public class Tangent extends MathOperation {
 
 	@Override
 	public int getNumRequiredParameters() {

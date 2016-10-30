@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class PenDown extends TurtleCommand{
+public class GroupEnd extends Instruction {
 
 	@Override
 	public int getNumRequiredParameters() {
@@ -12,10 +12,8 @@ public class PenDown extends TurtleCommand{
 
 	@Override
 	public double evaluate(SLOGOView view, SLOGOModel model) {
-		if (canEvaluate())
-			return model.penDown();
-		else
-			return -1;
+		// do nothing, this object should never be evaluated
+		return 0;
 	}
 
 }

@@ -3,7 +3,7 @@ import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 import java.util.AbstractMap;
 
-public class MakeUserInstruction extends Instruction{
+public class MakeUserInstruction extends ControlStructureCommand{
 	
 	@Override
 	//Third parameter should be a ListStart with the entire instruction set

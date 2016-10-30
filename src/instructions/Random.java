@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Random extends Instruction {
+public class Random extends MathOperation {
 
 	@Override
 	public int getNumRequiredParameters() {
