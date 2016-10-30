@@ -6,6 +6,14 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/**
+ * Takes in a desired file name, a variable map, and an instruction map.
+ * Generates a new serializable object, SavedSettings, which contains both maps,
+ * and then writes this object to a file with the desired filename.
+ * 
+ * @author philipfoo
+ *
+ */
 public class SettingsGenerator {
 
 	public void generateSerializedObj(String fileName, AbstractMap<String, Double> varMap, 

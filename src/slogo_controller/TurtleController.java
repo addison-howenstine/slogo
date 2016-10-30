@@ -70,7 +70,7 @@ public class TurtleController implements SLOGOController {
 	/**
 	 * Method which generates a serialized file at lib/fileName. Used to
 	 * store current state of the SLOGO playground.
-	 * @param fileName
+	 * @param fileName - name of the file to be generated. Will be in format fileName.ser
 	 */
 	public void generateSettingsFile(String fileName){
 		SettingsGenerator generator = new SettingsGenerator();
@@ -79,7 +79,8 @@ public class TurtleController implements SLOGOController {
 	
 	/**
 	 * Loads a selected file into memory - updates instruction map and variable map.
-	 * @param fileName
+	 * @param fileName - name of file to be loaded
+	 * @param view - SLOGOView to update the UI with vars/instructions loaded from file
 	 */
 	public void loadSettingsFile(String fileName, SLOGOView view){
 		SettingsLoader loader = new SettingsLoader(fileName);
