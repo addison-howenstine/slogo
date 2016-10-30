@@ -21,14 +21,12 @@ public class SettingsLoader {
 	 * @param fileName: the file name of the desired file to be loaded
 	 */
 	public SettingsLoader(String fileName){
-		SavedSettings settings;
 		try {
 			FileInputStream fin = new FileInputStream("lib/" + fileName + ".ser");
 			ObjectInputStream ois = new ObjectInputStream(fin);
-			settings = (SavedSettings) ois.readObject();
+			this.settingsToLoad = (SavedSettings) ois.readObject();
 			ois.close();
 			
-			this.settingsToLoad = settings;
 		}catch (Exception e){
 			e.printStackTrace();
 		}
