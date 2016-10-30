@@ -74,7 +74,11 @@ public class TurtleController implements SLOGOController {
 	 */
 	public void generateSettingsFile(String fileName){
 		SettingsGenerator generator = new SettingsGenerator();
-		generator.generateSerializedObj(fileName, myVarMap, myInstructionMap);
+		try{
+			generator.generateSerializedObj(fileName, myVarMap, myInstructionMap);
+		}catch(Exception e){
+			view.showError(e.getMessage());
+		}
 	}
 	
 	/**
@@ -83,9 +87,14 @@ public class TurtleController implements SLOGOController {
 	 * @param view - SLOGOView to update the UI with vars/instructions loaded from file
 	 */
 	public void loadSettingsFile(String fileName, SLOGOView view){
-		SettingsLoader loader = new SettingsLoader(fileName);
-		loader.loadInstructionsToMap(myInstructionMap, view);
-		loader.loadVariablesToMap(myVarMap, view);
+		try{
+			SettingsLoader loader = new SettingsLoader(fileName);
+			loader.loadInstructionsToMap(myInstructionMap, view);
+			loader.loadVariablesToMap(myVarMap, view);
+		}catch(Exception e){
+			view.showError(e.getMessage());
+		}
+
 	}
 	
 

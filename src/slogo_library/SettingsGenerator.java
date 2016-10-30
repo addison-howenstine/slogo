@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class SettingsGenerator {
 
 	public void generateSerializedObj(String fileName, AbstractMap<String, Double> varMap, 
-			AbstractMap<String, Instruction> instrMap){
+			AbstractMap<String, Instruction> instrMap) throws Exception{
 		
 		SavedSettings currentState = new SavedSettings(varMap, instrMap);
 		try{
@@ -26,7 +26,7 @@ public class SettingsGenerator {
 			oos.writeObject(currentState);
 			oos.close();
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new Exception(e.getMessage());
 		}
 	}
 }

@@ -20,7 +20,7 @@ public class SettingsLoader {
 	 * Loads a given file as an attribute using serializable objects
 	 * @param fileName: the file name of the desired file to be loaded
 	 */
-	public SettingsLoader(String fileName){
+	public SettingsLoader(String fileName) throws Exception{
 		try {
 			FileInputStream fin = new FileInputStream("lib/" + fileName + ".ser");
 			ObjectInputStream ois = new ObjectInputStream(fin);
@@ -28,7 +28,7 @@ public class SettingsLoader {
 			ois.close();
 			
 		}catch (Exception e){
-			e.printStackTrace();
+			throw new Exception(e.getMessage());
 		}
 	}
 	
