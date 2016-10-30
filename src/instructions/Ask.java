@@ -6,7 +6,7 @@ import java.util.List;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Ask extends Instruction {
+public class Ask extends MultipleTurtlesCommand {
 
 	@Override
 	public int getNumRequiredParameters() {

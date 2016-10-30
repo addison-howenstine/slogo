@@ -75,24 +75,7 @@ public class SLOGOParser {
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
 
-		Instruction instruction = null;
-		try {
-			// instantiate a class and object for command instructions
-			Class<?> c = Class.forName("instructions." + actualInstruction);
-			instruction = (Instruction) c.newInstance();
-			} 
-		catch (ClassNotFoundException e) {
-			// instead of throwing an exception, pass error method
-			instruction = new Error("Method name not found!");
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		}
+		Instruction instruction = getInstructionType(actualInstruction);
 			
 		List<Instruction> parameters = new ArrayList<Instruction>();
 		if(instruction instanceof Constant){
@@ -101,12 +84,15 @@ public class SLOGOParser {
 		if(instruction instanceof ListStart){
 			parameters = groupInstructionList(instructionScanner, instrMap);
 		}
+		if(instruction instanceof GroupStart){
+			((GroupStart) instruction).setCommand(getInstructionType(getSymbol(instructionScanner.next())));
+			parameters = groupUnlimitedParameterGroup(instructionScanner, instrMap);
+		}
 		if (instruction instanceof Variable){
 			((Variable) instruction).setName(typedInstruction);
 		}
 		if (instruction instanceof DoTimes || instruction instanceof For){
 			instructionScanner.next(); //skip the bracket
-			System.out.println("FOR");
 		}
 		
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
@@ -121,6 +107,28 @@ public class SLOGOParser {
 		return instruction;
 	}
 	
+	private Instruction getInstructionType(String instructionClassName){
+		Instruction instruction = null;
+		try {
+			// instantiate a class and object for command instructions
+			Class<?> c = Class.forName("instructions." + instructionClassName);
+			instruction = (Instruction) c.newInstance();
+			} 
+		catch (ClassNotFoundException e) {
+			// instead of throwing an exception, pass error method
+			instruction = new Error("Method name not found!");
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		return instruction;
+	}
+	
 	private List<Instruction> groupInstructionList(Scanner s, AbstractMap<String, Instruction> instrMap){
 		List<Instruction> groupedList = new ArrayList<Instruction>();
 		while (s.hasNext()){
@@ -128,6 +136,18 @@ public class SLOGOParser {
 			if (toAdd instanceof ListStart)
 				groupedList.addAll(groupInstructionList(s, instrMap));
 			if (toAdd instanceof ListEnd){
+				return groupedList;
+			}
+			groupedList.add(toAdd);
+		}
+		return groupedList;
+	}
+	
+	private List<Instruction> groupUnlimitedParameterGroup(Scanner s, AbstractMap<String, Instruction> instrMap){
+		List<Instruction> groupedList = new ArrayList<Instruction>();
+		while (s.hasNext()){
+			Instruction toAdd = createNextInstructionFromText(s, instrMap);
+			if (toAdd instanceof GroupEnd){
 				return groupedList;
 			}
 			groupedList.add(toAdd);

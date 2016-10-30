@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class IfElse extends Instruction {
+public class IfElse extends ControlStructureCommand {
 
 	@Override
 	public int getNumRequiredParameters() {

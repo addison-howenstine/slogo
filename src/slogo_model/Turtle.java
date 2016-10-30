@@ -28,21 +28,21 @@ public class Turtle extends Observable implements SLOGOModel{
 		// move to opposite edge, put pen down, call recursively forward(pixels - distanceLeftToMove)
 		// until distanceLeftToMove = 0
 		double newHeading = (backwards) ? heading + 180 : heading;
-		
+
 		int[] directions = getDirection(newHeading);
 		double boundedX = maxX * directions[0];
 		double boundedY = maxY * directions[1];
-		
+
 		double desiredX = xCor() + pixels * Math.sin(Math.toRadians(heading));
 		double desiredY = yCor() + pixels * Math.cos(Math.toRadians(heading));
-		
+
 		if (Math.abs(desiredX) > Math.abs(boundedX) || Math.abs(desiredY) > Math.abs(boundedY)){
 			double distanceToWallX = boundedX - xCor();
 			double distanceToWallY = boundedY - yCor();
-			
+
 			double yShortestDistance = distanceToWallY / (Math.cos(Math.toRadians(heading)));
 			double xShortestDistance = distanceToWallX / (Math.sin(Math.toRadians(heading)));
-			
+
 			if (Math.abs(xShortestDistance) < Math.abs(yShortestDistance)){
 				double modifiedY = yCor() + xShortestDistance * Math.cos(Math.toRadians(heading));
 				setXY(boundedX, modifiedY);
@@ -59,11 +59,11 @@ public class Turtle extends Observable implements SLOGOModel{
 				return forward(pixels - yShortestDistance, backwards);
 			}
 		}
-		
+
 		setXY(desiredX, desiredY);
 		return pixels;
 	}
-	
+
 	/**
 	 * 
 	 * @return int[] directions where directions[0] is an int representing right/left
@@ -78,7 +78,7 @@ public class Turtle extends Observable implements SLOGOModel{
 			}else if (newHeading > 180){
 				directions[0] = -1;
 			}
-			
+
 			//Set up/down
 			if (newHeading <= 90 || newHeading >= 270){
 				directions[1] = 1;
@@ -91,7 +91,7 @@ public class Turtle extends Observable implements SLOGOModel{
 			}else if (newHeading > -180){
 				directions[0] = -1;
 			}
-			
+
 			if (newHeading >= -90 || newHeading <= -270){
 				directions[1] = 1;
 			}else if(newHeading < -90 && newHeading > -270){
@@ -134,8 +134,12 @@ public class Turtle extends Observable implements SLOGOModel{
 	@Override
 	public double towards(double x, double y) {
 		double oldHeading = heading();
-		setHeading(orient360(Math.atan( ( x - xCor() ) / ( y - yCor() ) )));
-		return distanceTurned180(orient360(oldHeading - heading));
+		double newHeading = orient360(Math.toDegrees(Math.atan( ( x - xCor() ) / ( y - yCor() ) )));
+		if( y >= 0 )
+			setHeading(newHeading);
+		else
+			setHeading(orient360(newHeading + 180));
+		return distanceTurned180(orient360(oldHeading - heading()));
 	}
 
 	@Override
@@ -227,7 +231,7 @@ public class Turtle extends Observable implements SLOGOModel{
 	private double orient360(double degree){
 		return degree %= 360;
 	}
-	
+
 	/**
 	 * @param distanceTurned - distance turned in degrees between 0 and 360
 	 * @return - positive distance turned between 0 and 180

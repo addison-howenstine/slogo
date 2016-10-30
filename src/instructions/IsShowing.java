@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class IsShowing extends Instruction {
+public class IsShowing extends TurtleCommand {
 
 	@Override
 	public int getNumRequiredParameters() {

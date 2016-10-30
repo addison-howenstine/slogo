@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Repeat extends Instruction {
+public class Repeat extends ControlStructureCommand {
 
 	@Override
 	public int getNumRequiredParameters() {

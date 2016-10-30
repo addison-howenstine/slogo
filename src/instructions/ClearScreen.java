@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class ClearScreen extends Instruction {
+public class ClearScreen extends TurtleCommand {
 
 	@Override
 	public int getNumRequiredParameters() {

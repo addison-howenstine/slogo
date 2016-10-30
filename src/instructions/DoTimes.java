@@ -2,7 +2,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class DoTimes extends Instruction{
+public class DoTimes extends ControlStructureCommand{
 	/**
 	 * Expect first parameter to be Variable
 	 * Second parameter will be Constant, or will be evaluated to constant
