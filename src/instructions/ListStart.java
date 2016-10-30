@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class ListStart extends Instruction {
+public class ListStart extends Instruction{
 
 	@Override
 	public int getNumRequiredParameters() {

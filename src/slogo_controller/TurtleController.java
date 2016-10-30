@@ -2,6 +2,7 @@ package slogo_controller;
 
 import instructions.Instruction;
 import instructions.Error;
+import slogo_library.*;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -59,12 +60,31 @@ public class TurtleController implements SLOGOController {
 					activeModelID = model;
 					inst.evaluate(view, models.get(activeModelID));
 				});
-			}catch(Exception e){
+			}catch(Exception e){				
 				view.showError(e.getMessage());
 				return;
 			}
 		}
 	}
+	
+	/**
+	 * Method which generates a serialized file at lib/fileName. Used to
+	 * store current state of the SLOGO playground.
+	 * @param fileName
+	 */
+	public void generateSettingsFile(String fileName){
+		SettingsGenerator generator = new SettingsGenerator();
+		generator.generateSerializedObj(fileName, myVarMap, myInstructionMap);
+	}
+	
+	/**
+	 * Loads a selected 
+	 * @param fileName
+	 */
+	public void loadSettingsFile(String fileName){
+		
+	}
+	
 
 	@Override
 	public AbstractMap<String, Instruction> getInstrMap(){
