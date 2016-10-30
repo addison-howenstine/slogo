@@ -20,9 +20,4 @@ public class MakeUserInstruction extends ControlStructureCommand{
 		//Shouldn't need to return anything
 		return -1;
 	}
-	
-	public double evaluate(SLOGOView view){
-		evaluate(view, null);
-		return -1;
-	}
 }

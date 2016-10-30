@@ -23,7 +23,16 @@ public class Turtle extends Observable implements SLOGOModel{
 	}
 
 	@Override
-	public double forward(double pixels, boolean backwards) {
+	public double forward(double pixels){
+		return move(pixels, false);
+	}
+	
+	@Override
+	public double back(double pixels) {
+		return (-1) * move( (-1) * pixels, true);
+	}
+	
+	private double move(double pixels, boolean backwards) {
 		double newHeading = (backwards) ? heading + 180 : heading;
 
 		int[] directions = getDirection(newHeading);
@@ -46,14 +55,14 @@ public class Turtle extends Observable implements SLOGOModel{
 				penUp();
 				setXY(-boundedX, modifiedY);
 				penDown();
-				return forward(pixels - xShortestDistance, backwards);
+				return move(pixels - xShortestDistance, backwards);
 			}else{
 				double modifiedX = xCor() + yShortestDistance * Math.sin(Math.toRadians(heading));
 				setXY(modifiedX, boundedY);
 				penUp();
 				setXY(modifiedX, -boundedY);
 				penDown();
-				return forward(pixels - yShortestDistance, backwards);
+				return move(pixels - yShortestDistance, backwards);
 			}
 		}
 
@@ -100,11 +109,6 @@ public class Turtle extends Observable implements SLOGOModel{
 
 	private double distance(double x0, double x1, double y0, double y1){
 		return Math.sqrt( Math.pow( (x1 - x0) , 2 ) +  Math.pow( (y1 - y0) , 2 ));
-	}
-
-	@Override
-	public double back(double pixels) {
-		return (-1) * forward( (-1) * pixels, true);
 	}
 
 	@Override
