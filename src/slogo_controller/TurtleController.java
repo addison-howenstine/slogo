@@ -1,7 +1,7 @@
 package slogo_controller;
 
 import instructions.Instruction;
-import instructions.Error;
+import instructions.TurtleCommand;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -49,16 +49,19 @@ public class TurtleController implements SLOGOController {
 			view.showError(e.getMessage());
 			return;
 		}
-		
+
 		for(Instruction inst : instructionList){
 			if (inst == null){
 				continue;
 			}
 			try{
-				activeModels.forEach( model -> {
-					activeModelID = model;
-					inst.evaluate(view, models.get(activeModelID));
-				});
+				if (inst instanceof TurtleCommand)
+					activeModels.forEach( model -> {
+						activeModelID = model;
+						inst.evaluate(view, models.get(activeModelID));
+					});
+				else
+					inst.evaluate(view,  models.get(activeModelID));
 			}catch(Exception e){
 				view.showError(e.getMessage());
 				return;
@@ -89,7 +92,7 @@ public class TurtleController implements SLOGOController {
 		}
 		view.updateScreen();
 	}
-	
+
 	private void createNewModel(){
 		SLOGOModel newTurtle = new Turtle(view.getMaxX(), view.getMaxY());
 		models.add(newTurtle);
@@ -106,6 +109,16 @@ public class TurtleController implements SLOGOController {
 			activeModels.add(activeModelID);
 		}
 		return activeModelID;
+	}
+
+	@Override
+	public void toggleActive(Integer newActive) {
+		if (newActive >= models.size())
+			addModel(newActive);
+		if (activeModels.contains(newActive))
+			activeModels.remove(newActive);
+		else
+			activeModels.add(newActive);
 	}
 
 	@Override

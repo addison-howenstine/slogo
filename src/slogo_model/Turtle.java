@@ -24,9 +24,6 @@ public class Turtle extends Observable implements SLOGOModel{
 
 	@Override
 	public double forward(double pixels, boolean backwards) {
-		// TODO : if pixels is greater than can travel, move to edge, penUP
-		// move to opposite edge, put pen down, call recursively forward(pixels - distanceLeftToMove)
-		// until distanceLeftToMove = 0
 		double newHeading = (backwards) ? heading + 180 : heading;
 
 		int[] directions = getDirection(newHeading);
@@ -135,7 +132,7 @@ public class Turtle extends Observable implements SLOGOModel{
 	public double towards(double x, double y) {
 		double oldHeading = heading();
 		double newHeading = orient360(Math.toDegrees(Math.atan( ( x - xCor() ) / ( y - yCor() ) )));
-		if( y >= 0 )
+		if( y - yCor() >= 0 )
 			setHeading(newHeading);
 		else
 			setHeading(orient360(newHeading + 180));
