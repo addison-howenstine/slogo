@@ -78,11 +78,13 @@ public class TurtleController implements SLOGOController {
 	}
 	
 	/**
-	 * Loads a selected 
+	 * Loads a selected file into memory - updates instruction map and variable map.
 	 * @param fileName
 	 */
-	public void loadSettingsFile(String fileName){
-		
+	public void loadSettingsFile(String fileName, SLOGOView view){
+		SettingsLoader loader = new SettingsLoader(fileName);
+		loader.loadInstructionsToMap(myInstructionMap, view);
+		loader.loadVariablesToMap(myVarMap, view);
 	}
 	
 

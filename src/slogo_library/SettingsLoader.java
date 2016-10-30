@@ -3,6 +3,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import instructions.Instruction;
 import java.util.AbstractMap;
+import slogo_view.SLOGOView;
 
 /**
  * SettingsLoader class is responsible for loading an old SLOGO library from disk, given 
@@ -33,17 +34,19 @@ public class SettingsLoader {
 		}
 	}
 	
-	public void loadInstructionsToMap(AbstractMap<String, Instruction> toLoad){
+	public void loadInstructionsToMap(AbstractMap<String, Instruction> toLoad, SLOGOView view){
 		AbstractMap<String, Instruction> map = settingsToLoad.getInstrMap();
 		map.forEach((k, v) -> {
 			toLoad.put(k, v);
+			view.addUserCommand(k);
 		});
 	}
 	
-	public void loadVariablesToMap(AbstractMap<String, Double> toLoad){
+	public void loadVariablesToMap(AbstractMap<String, Double> toLoad, SLOGOView view){
 		AbstractMap<String, Double> map = settingsToLoad.getVarMap();
 		map.forEach((k, v) -> {
 			toLoad.put(k, v);
+			view.addUserVariable(k, v);
 		});
 	}
 }
