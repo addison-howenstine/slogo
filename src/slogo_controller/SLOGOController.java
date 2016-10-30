@@ -55,7 +55,7 @@ public interface SLOGOController {
 	 * @return
 	 */
 	public double ask(List<Integer> tempActives, List<Instruction> instructions);
-	
+		
 	/**
 	 * @return a list of models this Controller is controlling
 	 */

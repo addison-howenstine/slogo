@@ -128,15 +128,19 @@ public class TurtleController implements SLOGOController {
 
 	@Override
 	public double ask(List<Integer> tempActives, List<Instruction> instructions) {
+		double toReturn = 0;
+		for (Integer a : tempActives){
+			activeModelID = a;
+			if ( activeModelID >= models.size() )
+				addModel(activeModelID);
+			for (Instruction i : instructions)
+				toReturn = i.evaluate(view, models.get(activeModelID));
+		}
+		// at the end, set activeModelID to next true active model
+		activeModelID = activeModels.get(0);
+		return toReturn;
+		
 		// TODO it would be great to pass a lambda instead of a List of instructions
-		Instruction last = instructions.get(instructions.size() - 1);
-		instructions.remove(instructions.size() - 1);
-		tempActives.forEach(t -> {
-			activeModelID = t;
-			instructions.forEach(i -> i.evaluate(view, models.get(activeModelID)));
-		});
-		activeModelID = tempActives.get(tempActives.size() - 1);
-		return last.evaluate(view, models.get(activeModelID));
 	}
 
 	@Override
