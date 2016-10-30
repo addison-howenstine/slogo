@@ -33,7 +33,7 @@ public class TurtleController implements SLOGOController {
 		activeModels.add(0);
 		this.myVarMap = new HashMap<String, Double>();
 		this.myInstructionMap = new HashMap<String, Instruction>();
-		parser = new SLOGOParser();
+		parser = new SLOGOParser(this.view);
 		// important that Syntax comes after languages!!!
 		currentResourceBundle = view.getResourceBundle();
 		parser.addPatterns(currentResourceBundle);
@@ -41,9 +41,18 @@ public class TurtleController implements SLOGOController {
 	}
 
 	@Override
-	public void run(String command) {
-		List<Instruction> instructionList = parser.parse(command, myInstructionMap);
+	public void run(String command){
+		List<Instruction> instructionList = null;
+		try {
+			instructionList = parser.parse(command, myInstructionMap);
+		}catch (Exception e){
+			view.showError(e.getMessage());
+			return;
+		}
 		for(Instruction inst : instructionList){
+			if (inst == null){
+				continue;
+			}
 			try{
 				activeModels.forEach( model -> {
 					activeModelID = model;
@@ -51,6 +60,7 @@ public class TurtleController implements SLOGOController {
 				});
 			}catch(Exception e){
 				//TODO: EVALUATION FAILED - will happen if variable hasn't been created
+				System.out.println(e);
 			}
 		}
 	}
