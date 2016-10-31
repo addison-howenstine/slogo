@@ -119,8 +119,10 @@ public class SLOGOParser {
 		}
 		instruction.setParameters(parameters);
 		
+		// If a new instruction is being made, evaluate immediately instead of adding
+		// to expression tree of instructions in case new instruction is called right away
 		if (instruction instanceof MakeUserInstruction){
-			((MakeUserInstruction) instruction).evaluate(view);
+			instruction.evaluate(view, null);
 			return null;
 		}
 		

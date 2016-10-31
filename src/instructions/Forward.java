@@ -18,7 +18,7 @@ public class Forward extends TurtleCommand implements UnlimitedParametersInstruc
 	@Override
 	public double evaluate(SLOGOView view, SLOGOModel model) {
 		if (canEvaluate())
-			return model.forward(parameters.get(0).evaluate(view, model), false);
+			return model.forward(parameters.get(0).evaluate(view, model));
 		else
 			return -1;
 	}
@@ -27,7 +27,7 @@ public class Forward extends TurtleCommand implements UnlimitedParametersInstruc
 	public double evaluateUnlimitedParameters(SLOGOView view, SLOGOModel model) {
 		double toReturn = 0;
 		for(Instruction i : parameters ){
-			toReturn = model.forward(i.evaluate(view, model), false);
+			toReturn = model.forward(i.evaluate(view, model));
 		}
 		return toReturn;
 	}	

@@ -1,9 +1,9 @@
 package slogo_controller;
 
 import instructions.Instruction;
+import instructions.TurtleCommand;
 import instructions.Error;
 import slogo_library.*;
-
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,17 +50,20 @@ public class TurtleController implements SLOGOController {
 			view.showError(e.getMessage());
 			return;
 		}
-		
+
 		for(Instruction inst : instructionList){
 			if (inst == null){
 				continue;
 			}
 			try{
-				activeModels.forEach( model -> {
-					activeModelID = model;
-					inst.evaluate(view, models.get(activeModelID));
-				});
-			}catch(Exception e){				
+				if (inst instanceof TurtleCommand)
+					activeModels.forEach( model -> {
+						activeModelID = model;
+						inst.evaluate(view, models.get(activeModelID));
+					});
+				else
+					inst.evaluate(view,  models.get(activeModelID));
+			}catch(Exception e){
 				view.showError(e.getMessage());
 				return;
 			}
@@ -121,7 +124,7 @@ public class TurtleController implements SLOGOController {
 		}
 		view.updateScreen();
 	}
-	
+
 	private void createNewModel(){
 		SLOGOModel newTurtle = new Turtle(view.getMaxX(), view.getMaxY());
 		models.add(newTurtle);
@@ -141,26 +144,37 @@ public class TurtleController implements SLOGOController {
 	}
 
 	@Override
+	public void toggleActive(Integer newActive) {
+		if (newActive >= models.size())
+			addModel(newActive);
+		if (activeModels.contains(newActive))
+			activeModels.remove(newActive);
+		else
+			activeModels.add(newActive);
+	}
+
+	@Override
 	public double modelID() {
 		return activeModelID;
 	}
 
 	@Override
 	public double ask(List<Integer> tempActives, List<Instruction> instructions) {
-		// TODO it would be great to pass a lambda instead of a List of instructions
-		Instruction last = instructions.get(instructions.size() - 1);
-		instructions.remove(instructions.size() - 1);
-		tempActives.forEach(t -> {
-			activeModelID = t;
-			instructions.forEach(i -> i.evaluate(view, models.get(activeModelID)));
-		});
-		activeModelID = tempActives.get(tempActives.size() - 1);
-		return last.evaluate(view, models.get(activeModelID));
+		double toReturn = 0;
+		for (Integer a : tempActives){
+			activeModelID = a;
+			if ( activeModelID >= models.size() )
+				addModel(activeModelID);
+			for (Instruction i : instructions)
+				toReturn = i.evaluate(view, models.get(activeModelID));
+		}
+		// at the end, set activeModelID to next true active model
+		activeModelID = activeModels.get(0);
+		return toReturn;
 	}
 
 	@Override
 	public List<SLOGOModel> getModels() {
-		// TODO it would be great to get rid of this method and replace with functional programming so we don't give away pointer to models
 		return models;
 	}
 }
