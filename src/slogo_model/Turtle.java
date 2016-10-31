@@ -147,8 +147,11 @@ public class Turtle extends Observable implements SLOGOModel{
 	public double setXY(double x, double y) {
 		double oldX = xCor();
 		double oldY = yCor();
+		double oldHeading = heading();
+		towards(x,y);
 		xCor = x;
 		yCor = y;
+		heading = oldHeading;
 		setChanged();
 		notifyObservers();
 		return distance(oldX, xCor(), oldY, yCor());
@@ -190,8 +193,8 @@ public class Turtle extends Observable implements SLOGOModel{
 	public double home() {
 		double oldX = xCor();
 		double oldY = yCor();
-		setHeading(0);
 		setXY(0,0);
+		setHeading(0);
 		return distance(oldX, xCor(), oldY, yCor());
 	}
 
