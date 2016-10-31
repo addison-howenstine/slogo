@@ -275,45 +275,29 @@ public class SLOGOScreen {
 				options.initOwner(myStage);
 				
 				VBox root = new VBox();
-				
-				myStrokeTypesSelector = new ComboBox<String>(FXCollections.observableList(strokeTypes));
-				myStrokeTypesSelector.setValue(myResources.getString("Solid"));
-				myStrokeTypesSelector.valueProperty().addListener(new ChangeListener<String>() {
-
-					@Override
-					public void changed(ObservableValue<? extends String> observable, String oldValue,
-							String newValue) {
-						if (newValue.equals(myResources.getString("Solid"))) {
-							myPenOptions.setDashLength(1d);
-							myPenOptions.setDashSpace(0d);
-						} else if (newValue.equals(myResources.getString("Dashed"))) {
-							myPenOptions.setDashLength(5d);
-							myPenOptions.setDashSpace(5d);
-							
-						} else if (newValue.equals(myResources.getString("Dotted"))) {
-							myPenOptions.setDashLength(0.01d);
-							myPenOptions.setDashSpace(5d);
+				if (myStrokeTypesSelector == null){
+					myStrokeTypesSelector = new ComboBox<String>(FXCollections.observableList(strokeTypes));
+					myStrokeTypesSelector.setValue(myResources.getString("Solid"));
+					myStrokeTypesSelector.valueProperty().addListener(new ChangeListener<String>() {
+	
+						@Override
+						public void changed(ObservableValue<? extends String> observable, String oldValue,
+								String newValue) {
+							if (newValue.equals(myResources.getString("Solid"))) {
+								myPenOptions.setDashLength(1d);
+								myPenOptions.setDashSpace(0d);
+							} else if (newValue.equals(myResources.getString("Dashed"))) {
+								myPenOptions.setDashLength(5d);
+								myPenOptions.setDashSpace(5d);
+								
+							} else if (newValue.equals(myResources.getString("Dotted"))) {
+								myPenOptions.setDashLength(0.01d);
+								myPenOptions.setDashSpace(5d);
+							}
 						}
-					}
-					
-				});
-				
-				myStrokeWidthField = new TextField("Width");
-				myStrokeWidthField.textProperty().addListener(new ChangeListener<String>() {
-
-					@Override
-					public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-						try {
-							int width = Integer.parseInt(newValue);
-							myPenOptions.setWidth(width);
-						} catch (NumberFormatException e) {
-							myPenOptions.setWidth(2);
-						}
-					}
-					
-				});
-				
-				
+						
+					});
+				}
 				root.getChildren().add(myStrokeTypesSelector);
 				root.getChildren().add(myStrokeWidthField);
 				
@@ -361,10 +345,12 @@ public class SLOGOScreen {
 	}
 
 	private void setUpTurtleScreen() {
-		myBuilder.addRectangle(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT, 
+		Rectangle rec = myBuilder.addRectangle(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT, 
 				myColorsMap.get("1. " + myResources.getString(TURTLE_AREA_OUTLINE)));
 		myTurtleScreen = myBuilder.addRectangle(TURTLE_AREA_X + 1, TURTLE_AREA_Y + 1, TURTLE_AREA_WIDTH - 2, 
 				TURTLE_AREA_HEIGHT - 2, myColorsMap.get("8. " + myResources.getString(DEFAULT_BACKGROUND)));
+		myTurtleScreen.toBack();
+		rec.toBack();
 	}
 
 	private void setUpCommandHistoryDisplay() {

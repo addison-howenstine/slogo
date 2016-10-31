@@ -7,19 +7,32 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
 
+import javafx.animation.Animation;
+import javafx.animation.PathTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.SequentialTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import slogo_controller.SLOGOController;
 import slogo_model.SLOGOModel;
 
@@ -31,6 +44,7 @@ public class Playground implements SLOGOView, Observer{
 	private static final int TURTLE_AREA_WIDTH = 800;
 	private static final int TURTLE_X_OFFSET = TURTLE_AREA_WIDTH/2 + TURTLE_AREA_X;
 	private static final int HEIGHT = 700;
+	private static final int WIDTH = 1300;
 	private static final int TEXT_FIELD_Y = HEIGHT - 30;
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
 	private static final int TURTLE_Y_OFFSET = TURTLE_AREA_HEIGHT/2 + TURTLE_AREA_Y;
@@ -59,8 +73,12 @@ public class Playground implements SLOGOView, Observer{
 	private ObservableList<String> myUserCommands;
 	private HashMap<String, Double> myVariableMap = new HashMap<String, Double>();
 	private ArrayList<String> myOldVariables = new ArrayList<String>();
-
+	private Canvas myCanvas;
 	private boolean errorReceived = false;
+	private ArrayList<Animation> myAnimations = new ArrayList<Animation>();
+	private int counter = 0;
+	private ArrayList<Double> myHeadings = new ArrayList<Double>();
+
 
 	public Playground(Stage stage, String language) {
 		construct(stage, language);
@@ -77,6 +95,8 @@ public class Playground implements SLOGOView, Observer{
 		myRoot = new Group();
 		myBuilder = new UIBuilder(myRoot);
 		myScreen = new SLOGOScreen(this, myStage, myResources, myRoot, language);
+		myCanvas = new Canvas(WIDTH, HEIGHT);
+		myRoot.getChildren().add(myCanvas);
 	}
 
 	
@@ -104,6 +124,7 @@ public class Playground implements SLOGOView, Observer{
 			myRoot.getChildren().remove(line);
 		}
 		myTrails.clear();
+		myCanvas.getGraphicsContext2D().clearRect(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT);
 	}
 
 	@Override
@@ -175,34 +196,68 @@ public class Playground implements SLOGOView, Observer{
 		ImageView visT = new ImageView(image);
 		visT.setFitHeight(TURTLE_HEIGHT);
 		visT.setPreserveRatio(true);
+		visT.setTranslateX(TURTLE_X_OFFSET - visT.getBoundsInLocal().getWidth()/2); 
+		visT.setTranslateY(TURTLE_Y_OFFSET - visT.getBoundsInLocal().getHeight()/2);
 		myX.add(0.0);
 		myY.add(0.0);
 		myRoot.getChildren().add(visT);
 		visualTurtles.add(visT);
+		myHeadings.add(0.0);
 	}
 
 	@Override
 	public void updateScreen(){
+		GraphicsContext gc = myCanvas.getGraphicsContext2D();
 		int numModels = myController.getModels().size();
 		while(visualTurtles.size() < numModels){
 			setUpTurtle();
 		}
-		
 		for(int i = 0; i < numModels; i++){
 			ImageView myTurtle = visualTurtles.get(i);
 			SLOGOModel myModel = myController.getModels().get(i);
-			
-			myTurtle.relocate(myModel.xCor() + TURTLE_X_OFFSET - myTurtle.getBoundsInLocal().getWidth()/2, 
-					TURTLE_Y_OFFSET - myModel.yCor() - myTurtle.getBoundsInLocal().getHeight()/2);
-			myTurtle.setRotate(myModel.heading());
-			if (myModel.isPenDown() == 1){
-				Line line = myBuilder.addLine(myX.get(i) + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY.get(i), 
-						myModel.xCor() + TURTLE_X_OFFSET, 
-						TURTLE_Y_OFFSET - myModel.yCor(), myScreen.getPenOptions());
-				myTrails.add(line);
+			if (myX.get(i) != myModel.xCor() || myY.get(i) != myModel.yCor()){
+				Path path = new Path();
+				path.getElements().add(new MoveTo(myX.get(i) + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY.get(i)));
+				path.getElements().add(new LineTo(myModel.xCor() + TURTLE_X_OFFSET, 
+						TURTLE_Y_OFFSET - myModel.yCor()));
+				PathTransition pt = new PathTransition(Duration.millis(10000), path, myTurtle);
+				int j = i;
+				if (myModel.isPenDown() == 1){
+					pt.currentTimeProperty().addListener(new ChangeListener<Duration>() {
+						double oldX = myTurtle.getTranslateX() + myTurtle.getBoundsInLocal().getWidth()/2;
+						double oldY = myTurtle.getTranslateY() + myTurtle.getBoundsInLocal().getHeight()/2;
+						double newX = myTurtle.getTranslateX() + myTurtle.getBoundsInLocal().getWidth()/2;
+						double newY = myTurtle.getTranslateY() + myTurtle.getBoundsInLocal().getHeight()/2;
+						double count = -1;
+						public void changed(ObservableValue ov, Duration t, Duration t1){
+							count++;
+							if (t.equals(Duration.ZERO))
+								return;
+							if (count > 2){
+								gc.setStroke(myScreen.getPenOptions().getColor());
+								gc.setLineWidth(myScreen.getPenOptions().getWidth());
+								gc.setLineDashes(myScreen.getPenOptions().getDashLength(), 
+										myScreen.getPenOptions().getDashSpace());
+								gc.strokeLine(oldX, oldY, newX, newY);
+							}
+							oldX = newX;
+							oldY = newY;
+							newX = myTurtle.getTranslateX() + myTurtle.getBoundsInLocal().getWidth()/2;
+							newY = myTurtle.getTranslateY() + myTurtle.getBoundsInLocal().getHeight()/2;
+						}
+					});
+				}
+				myX.set(j, myModel.xCor());
+				myY.set(j, myModel.yCor());
+				myAnimations.add(pt);
 			}
-			myX.set(i, myModel.xCor());
-			myY.set(i, myModel.yCor());
+			if (myHeadings.get(i) != myModel.heading()){
+				RotateTransition rt = new RotateTransition(Duration.seconds(1));
+				rt.setNode(myTurtle);
+				rt.setToAngle(myModel.heading());
+				myAnimations.add(rt);
+				myHeadings.set(i, myModel.heading());
+			}
 			if (myModel.showing() == 0 && myRoot.getChildren().contains(myTurtle)){
 				myRoot.getChildren().remove(myTurtle);
 			}
@@ -210,11 +265,29 @@ public class Playground implements SLOGOView, Observer{
 				myRoot.getChildren().add(myTurtle);
 			}
 		}
+		if (myAnimations.size() > 0)
+			runAnimation(myAnimations.get(counter), counter + 1);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		updateScreen();
+	}
+	
+	private void runAnimation(Animation animation, int index){
+		animation.play();
+		animation.setOnFinished(new EventHandler<ActionEvent>(){
+			public void handle(ActionEvent event){
+				if (index < myAnimations.size()){
+					runAnimation(myAnimations.get(index), index + 1);
+					counter++;
+				}
+				else {
+					myAnimations.clear();
+					counter = 0;
+				}
+			}
+		});
 	}
 	
 	protected void runCommandFromTextInput(TextInputControl tic) {
@@ -248,7 +321,7 @@ public class Playground implements SLOGOView, Observer{
 	protected void changeTurtleImages(String image){
 		visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader()
 				.getResourceAsStream(myScreen.getImagesMap().get(image)))));
-	}
+		}
 	
 	protected void changeLanguage(String language){
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
