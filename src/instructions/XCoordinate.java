@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class XCoordinate extends Instruction {
+public class XCoordinate extends TurtleQuery {
 
 	@Override
 	public int getNumRequiredParameters() {

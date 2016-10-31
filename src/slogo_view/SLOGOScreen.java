@@ -99,7 +99,9 @@ public class SLOGOScreen {
 	private Button myRunButton;
 	private Button myMultilineButton;
 	private Button myPenButton;
+	
 	private ComboBox<String> myStrokeTypesSelector;
+	private TextField myStrokeWidthField;
 	
 	protected SLOGOScreen(Playground playground, Stage stage, ResourceBundle resources, Group root, String language){
 		myPlayground = playground;
@@ -297,6 +299,8 @@ public class SLOGOScreen {
 					});
 				}
 				root.getChildren().add(myStrokeTypesSelector);
+				root.getChildren().add(myStrokeWidthField);
+				
 				Scene scene = new Scene(root, 200, 200);
 				options.setScene(scene);
 				options.show();

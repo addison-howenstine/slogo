@@ -1,8 +1,9 @@
 package slogo_controller;
 
 import instructions.Instruction;
+import instructions.TurtleCommand;
 import instructions.Error;
-
+import slogo_library.*;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class TurtleController implements SLOGOController {
 		activeModels.add(0);
 		this.myVarMap = new HashMap<String, Double>();
 		this.myInstructionMap = new HashMap<String, Instruction>();
-		parser = new SLOGOParser();
+		parser = new SLOGOParser(this.view);
 		// important that Syntax comes after languages!!!
 		currentResourceBundle = view.getResourceBundle();
 		parser.addPatterns(currentResourceBundle);
@@ -41,19 +42,64 @@ public class TurtleController implements SLOGOController {
 	}
 
 	@Override
-	public void run(String command) {
-		List<Instruction> instructionList = parser.parse(command, myInstructionMap);
+	public void run(String command){
+		List<Instruction> instructionList = null;
+		try {
+			instructionList = parser.parse(command, myInstructionMap);
+		}catch (Exception e){
+			view.showError(e.getMessage());
+			return;
+		}
+
 		for(Instruction inst : instructionList){
+			if (inst == null){
+				continue;
+			}
 			try{
-				activeModels.forEach( model -> {
-					activeModelID = model;
-					inst.evaluate(view, models.get(activeModelID));
-				});
+				if (inst instanceof TurtleCommand)
+					activeModels.forEach( model -> {
+						activeModelID = model;
+						inst.evaluate(view, models.get(activeModelID));
+					});
+				else
+					inst.evaluate(view,  models.get(activeModelID));
 			}catch(Exception e){
-				//TODO: EVALUATION FAILED - will happen if variable hasn't been created
+				view.showError(e.getMessage());
+				return;
 			}
 		}
 	}
+	
+	/**
+	 * Method which generates a serialized file at lib/fileName. Used to
+	 * store current state of the SLOGO playground.
+	 * @param fileName - name of the file to be generated. Will be in format fileName.ser
+	 */
+	public void generateSettingsFile(String fileName){
+		SettingsGenerator generator = new SettingsGenerator();
+		try{
+			generator.generateSerializedObj(fileName, myVarMap, myInstructionMap);
+		}catch(Exception e){
+			view.showError(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Loads a selected file into memory - updates instruction map and variable map.
+	 * @param fileName - name of file to be loaded
+	 * @param view - SLOGOView to update the UI with vars/instructions loaded from file
+	 */
+	public void loadSettingsFile(String fileName, SLOGOView view){
+		try{
+			SettingsLoader loader = new SettingsLoader(fileName);
+			loader.loadInstructionsToMap(myInstructionMap, view);
+			loader.loadVariablesToMap(myVarMap, view);
+		}catch(Exception e){
+			view.showError(e.getMessage());
+		}
+
+	}
+	
 
 	@Override
 	public AbstractMap<String, Instruction> getInstrMap(){
@@ -78,7 +124,7 @@ public class TurtleController implements SLOGOController {
 		}
 		view.updateScreen();
 	}
-	
+
 	private void createNewModel(){
 		SLOGOModel newTurtle = new Turtle(view.getMaxX(), view.getMaxY());
 		models.add(newTurtle);
@@ -98,26 +144,37 @@ public class TurtleController implements SLOGOController {
 	}
 
 	@Override
+	public void toggleActive(Integer newActive) {
+		if (newActive >= models.size())
+			addModel(newActive);
+		if (activeModels.contains(newActive))
+			activeModels.remove(newActive);
+		else
+			activeModels.add(newActive);
+	}
+
+	@Override
 	public double modelID() {
 		return activeModelID;
 	}
 
 	@Override
 	public double ask(List<Integer> tempActives, List<Instruction> instructions) {
-		// TODO it would be great to pass a lambda instead of a List of instructions
-		Instruction last = instructions.get(instructions.size() - 1);
-		instructions.remove(instructions.size() - 1);
-		tempActives.forEach(t -> {
-			activeModelID = t;
-			instructions.forEach(i -> i.evaluate(view, models.get(activeModelID)));
-		});
-		activeModelID = tempActives.get(tempActives.size() - 1);
-		return last.evaluate(view, models.get(activeModelID));
+		double toReturn = 0;
+		for (Integer a : tempActives){
+			activeModelID = a;
+			if ( activeModelID >= models.size() )
+				addModel(activeModelID);
+			for (Instruction i : instructions)
+				toReturn = i.evaluate(view, models.get(activeModelID));
+		}
+		// at the end, set activeModelID to next true active model
+		activeModelID = activeModels.get(0);
+		return toReturn;
 	}
 
 	@Override
 	public List<SLOGOModel> getModels() {
-		// TODO it would be great to get rid of this method and replace with functional programming so we don't give away pointer to models
 		return models;
 	}
 }

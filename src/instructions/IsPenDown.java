@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class IsPenDown extends Instruction {
+public class IsPenDown extends TurtleCommand{
 
 	@Override
 	public int getNumRequiredParameters() {

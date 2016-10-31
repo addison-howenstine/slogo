@@ -2,7 +2,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class For extends Instruction{
+public class For extends ControlStructureCommand{
 	/**
 	 * 0th param: variable / variable name
 	 * 1st param: start
