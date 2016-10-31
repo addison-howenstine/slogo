@@ -1,0 +1,22 @@
+set :c 0
+
+to rightTriangle [ :a :b ] [
+ 
+set :alpha 90
+set :x xcor
+set :y ycor
+set :head heading
+
+setheading 0
+fd :a back :a
+left :alpha
+fd :b
+towards :x + :a :y
+set :c [ pow [ + [ pow :a 2 ] [ pow :b 2 ] ] [ / 1 2 ] ]
+fd :c
+setxy :x :y
+setheading :head ]
+
+set :a random 100
+set :b random 300
+rightTriangle

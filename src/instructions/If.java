@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class If extends Instruction {
+public class If extends ControlStructureCommand {
 
 	@Override
 	public int getNumRequiredParameters() {
@@ -18,7 +18,7 @@ public class If extends Instruction {
 			else return 0;
 		}
 		else
-			return -1;
+			throw new RuntimeException("Cannot evaluate instruction: if");
 	}
 
 }

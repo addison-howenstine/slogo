@@ -1,15 +1,17 @@
 package instructions;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public abstract class Instruction {
+public abstract class Instruction implements Serializable{
 
 	protected List<Instruction> parameters;
-
+	private static final long serialVersionUID = 7526471155622776147L;
+	
 	public Instruction(){
 		parameters = new ArrayList<Instruction>();
 	}

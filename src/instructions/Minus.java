@@ -3,7 +3,7 @@ package instructions;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Minus extends Instruction {
+public class Minus extends MathOperation {
 
 	@Override
 	public int getNumRequiredParameters() {

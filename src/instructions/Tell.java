@@ -7,7 +7,7 @@ import slogo_controller.TurtleController;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
-public class Tell extends Instruction {
+public class Tell extends MultipleTurtlesCommand {
 
 	@Override
 	public int getNumRequiredParameters() {

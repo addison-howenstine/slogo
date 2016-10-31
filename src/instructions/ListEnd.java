@@ -7,7 +7,6 @@ public class ListEnd extends Instruction {
 
 	@Override
 	public int getNumRequiredParameters() {
-		// List can have an unlimited number of parameters but shouldn't look for them in parser
 		return 0;
 	}
 
