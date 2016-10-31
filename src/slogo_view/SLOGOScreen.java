@@ -99,7 +99,9 @@ public class SLOGOScreen {
 	private Button myRunButton;
 	private Button myMultilineButton;
 	private Button myPenButton;
+	
 	private ComboBox<String> myStrokeTypesSelector;
+	private TextField myStrokeWidthField;
 	
 	protected SLOGOScreen(Playground playground, Stage stage, ResourceBundle resources, Group root, String language){
 		myPlayground = playground;
@@ -273,6 +275,7 @@ public class SLOGOScreen {
 				options.initOwner(myStage);
 				
 				VBox root = new VBox();
+				
 				myStrokeTypesSelector = new ComboBox<String>(FXCollections.observableList(strokeTypes));
 				myStrokeTypesSelector.setValue(myResources.getString("Solid"));
 				myStrokeTypesSelector.valueProperty().addListener(new ChangeListener<String>() {
@@ -294,7 +297,26 @@ public class SLOGOScreen {
 					}
 					
 				});
+				
+				myStrokeWidthField = new TextField("Width");
+				myStrokeWidthField.textProperty().addListener(new ChangeListener<String>() {
+
+					@Override
+					public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+						try {
+							int width = Integer.parseInt(newValue);
+							myPenOptions.setWidth(width);
+						} catch (NumberFormatException e) {
+							myPenOptions.setWidth(2);
+						}
+					}
+					
+				});
+				
+				
 				root.getChildren().add(myStrokeTypesSelector);
+				root.getChildren().add(myStrokeWidthField);
+				
 				Scene scene = new Scene(root, 200, 200);
 				options.setScene(scene);
 				options.show();

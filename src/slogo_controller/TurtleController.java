@@ -2,7 +2,8 @@ package slogo_controller;
 
 import instructions.Instruction;
 import instructions.TurtleCommand;
-
+import instructions.Error;
+import slogo_library.*;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +69,37 @@ public class TurtleController implements SLOGOController {
 			}
 		}
 	}
+	
+	/**
+	 * Method which generates a serialized file at lib/fileName. Used to
+	 * store current state of the SLOGO playground.
+	 * @param fileName - name of the file to be generated. Will be in format fileName.ser
+	 */
+	public void generateSettingsFile(String fileName){
+		SettingsGenerator generator = new SettingsGenerator();
+		try{
+			generator.generateSerializedObj(fileName, myVarMap, myInstructionMap);
+		}catch(Exception e){
+			view.showError(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Loads a selected file into memory - updates instruction map and variable map.
+	 * @param fileName - name of file to be loaded
+	 * @param view - SLOGOView to update the UI with vars/instructions loaded from file
+	 */
+	public void loadSettingsFile(String fileName, SLOGOView view){
+		try{
+			SettingsLoader loader = new SettingsLoader(fileName);
+			loader.loadInstructionsToMap(myInstructionMap, view);
+			loader.loadVariablesToMap(myVarMap, view);
+		}catch(Exception e){
+			view.showError(e.getMessage());
+		}
+
+	}
+	
 
 	@Override
 	public AbstractMap<String, Instruction> getInstrMap(){
@@ -139,13 +171,10 @@ public class TurtleController implements SLOGOController {
 		// at the end, set activeModelID to next true active model
 		activeModelID = activeModels.get(0);
 		return toReturn;
-		
-		// TODO it would be great to pass a lambda instead of a List of instructions
 	}
 
 	@Override
 	public List<SLOGOModel> getModels() {
-		// TODO it would be great to get rid of this method and replace with functional programming so we don't give away pointer to models
 		return models;
 	}
 }
