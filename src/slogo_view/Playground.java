@@ -78,6 +78,7 @@ public class Playground implements SLOGOView, Observer{
 	private ArrayList<Animation> myAnimations = new ArrayList<Animation>();
 	private int counter = 0;
 	private ArrayList<Double> myHeadings = new ArrayList<Double>();
+	private boolean clearScreen = false;
 
 
 	public Playground(Stage stage, String language) {
@@ -120,11 +121,7 @@ public class Playground implements SLOGOView, Observer{
 
 	@Override
 	public void clearTrails() {
-		for (Line line: myTrails){
-			myRoot.getChildren().remove(line);
-		}
-		myTrails.clear();
-		myCanvas.getGraphicsContext2D().clearRect(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT);
+		myAnimations.add(null);
 	}
 
 	@Override
@@ -220,7 +217,7 @@ public class Playground implements SLOGOView, Observer{
 				path.getElements().add(new MoveTo(myX.get(i) + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY.get(i)));
 				path.getElements().add(new LineTo(myModel.xCor() + TURTLE_X_OFFSET, 
 						TURTLE_Y_OFFSET - myModel.yCor()));
-				PathTransition pt = new PathTransition(Duration.millis(10000), path, myTurtle);
+				PathTransition pt = new PathTransition(Duration.millis(1000), path, myTurtle);
 				int j = i;
 				if (myModel.isPenDown() == 1){
 					pt.currentTimeProperty().addListener(new ChangeListener<Duration>() {
@@ -275,19 +272,29 @@ public class Playground implements SLOGOView, Observer{
 	}
 	
 	private void runAnimation(Animation animation, int index){
-		animation.play();
-		animation.setOnFinished(new EventHandler<ActionEvent>(){
-			public void handle(ActionEvent event){
-				if (index < myAnimations.size()){
-					runAnimation(myAnimations.get(index), index + 1);
-					counter++;
+		if (animation == null){
+			myCanvas.getGraphicsContext2D().clearRect(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT);
+			animationsChecker(index);
+		}
+		else {
+			animation.play();
+			animation.setOnFinished(new EventHandler<ActionEvent>(){
+				public void handle(ActionEvent event){
+					animationsChecker(index);
 				}
-				else {
-					myAnimations.clear();
-					counter = 0;
-				}
-			}
-		});
+			});
+		}
+	}
+	
+	private void animationsChecker(int index) {
+		if (index < myAnimations.size()){
+			runAnimation(myAnimations.get(index), index + 1);
+			counter++;
+		}
+		else {
+			myAnimations.clear();
+			counter = 0;
+		}
 	}
 	
 	protected void runCommandFromTextInput(TextInputControl tic) {
