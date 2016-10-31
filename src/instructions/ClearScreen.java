@@ -13,8 +13,12 @@ public class ClearScreen extends Instruction {
 	@Override
 	public double evaluate(SLOGOView view, SLOGOModel model) {
 		if (canEvaluate()){
-			model.home();
 			view.clearTrails();
+			double isPenDown = model.isPenDown();
+			model.penUp();
+			model.home();
+			if (isPenDown == 1)
+				model.penDown();
 			return model.clearScreen();
 		}
 		else
