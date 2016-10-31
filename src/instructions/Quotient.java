@@ -16,7 +16,7 @@ public class Quotient extends MathOperation implements UnlimitedParametersInstru
 			return parameters.get(0).evaluate(view, model) / 
 					parameters.get(1).evaluate(view, model);
 		else
-			return -1;
+			throw new RuntimeException("Cannot evaluate quotient");
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class If extends ControlStructureCommand {
 			else return 0;
 		}
 		else
-			return -1;
+			throw new RuntimeException("Cannot evaluate instruction: if");
 	}
 
 }
