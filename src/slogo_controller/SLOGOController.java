@@ -5,6 +5,17 @@ import java.util.List;
 
 import slogo_model.SLOGOModel;
 
+
+
+/**
+ * Controller stands between the View and Model such that
+ * Controller can accept and interpret commands from the View
+ * and control a Model or many Models based on those interpreted
+ * instructions.
+ * 
+ * @author Addison
+ *
+ */
 public interface SLOGOController {
 	
 	/**
@@ -16,15 +27,13 @@ public interface SLOGOController {
 	public void run(String command);
 	
 	/**
-	 * 
-	 * @return
+	 * @return map of user defined instructions to an Instruction
 	 */
 	public AbstractMap<String, Instruction> getInstrMap();
 	
-	
 	/**
 	 * 
-	 * @return
+	 * @return map of user defined variables to their double value
 	 */
 	public AbstractMap<String, Double> getVarMap();
 	
@@ -35,7 +44,7 @@ public interface SLOGOController {
 			
 	/**
 	 * @param newActives - List of model IDs to set active
-	 * @return
+	 * @return last value in turtles list
 	 */
 	public double tell(List<Integer> newActives);
 	
@@ -52,7 +61,7 @@ public interface SLOGOController {
 	 * 
 	 * @param tempActives
 	 * @param instructions
-	 * @return
+	 * @return result of last command run
 	 */
 	public double ask(List<Integer> tempActives, List<Instruction> instructions);
 		

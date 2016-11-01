@@ -1,7 +1,11 @@
 package slogo_model;
 import java.util.*;
-import instructions.*;
 
+/**
+ * Concrete implementation of SLOGOModel
+ * 
+ * @author Addison
+ */
 public class Turtle extends Observable implements SLOGOModel{
 
 	private double xCor;

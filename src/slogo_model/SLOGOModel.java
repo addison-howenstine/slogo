@@ -9,18 +9,17 @@ import instructions.*;
  * keeps no record of these other objects.
  * 
  * @author Addison
- *
  */
 
 public interface SLOGOModel {
 	
 	/**
-	 * @return - the turtle's X coodrinate from the center of the screen
+	 * @return - the turtle's X coordinate from the center of the screen
 	 */
 	public double xCor();
 	
 	/**
-	 * @return - the turtle's Y coodrinate from the center of the screen
+	 * @return - the turtle's Y coordinate from the center of the screen
 	 */
 	public double yCor();
 	

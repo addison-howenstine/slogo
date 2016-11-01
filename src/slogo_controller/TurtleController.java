@@ -15,6 +15,14 @@ import slogo_model.Turtle;
 import slogo_view.Playground;
 import slogo_view.SLOGOView;
 
+/**
+ * Concrete instance of SLOGOController
+ * Starts with one Turtle at center of screen, runs
+ * commands passed from View as a string by using an
+ * instance of SLOGOParser to parse the string
+ * 
+ * @author Addison
+ */
 public class TurtleController implements SLOGOController {
 
 	private SLOGOView view;
@@ -99,7 +107,6 @@ public class TurtleController implements SLOGOController {
 		}
 
 	}
-	
 
 	@Override
 	public AbstractMap<String, Instruction> getInstrMap(){
@@ -111,6 +118,7 @@ public class TurtleController implements SLOGOController {
 		return myVarMap;
 	}
 
+	@Override
 	public void changeLanguage(){
 		parser.clearPatterns();
 		parser.addPatterns(view.getResourceBundle());
@@ -140,7 +148,7 @@ public class TurtleController implements SLOGOController {
 				addModel(activeModelID);
 			activeModels.add(activeModelID);
 		}
-		return activeModelID;
+		return models.indexOf(activeModels.get(activeModels.size()-1));
 	}
 
 	@Override
