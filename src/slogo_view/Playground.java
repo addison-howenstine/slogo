@@ -78,7 +78,8 @@ public class Playground implements SLOGOView, Observer{
 	private ArrayList<Animation> myAnimations = new ArrayList<Animation>();
 	private int counter = 0;
 	private ArrayList<Double> myHeadings = new ArrayList<Double>();
-	private boolean clearScreen = false;
+	private int myPenColor = 1;
+	private int myImage = 1;
 
 
 	public Playground(Stage stage, String language) {
@@ -163,23 +164,31 @@ public class Playground implements SLOGOView, Observer{
 	@Override
 	public void setPenColor(int index){
 		setPenColor(myScreen.getColors().get(index - 1));
-		myPenColorSelector.setValue(myScreen.getColors().get(index - 1));
+		myScreen.getPenColorSelector().setValue(myScreen.getColors().get(index - 1));
+		myPenColor = index;
 	}
 	
 	protected void setPenColor(String color){
 		myScreen.getPenOptions().setColor(myScreen.getColorsMap().get(color));
 	}
+	
+	@Override
+	public void setPenWidth(int index){
+		myScreen.getPenOptions().setWidth(index);
+		myScreen.getPenWidthSelector().setValue(index);
+	}
 
 	@Override
 	public void setBackgroundColor(int index){
-		myTurtleScreen.setFill(myScreen.getColorsMap().get(myScreen.getColors().get(index)));
-		myBackgroundSelector.setValue(myScreen.getColors().get(index));
+		myScreen.getTurtleArea().setFill(myScreen.getColorsMap().get(myScreen.getColors().get(index - 1)));
+		myScreen.getBackgroundSelector().setValue(myScreen.getColors().get(index - 1));
 	}
 	
 	@Override
 	public void setImage(int index){
-		changeTurtleImages(myScreen.getImages().get(index));
-		myScreen.getImageSelector().setValue(myScreen.getImages().get(index));
+		changeTurtleImages(myScreen.getImages().get(index - 1));
+		myScreen.getImageSelector().setValue(myScreen.getImages().get(index - 1));
+		myImage = index;
 	}
 
 	@Override
@@ -233,8 +242,6 @@ public class Playground implements SLOGOView, Observer{
 							if (count > 2){
 								gc.setStroke(myScreen.getPenOptions().getColor());
 								gc.setLineWidth(myScreen.getPenOptions().getWidth());
-								gc.setLineDashes(myScreen.getPenOptions().getDashLength(), 
-										myScreen.getPenOptions().getDashSpace());
 								gc.strokeLine(oldX, oldY, newX, newY);
 							}
 							oldX = newX;
@@ -277,6 +284,7 @@ public class Playground implements SLOGOView, Observer{
 			animationsChecker(index);
 		}
 		else {
+			animation.setRate(myScreen.getSpeedSlider().getValue());
 			animation.play();
 			animation.setOnFinished(new EventHandler<ActionEvent>(){
 				public void handle(ActionEvent event){
@@ -333,5 +341,25 @@ public class Playground implements SLOGOView, Observer{
 	protected void changeLanguage(String language){
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		myController.changeLanguage();
+	}
+	
+	protected void handleMouseInput(double x, double y){
+		int i = 0;
+		for (ImageView turtle: visualTurtles){
+			if (turtle.getBoundsInParent().contains(x, y)){
+				myController.toggleActive(i);
+			}
+			i++;
+		}
+	}
+	
+	@Override
+	public int getPenColor(){
+		return myPenColor;
+	}
+	
+	@Override
+	public int getImage(){
+		return myImage;
 	}
 }

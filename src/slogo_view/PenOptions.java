@@ -6,14 +6,10 @@ public class PenOptions {
 	
 	private Paint color;
 	private int width;
-	private double dashLength;
-	private double dashSpace;
 	
-	public PenOptions(Paint color, int width, double dashLength, double dashSpace) {
+	public PenOptions(Paint color, int width) {
 		this.color = color;
 		this.width = width;
-		this.dashLength = dashLength;
-		this.dashSpace = dashSpace;
 	}
 	
 	public Paint getColor() {
@@ -30,21 +26,5 @@ public class PenOptions {
 
 	public void setWidth(int width) {
 		this.width = width;
-	}
-
-	public double getDashLength() {
-		return dashLength;
-	}
-
-	public void setDashLength(double dashLength) {
-		this.dashLength = dashLength;
-	}
-
-	public double getDashSpace() {
-		return dashSpace;
-	}
-
-	public void setDashSpace(double dashSpace) {
-		this.dashSpace = dashSpace;
 	}
 }
