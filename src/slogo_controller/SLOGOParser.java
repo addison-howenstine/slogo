@@ -2,7 +2,6 @@ package slogo_controller;
 
 import instructions.*;
 
-import instructions.Error;
 import slogo_view.SLOGOView;
 
 import java.util.Enumeration;
@@ -16,6 +15,12 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 
+/**
+ * Parses text of instructions into actual Instruction intances
+ * Derived from parsing code by @author Robert Duvall
+ * 
+ * @author Addison
+ */
 public class SLOGOParser {
 	// "types" and the regular expression patterns that recognize those types
 	// note, it is a list because order matters (some patterns may be more generic)
@@ -30,15 +35,8 @@ public class SLOGOParser {
 	}
 
 	/**
-	 * TODO: Change this javadoc description 
-	 *
-	 * Reads command text in line by line, if line is not a comment, 
-	 * the line is split into words and turned into Instruction objects. 
-	 * Unrelated Instructions are returned as a List to be evaluated individually in Controller
-	 * If an Instruction is dependent on the return value of another necessary Instruction,
-	 * the necessary Instruction on which the top level root Instruction is dependent will be linked
-	 * as a parameter child of the root Instruction. This necessary Instruction will
-	 * be evaluated recursively by the Controller when evaluating the root Instruction
+	 * Reads in a line or multiple lines of instructions and creates a
+	 * List of Instructions for Controller to evaluate
 	 * 
 	 * @param command - input text of commands to be parsed into instructions
 	 * @return list of Instructions for Controller to execute
@@ -50,8 +48,7 @@ public class SLOGOParser {
 		String[] commandLines = command.split("\\n");
 		StringBuilder sb = new StringBuilder();
 		for(String line : commandLines){
-			// TODO fix this line, it's not actually catching #'s, maybe char is different somehow?
-			if(!getSymbol(line).equals("Comment")){
+			if(! ( getSymbol(line).equals("Comment") || getSymbol(line + " ").equals("Comment"))){
 				sb.append(line);
 			}
 			sb.append(" ");
@@ -119,7 +116,21 @@ public class SLOGOParser {
 				parameters.add(new UserInstruction(instructionName));
 				continue;
 			}
-			parameters.add(createNextInstructionFromText(instructionScanner, instrMap));
+			Instruction nextParameter = createNextInstructionFromText(instructionScanner, instrMap);
+			if (instruction instanceof MakeUserInstruction && i == 1){
+				List<Variable> variableParameters = new ArrayList<Variable>();
+				nextParameter.parameters.forEach(p -> {
+					if (! (p instanceof Variable) ){
+						//TODO throw an error
+					}
+					variableParameters.add((Variable) p);
+				});
+				// give UserInstruction a list of the parameters it will need to look for
+				UserInstruction newUserInstruction = ((UserInstruction) parameters.get(0));
+				newUserInstruction.setVariableParameters(variableParameters);
+				view.getController().getInstrMap().put(newUserInstruction.getName(), newUserInstruction);
+			}
+			parameters.add(nextParameter);
 		}
 		instruction.setParameters(parameters);
 
@@ -199,7 +210,6 @@ public class SLOGOParser {
 			String key = iter.nextElement();
 			String regex = resources.getString(key);
 			mySymbols.add(new SimpleEntry<>(key,
-					// THIS IS THE IMPORTANT LINE
 					Pattern.compile(regex, Pattern.CASE_INSENSITIVE)));
 		}
 	}
