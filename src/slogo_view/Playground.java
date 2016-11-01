@@ -56,15 +56,9 @@ public class Playground implements SLOGOView, Observer{
 
 	private ResourceBundle myResources;
 	private Group myRoot;
-	private UIBuilder myBuilder;
 	private SLOGOController myController;
-	private Rectangle myTurtleScreen;
 	private List<ImageView> visualTurtles;
 	private ObservableList<String> myUserVariables;
-	private ArrayList<Line> myTrails;
-	private ComboBox<String> myPenColorSelector;
-	private ComboBox<String> myBackgroundSelector;
-	private ComboBox<String> myImageSelector;
 	private ArrayList<Double> myX = new ArrayList<Double>();
 	private ArrayList<Double> myY = new ArrayList<Double>();
 	private Stage myStage;
@@ -92,10 +86,8 @@ public class Playground implements SLOGOView, Observer{
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = FXCollections.observableList(new ArrayList<String>());
-		myTrails = new ArrayList<Line>();
 		visualTurtles = new ArrayList<ImageView>();
 		myRoot = new Group();
-		myBuilder = new UIBuilder(myRoot);
 		myScreen = new SLOGOScreen(this, myStage, myResources, myRoot, language);
 		myCanvas = new Canvas(WIDTH, HEIGHT);
 		myRoot.getChildren().add(myCanvas);
@@ -113,11 +105,6 @@ public class Playground implements SLOGOView, Observer{
 		alert.setTitle(myResources.getString("ErrorTitle"));
 		alert.setContentText(errorMessage);
 		alert.showAndWait();
-	}
-
-	@Override
-	public ResourceBundle getResourceBundle() {
-		return myResources;
 	}
 
 	@Override
@@ -156,59 +143,9 @@ public class Playground implements SLOGOView, Observer{
 		myScreen.removeVariableFromDisplay(myScreen.getVariableDisplay());
 	}
 
-	@Override
-	public SLOGOController getController(){
-		return myController;
-	}
-
-	@Override
-	public double getMaxX(){
-		return TURTLE_AREA_WIDTH/2;
-	}
-
-	@Override
-	public double getMaxY(){
-		return TURTLE_AREA_HEIGHT/2;
-	}
-
-	@Override
-	public void setPenColor(int index){
-		setPenColor(myScreen.getColors().get(index - 1));
-		myScreen.getPenColorSelector().setValue(myScreen.getColors().get(index - 1));
-		myPenColor = index;
-	}
-
-	protected void setPenColor(String color){
-		myScreen.getPenOptions().setColor(myScreen.getColorsMap().get(color));
-	}
-	
-	@Override
-	public void setPenWidth(int index){
-		myScreen.getPenOptions().setWidth(index);
-		myScreen.getPenWidthSelector().setValue(index);
-	}
-
-	@Override
-	public void setBackgroundColor(int index){
-		myScreen.getTurtleArea().setFill(myScreen.getColorsMap().get(myScreen.getColors().get(index - 1)));
-		myScreen.getBackgroundSelector().setValue(myScreen.getColors().get(index - 1));
-	}
-
-	@Override
-	public void setImage(int index){
-		changeTurtleImages(myScreen.getImages().get(index - 1));
-		myScreen.getImageSelector().setValue(myScreen.getImages().get(index - 1));
-		myImage = index;
-	}
-
-	@Override
-	public void setController(SLOGOController controller){
-		myController = controller;
-	}
-
 	private void setUpTurtle() {
-		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myScreen.getImagesMap()
-				.get(myScreen.getImageSelector().getValue())));
+		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myScreen.getComboBoxesData().getImagesMap()
+				.get(myScreen.getComboBoxesData().getImageSelector().getValue())));
 		ImageView visT = new ImageView(image);
 		visT.setFitHeight(TURTLE_HEIGHT);
 		visT.setPreserveRatio(true);
@@ -250,8 +187,8 @@ public class Playground implements SLOGOView, Observer{
 							if (t.equals(Duration.ZERO))
 								return;
 							if (count > 2){
-								gc.setStroke(myScreen.getPenOptions().getColor());
-								gc.setLineWidth(myScreen.getPenOptions().getWidth());
+								gc.setStroke(myScreen.getComboBoxesData().getPenOptions().getColor());
+								gc.setLineWidth(myScreen.getComboBoxesData().getPenOptions().getWidth());
 								gc.strokeLine(oldX, oldY, newX, newY);
 							}
 							oldX = newX;
@@ -327,25 +264,9 @@ public class Playground implements SLOGOView, Observer{
 		tic.setText("");
 	}
 
-	protected ObservableList<String> getUserCommands(){
-		return myUserCommands;
-	}
-
-	protected ObservableList<String> getUserVariables(){
-		return myUserVariables;
-	}
-
-	protected ArrayList<String> getOldVariables(){
-		return myOldVariables;
-	}
-
-	protected ObservableList<String> getHistory(){
-		return myCommandHistory;
-	}
-
 	protected void changeTurtleImages(String image){
 		visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader()
-				.getResourceAsStream(myScreen.getImagesMap().get(image)))));
+				.getResourceAsStream(myScreen.getComboBoxesData().getImagesMap().get(image)))));
 	}
 
 	protected void changeLanguage(String language){
@@ -371,5 +292,76 @@ public class Playground implements SLOGOView, Observer{
 	@Override
 	public int getImage(){
 		return myImage;
+	}
+	
+	@Override
+	public SLOGOController getController(){
+		return myController;
+	}
+
+	@Override
+	public double getMaxX(){
+		return TURTLE_AREA_WIDTH/2;
+	}
+
+	@Override
+	public double getMaxY(){
+		return TURTLE_AREA_HEIGHT/2;
+	}
+	
+	@Override
+	public ResourceBundle getResourceBundle() {
+		return myResources;
+	}
+	
+	@Override
+	public void setPenColor(int index){
+		setPenColor(myScreen.getComboBoxesData().getColors().get(index - 1));
+		myScreen.getPenColorSelector().setValue(myScreen.getComboBoxesData().getColors().get(index - 1));
+		myPenColor = index;
+	}
+
+	protected void setPenColor(String color){
+		myScreen.getComboBoxesData().getPenOptions().setColor(myScreen.getComboBoxesData().getColorsMap().get(color));
+	}
+	
+	@Override
+	public void setPenWidth(int index){
+		myScreen.getComboBoxesData().getPenOptions().setWidth(index);
+		myScreen.getPenWidthSelector().setValue(index);
+	}
+
+	@Override
+	public void setBackgroundColor(int index){
+		myScreen.getTurtleArea().setFill(myScreen.getComboBoxesData().getColorsMap().get(myScreen.getComboBoxesData().getColors().get(index - 1)));
+		myScreen.getBackgroundSelector().setValue(myScreen.getComboBoxesData().getColors().get(index - 1));
+	}
+
+	@Override
+	public void setImage(int index){
+		changeTurtleImages(myScreen.getComboBoxesData().getImages().get(index - 1));
+		myScreen.getComboBoxesData().getImageSelector().setValue(myScreen.getComboBoxesData().getImages().get(index - 1));
+		myImage = index;
+	}
+
+	@Override
+	public void setController(SLOGOController controller){
+		myController = controller;
+	}
+	
+	protected ObservableList<String> getUserCommands(){
+		return myUserCommands;
+	}
+
+	protected ObservableList<String> getUserVariables(){
+		return myUserVariables;
+	}
+
+	protected ArrayList<String> getOldVariables(){
+		return myOldVariables;
+	}
+
+	protected ObservableList<String> getHistory(){
+		return myCommandHistory;
 	}
 }
