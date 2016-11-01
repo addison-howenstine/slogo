@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -35,6 +36,9 @@ import slogo_controller.SLOGOController;
 import slogo_controller.TurtleController;
 
 public class SLOGOScreen {
+	private static final int SLIDER_DEFAULT = 1;
+	private static final int SLIDER_MAX = 2;
+	private static final double SLIDER_MIN = 0.1;
 	private static final String TURTLE_AREA_OUTLINE = "Black";
 	private static final int TITLE_SIZE = 50;
 	private static final int MIN_BOUNDARY = 0;
@@ -44,18 +48,19 @@ public class SLOGOScreen {
 	private static final int DISPLAY_AREA_X = TURTLE_AREA_X + TURTLE_AREA_WIDTH + 10;
 	private static final int TEXT_FIELD_X = 5;
 	private static final int RUN_X = TEXT_FIELD_X + TURTLE_AREA_WIDTH + 10;
-	private static final int BUTTON_Y = 12;
-	private static final int COMBO_BOX_Y = 25;
+	private static final int ROW_2_Y = 25;
 	private static final int FONT_SIZE = 20;
+	private static final int SLIDER_FONT_SIZE = FONT_SIZE - 10;
 	private static final int BACKGROUND_X = 200;
 	private static final int CONTROL_X_OFFSET = 150;
-	private static final int PEN_X = BACKGROUND_X + CONTROL_X_OFFSET;
-	private static final int IMAGE_X = PEN_X + CONTROL_X_OFFSET;
+	private static final int SLIDER_X = RUN_X + CONTROL_X_OFFSET - 40;
+	private static final int PEN_COLOR_X = BACKGROUND_X + CONTROL_X_OFFSET;
+	private static final int PEN_WIDTH_X = PEN_COLOR_X + CONTROL_X_OFFSET;
+	private static final int IMAGE_X = PEN_WIDTH_X + CONTROL_X_OFFSET;
 	private static final int LANGUAGES_X = IMAGE_X + CONTROL_X_OFFSET;
-	private static final int MULTILINE_X = LANGUAGES_X + CONTROL_X_OFFSET;
-	private static final int HELP_X = MULTILINE_X + CONTROL_X_OFFSET - 40;
-	private static final int NEW_WINDOW_X = HELP_X + CONTROL_X_OFFSET - 40;
-	private static final int PEN_OPTIONS_X = NEW_WINDOW_X + CONTROL_X_OFFSET - 40;
+	private static final int BUTTON_1_X = LANGUAGES_X + CONTROL_X_OFFSET;
+	private static final int BUTTON_2_X = BUTTON_1_X + CONTROL_X_OFFSET - 40;
+	private static final int BUTTON_3_X = BUTTON_2_X + CONTROL_X_OFFSET - 40;
 	private static final String DEFAULT_IMAGE = "Turtle";
 	private static final String DEFAULT_BACKGROUND = "White";
 	private static final String DEFAULT_PEN = "Black";
@@ -66,7 +71,7 @@ public class SLOGOScreen {
 	private static final int TEXT_FIELD_Y = HEIGHT - 30;
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
 	private static final int DISPLAY_HEIGHT = TURTLE_AREA_HEIGHT/3;
-	private static final int WIDTH = 1300;
+	private static final int WIDTH = 1400;
 	private static final int DISPLAY_WIDTH = WIDTH - TURTLE_AREA_WIDTH - 50;
 	
 	private ResourceBundle myResources;
@@ -86,22 +91,23 @@ public class SLOGOScreen {
 	private ComboBox<String> myImageSelector;
 	private ComboBox<String> myPenColorSelector;
 	private ComboBox<String> myBackgroundSelector;
+	private ComboBox<Integer> myPenWidthSelector;
 	private Text myBackgroundText;
-	private Text myPenText;
+	private Text myPenColorText;
+	private Text myPenWidthText;
 	private Text myImageText;
 	private Text myLanguageText;
+	private Text mySpeedText;
 	private ArrayList<Button> myVariableButtons = new ArrayList<Button>();
 	private PenOptions myPenOptions;
-	private ObservableList<String> strokeTypes;
 	private TextField myCommandReader;
 	private Button myHelpButton;
 	private Button myNewWindowButton;
 	private Button myRunButton;
 	private Button myMultilineButton;
-	private Button myPenButton;
-	
-	private ComboBox<String> myStrokeTypesSelector;
-	private TextField myStrokeWidthField;
+	private Button myPenDownButton;
+	private Button myPenUpButton;
+	private Slider mySlider;
 	
 	protected SLOGOScreen(Playground playground, Stage stage, ResourceBundle resources, Group root, String language){
 		myPlayground = playground;
@@ -118,18 +124,20 @@ public class SLOGOScreen {
 		Scene scene = new Scene(myRoot, WIDTH, HEIGHT);
 		myBuilder = new UIBuilder(myRoot);
 		myBuilder.addText(TITLE, MIN_BOUNDARY, MIN_BOUNDARY, TITLE_SIZE);
-		myPenOptions = new PenOptions(Color.BLACK, 2, 1d, 0d);
+		myPenOptions = new PenOptions(Color.BLACK, 2);
 		setUpTurtleScreen();
 		setUpComboBoxes();
 		setUpHelpButton();
 		setUpTextInput();
+		setUpSpeedSlider();
 		setUpCommandHistoryDisplay();
 		setUpUserDefinedCommandsDisplay();
 		setUpVariableDisplay();
 		setUpMultilineButton();
 		setUpNewWindowButton();
-		setUpPenOptions();
-		setUpOptionsButton();
+		setUpPenDownButton();
+		setUpPenUpButton();
+		scene.setOnMouseClicked(e -> myPlayground.handleMouseInput(e.getX(), e.getY()));
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
 		myStage.show();
@@ -185,9 +193,15 @@ public class SLOGOScreen {
 			}
 		});
 	}
+	
+	private void setUpSpeedSlider() {
+		mySpeedText = myBuilder.addText(myResources.getString("Speed"), SLIDER_X, TEXT_FIELD_Y, SLIDER_FONT_SIZE);
+		mySlider = myBuilder.addSlider(SLIDER_X + mySpeedText.getBoundsInLocal().getWidth(), TEXT_FIELD_Y, 
+				SLIDER_MIN, SLIDER_MAX, SLIDER_DEFAULT);
+	}
 
 	private void setUpHelpButton() {
-		myHelpButton = myBuilder.addButton(myResources.getString("Help"), HELP_X, BUTTON_Y, 
+		myHelpButton = myBuilder.addButton(myResources.getString("Help"), BUTTON_1_X, MIN_BOUNDARY, 
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
 				final Stage dialog = new Stage();
@@ -213,7 +227,7 @@ public class SLOGOScreen {
 	}
 
 	private void setUpMultilineButton() {
-		myMultilineButton = myBuilder.addButton(myResources.getString("Multiline"), MULTILINE_X, BUTTON_Y, 
+		myMultilineButton = myBuilder.addButton(myResources.getString("Multiline"), BUTTON_1_X, ROW_2_Y, 
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				final Stage dialog = new Stage();
@@ -238,14 +252,12 @@ public class SLOGOScreen {
 				Scene dialogScene = new Scene(root, WIDTH/2, HEIGHT/2);
 				dialog.setScene(dialogScene);
 				dialog.show();
-
-
 			}
 		});
 	}
 	
 	private void setUpNewWindowButton(){
-		myNewWindowButton = myBuilder.addButton(myResources.getString("NewWindow"), NEW_WINDOW_X, BUTTON_Y, 
+		myNewWindowButton = myBuilder.addButton(myResources.getString("NewWindow"), BUTTON_2_X, MIN_BOUNDARY, 
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
 				Playground playground = new Playground(new Stage(), myLanguage);
@@ -256,91 +268,61 @@ public class SLOGOScreen {
 		});
 	}
 	
-	
-	private void setUpPenOptions() {		
-		strokeTypes = FXCollections.observableList(new ArrayList<String>());
-		strokeTypes.add(myResources.getString("Dashed"));
-		strokeTypes.add(myResources.getString("Dotted"));
-		strokeTypes.add(myResources.getString("Solid"));
+	private void setUpPenDownButton(){
+		myPenDownButton = myBuilder.addButton(myResources.getString("PenDownButton"), BUTTON_2_X, ROW_2_Y, 
+				new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event){
+				myPlayground.getController().run(myResources.getString("PenDown").split("\\|")[0]);
+			}
+		});
 	}
 	
-	private void setUpOptionsButton() {
-		myPenButton = myBuilder.addButton(myResources.getString("MorePenOptions"), PEN_OPTIONS_X, BUTTON_Y, 
-				new EventHandler<ActionEvent>(){
-
-			@Override
-			public void handle(ActionEvent event) {
-				final Stage options = new Stage();
-				options.initModality(Modality.APPLICATION_MODAL);
-				options.initOwner(myStage);
-				
-				VBox root = new VBox();
-				if (myStrokeTypesSelector == null){
-					myStrokeTypesSelector = new ComboBox<String>(FXCollections.observableList(strokeTypes));
-					myStrokeTypesSelector.setValue(myResources.getString("Solid"));
-					myStrokeTypesSelector.valueProperty().addListener(new ChangeListener<String>() {
-	
-						@Override
-						public void changed(ObservableValue<? extends String> observable, String oldValue,
-								String newValue) {
-							if (newValue.equals(myResources.getString("Solid"))) {
-								myPenOptions.setDashLength(1d);
-								myPenOptions.setDashSpace(0d);
-							} else if (newValue.equals(myResources.getString("Dashed"))) {
-								myPenOptions.setDashLength(5d);
-								myPenOptions.setDashSpace(5d);
-								
-							} else if (newValue.equals(myResources.getString("Dotted"))) {
-								myPenOptions.setDashLength(0.01d);
-								myPenOptions.setDashSpace(5d);
-							}
-						}
-						
-					});
-				}
-				root.getChildren().add(myStrokeTypesSelector);
-				root.getChildren().add(myStrokeWidthField);
-				
-				Scene scene = new Scene(root, 200, 200);
-				options.setScene(scene);
-				options.show();
-				
+	private void setUpPenUpButton(){
+		myPenUpButton = myBuilder.addButton(myResources.getString("PenUpButton"), BUTTON_3_X, MIN_BOUNDARY, 
+				new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event){
+				myPlayground.getController().run(myResources.getString("PenUp").split("\\|")[0]);
 			}
-			
 		});
 	}
 
 	private void setUpComboBoxes() {
 		myBackgroundText = myBuilder.addText(myResources.getString("Background"), BACKGROUND_X, MIN_BOUNDARY, 
 				FONT_SIZE);
-		myBackgroundSelector = myBuilder.addComboBox(BACKGROUND_X, COMBO_BOX_Y, myColors, 
+		myBackgroundSelector = myBuilder.addComboBox(BACKGROUND_X, ROW_2_Y, myColors, 
 				"8. " + myResources.getString(DEFAULT_BACKGROUND), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myTurtleScreen.setFill(myColorsMap.get(t1));
 			}
 		});
-		myPenText = myBuilder.addText(myResources.getString("Pen"), PEN_X, MIN_BOUNDARY, FONT_SIZE);
-		myPenColorSelector = myBuilder.addComboBox(PEN_X, COMBO_BOX_Y, myColors, 
+		myPenColorText = myBuilder.addText(myResources.getString("PenColor"), PEN_COLOR_X, MIN_BOUNDARY, FONT_SIZE);
+		myPenColorSelector = myBuilder.addComboBox(PEN_COLOR_X, ROW_2_Y, myColors, 
 				"1. " + myResources.getString(DEFAULT_PEN), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myPlayground.setPenColor(t1);
 			}
 		});
 		myImageText = myBuilder.addText(myResources.getString("Image"), IMAGE_X, MIN_BOUNDARY, FONT_SIZE);
-		myImageSelector = myBuilder.addComboBox(IMAGE_X, COMBO_BOX_Y, myImages, 
+		myImageSelector = myBuilder.addComboBox(IMAGE_X, ROW_2_Y, myImages, 
 				"1. " + myResources.getString(DEFAULT_IMAGE), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1) {
 				myPlayground.changeTurtleImages(t1);
 			}
 		});
 		myLanguageText = myBuilder.addText(myResources.getString("Languages"), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
-		myBuilder.addComboBox(LANGUAGES_X, COMBO_BOX_Y, myLanguages, myLanguage, new ChangeListener<String>() {
-
-			@Override
+		myBuilder.addComboBox(LANGUAGES_X, ROW_2_Y, myLanguages, myLanguage, new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String t, String t1) {
 				changeLanguage(t1);
 			}
-
+		});
+		myPenWidthText = myBuilder.addText(myResources.getString("PenWidth"), PEN_WIDTH_X, MIN_BOUNDARY, FONT_SIZE);
+		ObservableList<Integer> widths = FXCollections.observableList(new ArrayList<Integer>());
+		widths.addAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		myPenWidthSelector = myBuilder.addComboBox(PEN_WIDTH_X, ROW_2_Y, widths, 2, 
+				new ChangeListener<Integer>() {
+			public void changed(ObservableValue<? extends Integer> ov, Integer t, Integer t1){
+				myPenOptions.setWidth(t1);
+			}
 		});
 	}
 
@@ -480,15 +462,19 @@ public class SLOGOScreen {
 		myPlayground.changeLanguage(myLanguage);
 		myResources = myPlayground.getResourceBundle();
 		myBackgroundText.setText(myResources.getString("Background"));
-		myPenText.setText(myResources.getString("Pen"));
+		myPenColorText.setText(myResources.getString("PenColor"));
+		myPenWidthText.setText(myResources.getString("PenWidth"));
 		myImageText.setText(myResources.getString("Image"));
 		myLanguageText.setText(myResources.getString("Languages"));
+		mySpeedText.setText(myResources.getString("Speed"));
+		mySlider.setLayoutX(SLIDER_X + mySpeedText.getBoundsInLocal().getWidth());
 		myCommandReader.setText(myResources.getString("TextFieldText"));
 		myRunButton.setText(myResources.getString("Run"));
 		myHelpButton.setText(myResources.getString("Help"));
 		myNewWindowButton.setText(myResources.getString("NewWindow"));
 		myMultilineButton.setText(myResources.getString("Multiline"));
-		myPenButton.setText(myResources.getString("MorePenOptions"));
+		myPenDownButton.setText(myResources.getString("PenDownButton"));
+		myPenUpButton.setText(myResources.getString("PenUpButton"));
 		int backgroundIndex = myColors.indexOf(myBackgroundSelector.getValue());
 		int penIndex = myColors.indexOf(myPenColorSelector.getValue());
 		int imageIndex = myImages.indexOf(myImageSelector.getValue());
@@ -497,20 +483,32 @@ public class SLOGOScreen {
 		changeComboBoxLanguage(myBackgroundSelector, myColors, backgroundIndex);
 		changeComboBoxLanguage(myPenColorSelector, myColors, penIndex);
 		changeComboBoxLanguage(myImageSelector, myImages, imageIndex);
-		myImageSelector.getItems().remove(0);
-		if (myStrokeTypesSelector != null){
-			int penOptionsIndex = strokeTypes.indexOf(myStrokeTypesSelector.getValue());
-			setUpPenOptions();
-			changeComboBoxLanguage(myStrokeTypesSelector, strokeTypes, penOptionsIndex);
-		}
-		else {
-			setUpPenOptions();
-		}
+		myImageSelector.getItems().remove("5. Duke");
 	}
 	
 	private void changeComboBoxLanguage(ComboBox<String> selector, ObservableList<String> list, int index){
 		selector.getItems().addAll(list);
 		selector.setValue(list.get(index));
 		selector.getItems().retainAll(list);
+	}
+	
+	protected Rectangle getTurtleArea(){
+		return myTurtleScreen;
+	}
+	
+	protected ComboBox<String> getBackgroundSelector(){
+		return myBackgroundSelector;
+	}
+	
+	protected ComboBox<String> getPenColorSelector(){
+		return myPenColorSelector;
+	}
+
+	protected ComboBox<Integer> getPenWidthSelector(){
+		return myPenWidthSelector;
+	}
+	
+	protected Slider getSpeedSlider(){
+		return mySlider;
 	}
 }

@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -55,9 +56,9 @@ public class UIBuilder {
 		return button;
 	}
 
-	protected ComboBox<String> addComboBox(double x, double y, ObservableList<String> items, String defaultValue, 
-			ChangeListener<String> listener) {
-		ComboBox<String> comboBox = new ComboBox<String>(items);
+	protected ComboBox addComboBox(double x, double y, ObservableList items, Object defaultValue, 
+			ChangeListener listener) {
+		ComboBox comboBox = new ComboBox(items);
 		comboBox.relocate(x, y);
 		comboBox.setValue(defaultValue);
 		comboBox.valueProperty().addListener(listener);
@@ -70,15 +71,6 @@ public class UIBuilder {
 		rectangle.setFill(paint);
 		myRoot.getChildren().add(rectangle);
 		return rectangle;
-	}
-	
-	protected Line addLine(double startX, double startY, double endX, double endY, PenOptions options){
-		Line line = new Line(startX, startY, endX, endY);
-		line.setStroke(options.getColor());
-		line.setStrokeWidth(options.getWidth());
-		line.getStrokeDashArray().addAll(options.getDashLength(), options.getDashSpace());
-		myRoot.getChildren().add(line);
-		return line;
 	}
 	
 	protected TextArea addTextArea(double startX, double startY, double width, double height) {
@@ -118,6 +110,14 @@ public class UIBuilder {
 		myRoot.getChildren().add(pane);
 		
 		return box;
+	}
+	
+	public Slider addSlider(double x, double y, double min, double max, double value){
+		Slider slider = new Slider(min, max, value);
+		slider.relocate(x, y);
+		slider.setShowTickLabels(true);
+		myRoot.getChildren().add(slider);
+		return slider;
 	}
 
 }

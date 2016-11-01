@@ -49,4 +49,10 @@ public interface SLOGOView {
 	 */
 	public void updateScreen();
 
+	public void setPenWidth(int index);
+
+	public int getPenColor();
+
+	public int getImage();
+
 }
