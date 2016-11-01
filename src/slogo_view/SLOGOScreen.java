@@ -1,6 +1,8 @@
 package slogo_view;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -216,24 +218,12 @@ public class SLOGOScreen {
 		myHelpButton = myBuilder.addButton(myResources.getString("Help"), BUTTON_1_X, MIN_BOUNDARY, 
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
-				final Stage dialog = new Stage();
-				dialog.initModality(Modality.APPLICATION_MODAL);
-				dialog.initOwner(myStage);
-
-				VBox root = new VBox();
-
-				final WebView browser = new WebView();
-				final WebEngine webEngine = browser.getEngine();
-				ScrollPane dialogPane = new ScrollPane();
-				dialogPane.setContent(browser);
-
-				webEngine.loadContent("<h1>Enter help content here.</h1>");
-
-
-				root.getChildren().add(dialogPane);
-				Scene dialogScene = new Scene(root, WIDTH, HEIGHT);
-				dialog.setScene(dialogScene);
-				dialog.show();
+				File htmlFile = new File("src/help.html");
+				try {
+					Desktop.getDesktop().browse(htmlFile.toURI());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
