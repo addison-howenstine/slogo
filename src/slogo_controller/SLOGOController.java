@@ -4,6 +4,7 @@ import java.util.AbstractMap;
 import java.util.List;
 
 import slogo_model.SLOGOModel;
+import slogo_view.SLOGOView;
 
 public interface SLOGOController {
 	
@@ -66,4 +67,8 @@ public interface SLOGOController {
 	 * to update which language it uses to read instructions
 	 */
 	public void changeLanguage();
+
+	public void generateSettingsFile(String fileName);
+
+	public void loadSettingsFile(String fileName, SLOGOView view);
 }

@@ -133,11 +133,7 @@ public class Playground implements SLOGOView, Observer{
 	@Override
 	public void addUserVariable(String userVariable, double value) {
 		if (myVariableMap.containsKey(userVariable)){
-			Double oldValue = myVariableMap.get(userVariable);
-			StringBuilder sb = new StringBuilder(userVariable);
-			sb.append(" = ");
-			sb.append(oldValue);
-			myOldVariables.add(sb.toString());
+			variableRemover(userVariable);
 		}
 		myVariableMap.put(userVariable, value);
 		StringBuilder sb2 = new StringBuilder(userVariable);
@@ -146,9 +142,18 @@ public class Playground implements SLOGOView, Observer{
 		myUserVariables.add(sb2.toString());
 	}
 
+	private void variableRemover(String userVariable) {
+		Double oldValue = myVariableMap.get(userVariable);
+		StringBuilder sb = new StringBuilder(userVariable);
+		sb.append(" = ");
+		sb.append(oldValue);
+		myOldVariables.add(sb.toString());
+	}
+
 	@Override
 	public void removeUserVariable(String userVariable){
-		// TODO
+		variableRemover(userVariable);
+		myScreen.removeVariableFromDisplay(myScreen.getVariableDisplay());
 	}
 
 	@Override
