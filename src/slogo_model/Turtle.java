@@ -52,20 +52,34 @@ public class Turtle extends Observable implements SLOGOModel{
 
 			double yShortestDistance = distanceToWallY / (Math.cos(Math.toRadians(heading)));
 			double xShortestDistance = distanceToWallX / (Math.sin(Math.toRadians(heading)));
-
+			
+			
+			boolean prevVisibleState, prevPenState;
 			if (Math.abs(xShortestDistance) < Math.abs(yShortestDistance)){
 				double modifiedY = yCor() + xShortestDistance * Math.cos(Math.toRadians(heading));
 				setXY(boundedX, modifiedY);
+				
+				prevVisibleState = visible;
+				hideTurtle();
+				prevPenState = penDown;
 				penUp();
+				
 				setXY(-boundedX, modifiedY);
-				penDown();
+				maintainWrappingState(prevVisibleState, prevPenState);
+				
 				return move(pixels - xShortestDistance, backwards);
 			}else{
 				double modifiedX = xCor() + yShortestDistance * Math.sin(Math.toRadians(heading));
 				setXY(modifiedX, boundedY);
+				
+				prevVisibleState = visible;
+				hideTurtle();
+				prevPenState = penDown;
 				penUp();
+				
 				setXY(modifiedX, -boundedY);
-				penDown();
+				maintainWrappingState(prevVisibleState, prevPenState);
+				
 				return move(pixels - yShortestDistance, backwards);
 			}
 		}
@@ -109,6 +123,19 @@ public class Turtle extends Observable implements SLOGOModel{
 			}
 		}
 		return directions;
+	}
+	
+	private void maintainWrappingState(boolean prevVisibleState, boolean prevPenState){
+		if (prevVisibleState){
+			showTurtle();
+		}else{
+			hideTurtle();
+		}
+		if (prevPenState){
+			penDown();
+		}else{
+			penUp();
+		}
 	}
 
 	private double distance(double x0, double x1, double y0, double y1){
