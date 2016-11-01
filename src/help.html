@@ -131,7 +131,7 @@ instance, as well as additional options.</p>
 
 <div class="content">
 
-<h1>List of commands.</h1>
+<h1>List of basic commands.</h1>
 <h2>Commands</h2>
 
 <div class="command-container">
@@ -708,8 +708,151 @@ instance, as well as additional options.</p>
 </div>
 
 <div class="content">
+<h1>List of advanced commands.</h1>
+<h2>Display commands</h2>
+<div class="command-container" style="height:320px;">
+	<div class="command-inner-container">
+		<div class="entry">
+			<span class="comment">// Sets background color of screen to that represented by index.</span>
+			<br>
+			<span class="command">setbackground</span>
+			<span> &nbsp </span>
+			<span class="value">index</span>
+			<br>
+			<span class="command">setbg</span>
+			<span> &nbsp </span>
+			<span class="value">index</span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Sets size of the pen to be pixels thickness.</span>
+			<br>
+			<span class="command">setpensize</span>
+			<span> &nbsp </span>
+			<span class="value">pixels</span>
+			<br>
+			<span class="command">setps</span>
+			<span> &nbsp </span>
+			<span class="value">pixels</span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Sets color corresponding at given index to given r g b color values.</span>
+			<br>
+			<span class="command">setpalette</span>
+			<span> &nbsp </span>
+			<span class="value">index r g b</span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Returns turtle's current shape index.</span>
+			<br>
+			<span class="command">shape</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+			<span class="command">sh</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+	</div>
+	<div class="command-inner-container">
+		<div class="entry">
+			<span class="comment">// Sets color of the pen to that represented by index.</span>
+			<br>
+			<span class="command">setpencolor</span>
+			<span> &nbsp </span>
+			<span class="value">index</span>
+			<br>
+			<span class="command">setpc</span>
+			<span> &nbsp </span>
+			<span class="value">index</span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Sets shape of turtle to that represented by index.</span>
+			<br>
+			<span class="command">setshape</span>
+			<span> &nbsp </span>
+			<span class="value">index</span>
+			<br>
+			<span class="command">setsh</span>
+			<span> &nbsp </span>
+			<span class="value">index</span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Returns turtle's current color index.</span>
+			<br>
+			<span class="command">pencolor</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+			<span class="command">pc</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+	</div>
+</div>
+<h2>Multiple turtle commands</h2>
+<div class="command-container" style="height:400px;">
+	<div class="command-inner-container">
+		<div class="entry">
+			<span class="comment">// Returns current active turtle's ID number. ID values typically start at 1 and increase by 1 with each new turtle created.
+There is technically only one "active turtle" at any given time since each command is run once for each active turtle. This value can always be used to identify the current turtle running the command.</span>
+			<br>
+			<span class="command">ID</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Tell turtles given in first list to run commands given in the second list. Returns result of last command run. After commands are run, currently active list of turtles returns to that set by the last TELL command (or default active turtle if TELL never given). 
+			If more than one turtle is active, commands run return value associated with the last active turtle</span>
+			<br>
+			<span class="command">ask</span>
+			<span> &nbsp </span>
+			<span class="value">[ turtles ] [ commands ]</span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Returns number of turtles created so far.</span>
+			<br>
+			<span class="command">turtles</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+	</div>
+	<div class="command-inner-container">
+		<div class="entry">
+			<span class="comment">// Sets turtles that will follow commands hereafter. Returns last value in turtles list. If turtle has not previously existed, it is created and placed at the home location.
+If more than one turtle is active, commands run return value associated with the last active turtle.</span>
+			<br>
+			<span class="command">tell</span>
+			<span> &nbsp </span>
+			<span class="value">[ turtles ]</span>
+			<br>
+		</div>
+		<div class="entry">
+			<span class="comment">// Tell turtles matching given condition to run commands given in the second list. Returns result of last command run. After commands are run, currently active list of turtles returns to that set by the last TELL command (or default active turtle if TELL never given). If more than one turtle is active, commands run return value associated with the last active turtle.</span>
+			<br>
+			<span class="command">askwith</span>
+			<span> &nbsp </span>
+			<span class="value">[ condition ] [ commands ]</span>
+			<br>
+		</div>
+	</div>
+</div>
+</div>
+
+<div class="content">
 <h1>Links to more help.</h1>
 <a href="http://www.cs.duke.edu/courses/compsci308/fall16/assign/03_slogo/commands.php">SLogo Project</a>
+<br>
+<a href="http://www.cs.duke.edu/courses/compsci308/fall16/assign/03_slogo/examples/">Example Code</a>
 
 <p>SLOGO Team 9: Addison Howenstine, Phil Foo, Noah Over, Harshil Garg</p>
 </div>
