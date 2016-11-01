@@ -1,5 +1,6 @@
 package instructions;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +29,13 @@ public class ListStart extends Instruction{
 		// For a ListStart, parameters are set by the parser to include everything between brackets
 		int numParams = parameters.size();
 		List<String> variablesToRemove = new ArrayList<String>();
+		AbstractMap<String, Double> varsAtStart = view.getController().getVarMap();
 		double toReturn = 0;
 		for (int i = 0; i < numParams; i++){
 			Instruction nextI = parameters.get(i);
-			if(nextI instanceof MakeVariable){
+			if((nextI instanceof MakeVariable) && 
+					! (varsAtStart.containsKey(
+							((Variable) nextI.parameters.get(0)).getName()))){
 				// if a variable is being declared within brackets, keep track of the name
 				// so it can be deleted later
 				variablesToRemove.add(((Variable) nextI.parameters.get(0)).getName());
@@ -43,7 +47,5 @@ public class ListStart extends Instruction{
 			view.removeUserVariable(key);
 		});
 		return toReturn;
-
 	}
-
 }

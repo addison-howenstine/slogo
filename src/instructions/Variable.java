@@ -6,7 +6,10 @@ import slogo_view.SLOGOView;
 public class Variable extends Instruction{
 	private String name;
 	public Variable(){
-		
+	}
+	
+	public Variable(String name){
+		setName(name);
 	}
 	
 	@Override
@@ -16,7 +19,6 @@ public class Variable extends Instruction{
 	
 	@Override
 	public double evaluate(SLOGOView view, SLOGOModel model) throws RuntimeException{
-		//TODO: NEED ERROR CHECKING FOR WHEN VARIABLE DOESN'T EXIST IN MAP
 		if (!view.getController().getVarMap().containsKey(name)){
 			throw new NullPointerException("Variable " + name + " hasn't been created yet.");
 		}
