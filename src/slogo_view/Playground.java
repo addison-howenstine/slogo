@@ -2,62 +2,37 @@ package slogo_view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
 
-import javafx.animation.Animation;
-import javafx.animation.PathTransition;
-import javafx.animation.RotateTransition;
-import javafx.animation.SequentialTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import slogo_controller.SLOGOController;
 import slogo_model.SLOGOModel;
 
 public class Playground implements SLOGOView, Observer{
 	private static final int TITLE_SIZE = 50;
-	private static final int MIN_BOUNDARY = 0;
 	private static final int TURTLE_AREA_Y = TITLE_SIZE + 5;
-	private static final int TURTLE_AREA_X = MIN_BOUNDARY + 5;
 	private static final int TURTLE_AREA_WIDTH = 800;
-	private static final int TURTLE_X_OFFSET = TURTLE_AREA_WIDTH/2 + TURTLE_AREA_X;
 	private static final int HEIGHT = 700;
-	private static final int WIDTH = 1300;
 	private static final int TEXT_FIELD_Y = HEIGHT - 30;
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
-	private static final int TURTLE_Y_OFFSET = TURTLE_AREA_HEIGHT/2 + TURTLE_AREA_Y;
 	private static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
 	static final String[] LANGUAGES = {"Deutsche", "English", "Espanol", "Francais", "Italiano", "Portugues", 
 		"Russkiy", "Zhongwen"};
-	private static final int TURTLE_HEIGHT = 25;
 
 
 	private ResourceBundle myResources;
 	private Group myRoot;
 	private SLOGOController myController;
-	private List<ImageView> visualTurtles;
 	private ObservableList<String> myUserVariables;
 	private ArrayList<Double> myX = new ArrayList<Double>();
 	private ArrayList<Double> myY = new ArrayList<Double>();
@@ -67,30 +42,22 @@ public class Playground implements SLOGOView, Observer{
 	private ObservableList<String> myUserCommands;
 	private HashMap<String, Double> myVariableMap = new HashMap<String, Double>();
 	private ArrayList<String> myOldVariables = new ArrayList<String>();
-	private Canvas myCanvas;
 	private boolean errorReceived = false;
-	private ArrayList<Animation> myAnimations = new ArrayList<Animation>();
-	private int counter = 0;
+	private FrontEndTurtles myFrontEndTurtles;
 	private ArrayList<Double> myHeadings = new ArrayList<Double>();
 	private int myPenColor = 1;
 	private int myImage = 1;
 
 
 	public Playground(Stage stage, String language) {
-		construct(stage, language);
-	}
-
-	private void construct(Stage s, String language) {
-		myStage = s;
+		myStage = stage;
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		myUserCommands = FXCollections.observableList(new ArrayList<String>());
 		myCommandHistory = FXCollections.observableList(new ArrayList<String>());
 		myUserVariables = FXCollections.observableList(new ArrayList<String>());
-		visualTurtles = new ArrayList<ImageView>();
 		myRoot = new Group();
 		myScreen = new SLOGOScreen(this, myStage, myResources, myRoot, language);
-		myCanvas = new Canvas(WIDTH, HEIGHT);
-		myRoot.getChildren().add(myCanvas);
+		myFrontEndTurtles = new FrontEndTurtles(this);
 	}
 
 
@@ -109,7 +76,7 @@ public class Playground implements SLOGOView, Observer{
 
 	@Override
 	public void clearTrails() {
-		myAnimations.add(null);
+		myFrontEndTurtles.getAnimations().add(null);
 	}
 
 	@Override
@@ -140,74 +107,29 @@ public class Playground implements SLOGOView, Observer{
 	@Override
 	public void removeUserVariable(String userVariable){
 		variableRemover(userVariable);
-		myScreen.removeVariableFromDisplay(myScreen.getVariableDisplay());
+		myScreen.getDisplaysData().removeVariableFromDisplay(myScreen.getDisplaysData().getVariableDisplay());
 	}
-
-	private void setUpTurtle() {
-		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myScreen.getComboBoxesData().getImagesMap()
-				.get(myScreen.getComboBoxesData().getImageSelector().getValue())));
-		ImageView visT = new ImageView(image);
-		visT.setFitHeight(TURTLE_HEIGHT);
-		visT.setPreserveRatio(true);
-		visT.setTranslateX(TURTLE_X_OFFSET - visT.getBoundsInLocal().getWidth()/2); 
-		visT.setTranslateY(TURTLE_Y_OFFSET - visT.getBoundsInLocal().getHeight()/2);
-		myX.add(0.0);
-		myY.add(0.0);
-		myRoot.getChildren().add(visT);
-		visualTurtles.add(visT);
-		myHeadings.add(0.0);
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		updateScreen();
 	}
 
 	@Override
 	public void updateScreen(){
-		GraphicsContext gc = myCanvas.getGraphicsContext2D();
+		GraphicsContext gc = myFrontEndTurtles.getCanvas().getGraphicsContext2D();
 		int numModels = myController.getModels().size();
-		while(visualTurtles.size() < numModels){
-			setUpTurtle();
+		while(myFrontEndTurtles.getVisualTurtles().size() < numModels){
+			myFrontEndTurtles.setUpTurtle();
 		}
 		for(int i = 0; i < numModels; i++){
-			ImageView myTurtle = visualTurtles.get(i);
+			ImageView myTurtle = myFrontEndTurtles.getVisualTurtles().get(i);
 			SLOGOModel myModel = myController.getModels().get(i);
 			if (myX.get(i) != myModel.xCor() || myY.get(i) != myModel.yCor()){
-				Path path = new Path();
-				path.getElements().add(new MoveTo(myX.get(i) + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myY.get(i)));
-				path.getElements().add(new LineTo(myModel.xCor() + TURTLE_X_OFFSET, 
-						TURTLE_Y_OFFSET - myModel.yCor()));
-				PathTransition pt = new PathTransition(Duration.millis(1000), path, myTurtle);
-				int j = i;
-				if (myModel.isPenDown() == 1){
-					pt.currentTimeProperty().addListener(new ChangeListener<Duration>() {
-						double oldX = myTurtle.getTranslateX() + myTurtle.getBoundsInLocal().getWidth()/2;
-						double oldY = myTurtle.getTranslateY() + myTurtle.getBoundsInLocal().getHeight()/2;
-						double newX = myTurtle.getTranslateX() + myTurtle.getBoundsInLocal().getWidth()/2;
-						double newY = myTurtle.getTranslateY() + myTurtle.getBoundsInLocal().getHeight()/2;
-						double count = -1;
-						public void changed(ObservableValue ov, Duration t, Duration t1){
-							count++;
-							if (t.equals(Duration.ZERO))
-								return;
-							if (count > 2){
-								gc.setStroke(myScreen.getComboBoxesData().getPenOptions().getColor());
-								gc.setLineWidth(myScreen.getComboBoxesData().getPenOptions().getWidth());
-								gc.strokeLine(oldX, oldY, newX, newY);
-							}
-							oldX = newX;
-							oldY = newY;
-							newX = myTurtle.getTranslateX() + myTurtle.getBoundsInLocal().getWidth()/2;
-							newY = myTurtle.getTranslateY() + myTurtle.getBoundsInLocal().getHeight()/2;
-						}
-					});
-				}
-				myX.set(j, myModel.xCor());
-				myY.set(j, myModel.yCor());
-				myAnimations.add(pt);
+				myFrontEndTurtles.setUpPathAnimation(gc, i, myTurtle, myModel);
 			}
 			if (myHeadings.get(i) != myModel.heading()){
-				RotateTransition rt = new RotateTransition(Duration.seconds(1));
-				rt.setNode(myTurtle);
-				rt.setToAngle(myModel.heading());
-				myAnimations.add(rt);
-				myHeadings.set(i, myModel.heading());
+				myFrontEndTurtles.setUpRotateMethod(i, myTurtle, myModel);
 			}
 			if (myModel.showing() == 0 && myRoot.getChildren().contains(myTurtle)){
 				myRoot.getChildren().remove(myTurtle);
@@ -216,40 +138,8 @@ public class Playground implements SLOGOView, Observer{
 				myRoot.getChildren().add(myTurtle);
 			}
 		}
-		if (myAnimations.size() > 0)
-			runAnimation(myAnimations.get(counter), counter + 1);
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		updateScreen();
-	}
-
-	private void runAnimation(Animation animation, int index){
-		if (animation == null){
-			myCanvas.getGraphicsContext2D().clearRect(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT);
-			animationsChecker(index);
-		}
-		else {
-			animation.setRate(myScreen.getSpeedSlider().getValue());
-			animation.play();
-			animation.setOnFinished(new EventHandler<ActionEvent>(){
-				public void handle(ActionEvent event){
-					animationsChecker(index);
-				}
-			});
-		}
-	}
-
-	private void animationsChecker(int index) {
-		if (index < myAnimations.size()){
-			runAnimation(myAnimations.get(index), index + 1);
-			counter++;
-		}
-		else {
-			myAnimations.clear();
-			counter = 0;
-		}
+		if (myFrontEndTurtles.getAnimations().size() > 0)
+			myFrontEndTurtles.runAnimation(myFrontEndTurtles.getAnimations().get(myFrontEndTurtles.getCounter()), myFrontEndTurtles.getCounter() + 1);
 	}
 
 	protected void runCommandFromTextInput(TextInputControl tic) {
@@ -264,11 +154,6 @@ public class Playground implements SLOGOView, Observer{
 		tic.setText("");
 	}
 
-	protected void changeTurtleImages(String image){
-		visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader()
-				.getResourceAsStream(myScreen.getComboBoxesData().getImagesMap().get(image)))));
-	}
-
 	protected void changeLanguage(String language){
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		myController.changeLanguage();
@@ -276,7 +161,7 @@ public class Playground implements SLOGOView, Observer{
 	
 	protected void handleMouseInput(double x, double y){
 		int i = 0;
-		for (ImageView turtle: visualTurtles){
+		for (ImageView turtle: myFrontEndTurtles.getVisualTurtles()){
 			if (turtle.getBoundsInParent().contains(x, y)){
 				myController.toggleActive(i);
 			}
@@ -317,7 +202,7 @@ public class Playground implements SLOGOView, Observer{
 	@Override
 	public void setPenColor(int index){
 		setPenColor(myScreen.getComboBoxesData().getColors().get(index - 1));
-		myScreen.getPenColorSelector().setValue(myScreen.getComboBoxesData().getColors().get(index - 1));
+		myScreen.getComboBoxesData().getPenColorSelector().setValue(myScreen.getComboBoxesData().getColors().get(index - 1));
 		myPenColor = index;
 	}
 
@@ -328,18 +213,18 @@ public class Playground implements SLOGOView, Observer{
 	@Override
 	public void setPenWidth(int index){
 		myScreen.getComboBoxesData().getPenOptions().setWidth(index);
-		myScreen.getPenWidthSelector().setValue(index);
+		myScreen.getComboBoxesData().getPenWidthSelector().setValue(index);
 	}
 
 	@Override
 	public void setBackgroundColor(int index){
 		myScreen.getTurtleArea().setFill(myScreen.getComboBoxesData().getColorsMap().get(myScreen.getComboBoxesData().getColors().get(index - 1)));
-		myScreen.getBackgroundSelector().setValue(myScreen.getComboBoxesData().getColors().get(index - 1));
+		myScreen.getComboBoxesData().getBackgroundSelector().setValue(myScreen.getComboBoxesData().getColors().get(index - 1));
 	}
 
 	@Override
 	public void setImage(int index){
-		changeTurtleImages(myScreen.getComboBoxesData().getImages().get(index - 1));
+		myFrontEndTurtles.changeTurtleImages(myScreen.getComboBoxesData().getImages().get(index - 1));
 		myScreen.getComboBoxesData().getImageSelector().setValue(myScreen.getComboBoxesData().getImages().get(index - 1));
 		myImage = index;
 	}
@@ -363,5 +248,29 @@ public class Playground implements SLOGOView, Observer{
 
 	protected ObservableList<String> getHistory(){
 		return myCommandHistory;
+	}
+	
+	protected Group getRoot(){
+		return myRoot;
+	}
+	
+	protected SLOGOScreen getScreen(){
+		return myScreen;
+	}
+	
+	protected ArrayList<Double> getX(){
+		return myX;
+	}
+	
+	protected ArrayList<Double> getY(){
+		return myY;
+	}
+	
+	protected ArrayList<Double> getHeadings(){
+		return myHeadings;
+	}
+	
+	protected FrontEndTurtles getFrontEndTurtles(){
+		return myFrontEndTurtles;
 	}
 }

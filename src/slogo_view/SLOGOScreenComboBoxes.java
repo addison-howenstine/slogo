@@ -29,22 +29,22 @@ public class SLOGOScreenComboBoxes {
 	private static final String[] LANGUAGES = {"Deutsche", "English", "Espanol", "Francais", "Italiano", "Portugues", 
 			"Russkiy", "Zhongwen"};
 	
-	public TreeMap<String, Paint> myColorsMap;
-	public ObservableList<String> myColors;
-	public TreeMap<String, String> myImagesMap;
-	public ObservableList<String> myImages;
-	public String myLanguage;
-	public ObservableList<String> myLanguages;
-	public ComboBox<String> myImageSelector;
-	public ComboBox<String> myPenColorSelector;
-	public ComboBox<String> myBackgroundSelector;
-	public ComboBox<Integer> myPenWidthSelector;
-	public Text myBackgroundText;
-	public Text myPenColorText;
-	public Text myPenWidthText;
-	public Text myImageText;
-	public Text myLanguageText;
-	public PenOptions myPenOptions;
+	private TreeMap<String, Paint> myColorsMap;
+	private ObservableList<String> myColors;
+	private TreeMap<String, String> myImagesMap;
+	private ObservableList<String> myImages;
+	private String myLanguage;
+	private ObservableList<String> myLanguages;
+	private ComboBox<String> myImageSelector;
+	private ComboBox<String> myPenColorSelector;
+	private ComboBox<String> myBackgroundSelector;
+	private ComboBox<Integer> myPenWidthSelector;
+	private Text myBackgroundText;
+	private Text myPenColorText;
+	private Text myPenWidthText;
+	private Text myImageText;
+	private Text myLanguageText;
+	private PenOptions myPenOptions;
 	private SLOGOScreen myScreen;
 	
 	protected SLOGOScreenComboBoxes(SLOGOScreen screen){
@@ -89,7 +89,7 @@ public class SLOGOScreenComboBoxes {
 		myImageSelector = myScreen.getBuilder().addComboBox(IMAGE_X, ROW_2_Y, myImages, 
 				"1. " + myScreen.getResources().getString(DEFAULT_IMAGE), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1) {
-				myScreen.getPlayground().changeTurtleImages(t1);
+				myScreen.getPlayground().getFrontEndTurtles().changeTurtleImages(t1);
 			}
 		});
 	}
@@ -190,6 +190,18 @@ public class SLOGOScreenComboBoxes {
 	
 	protected String getLanguage(){
 		return myLanguage;
+	}
+	
+	protected ComboBox<String> getBackgroundSelector(){
+		return myBackgroundSelector;
+	}
+	
+	protected ComboBox<String> getPenColorSelector(){
+		return myPenColorSelector;
+	}
+
+	protected ComboBox<Integer> getPenWidthSelector(){
+		return myPenWidthSelector;
 	}
 	
 	protected void setLanguage(String language){
