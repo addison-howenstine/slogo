@@ -22,7 +22,7 @@ public class SettingsLoader {
 	 */
 	public SettingsLoader(String fileName) throws Exception{
 		try {
-			FileInputStream fin = new FileInputStream("lib/" + fileName + ".ser");
+			FileInputStream fin = new FileInputStream("lib/" + fileName);
 			ObjectInputStream ois = new ObjectInputStream(fin);
 			this.settingsToLoad = (SavedSettings) ois.readObject();
 			ois.close();
