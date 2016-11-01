@@ -34,6 +34,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slogo_controller.SLOGOController;
 import slogo_controller.TurtleController;
+import slogo_model.SLOGOModel;
 
 public class SLOGOScreen {
 	private static final int SLIDER_DEFAULT = 1;
@@ -68,6 +69,7 @@ public class SLOGOScreen {
 	static final String[] LANGUAGES = {"Deutsche", "English", "Espanol", "Francais", "Italiano", "Portugues", 
 			"Russkiy", "Zhongwen"};
 	private static final int HEIGHT = 700;
+	private static final int TEXT_AREA_HEIGHT = HEIGHT/2 - 25;
 	private static final int TEXT_FIELD_Y = HEIGHT - 30;
 	private static final int TURTLE_AREA_HEIGHT = TEXT_FIELD_Y - 5 - TURTLE_AREA_Y;
 	private static final int DISPLAY_HEIGHT = TURTLE_AREA_HEIGHT/3;
@@ -107,6 +109,7 @@ public class SLOGOScreen {
 	private Button myMultilineButton;
 	private Button myPenDownButton;
 	private Button myPenUpButton;
+	private Button myStatesButton;
 	private Slider mySlider;
 	
 	protected SLOGOScreen(Playground playground, Stage stage, ResourceBundle resources, Group root, String language){
@@ -137,6 +140,7 @@ public class SLOGOScreen {
 		setUpNewWindowButton();
 		setUpPenDownButton();
 		setUpPenUpButton();
+		setUpStatesButton();
 		scene.setOnMouseClicked(e -> myPlayground.handleMouseInput(e.getX(), e.getY()));
 		myStage.setScene(scene);
 		myStage.setTitle(TITLE);
@@ -237,6 +241,7 @@ public class SLOGOScreen {
 				VBox root = new VBox();
 
 				TextArea input = new TextArea();
+				input.setMinHeight(TEXT_AREA_HEIGHT);
 				Button submit = new Button(myResources.getString("Run"));
 				submit.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -282,6 +287,41 @@ public class SLOGOScreen {
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event){
 				myPlayground.getController().run(myResources.getString("PenUp").split("\\|")[0]);
+			}
+		});
+	}
+	
+	private void setUpStatesButton(){
+		myStatesButton = myBuilder.addButton(myResources.getString("TurtleStates"), BUTTON_3_X, ROW_2_Y, 
+				new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event){
+				Stage stage = new Stage();
+				stage.initModality(Modality.APPLICATION_MODAL);
+				stage.initOwner(myStage);
+				VBox root = new VBox();
+				int i = 0;
+				for (SLOGOModel turtle: myPlayground.getController().getModels()){
+					StringBuilder sb = new StringBuilder("");
+					sb.append(myResources.getString("Turtle") + " ");
+					sb.append(i);
+					sb.append(": x = ");
+					sb.append(turtle.xCor());
+					sb.append(", y = ");
+					sb.append(turtle.yCor());
+					sb.append(", ");
+					if (turtle.isPenDown() == 1)
+						sb.append(myResources.getString("PenDownButton"));
+					else
+						sb.append(myResources.getString("PenUpButton"));
+					sb.append(", " + myResources.getString("Heading").split("\\|")[0] + " = ");
+					sb.append(turtle.heading());
+					Text text = new Text(sb.toString());
+					root.getChildren().add(text);
+					i++;
+				}
+				Scene scene = new Scene(root, WIDTH/2, HEIGHT/2);
+				stage.setScene(scene);
+				stage.show();
 			}
 		});
 	}
@@ -475,6 +515,7 @@ public class SLOGOScreen {
 		myMultilineButton.setText(myResources.getString("Multiline"));
 		myPenDownButton.setText(myResources.getString("PenDownButton"));
 		myPenUpButton.setText(myResources.getString("PenUpButton"));
+		myStatesButton.setText(myResources.getString("TurtleStates"));
 		int backgroundIndex = myColors.indexOf(myBackgroundSelector.getValue());
 		int penIndex = myColors.indexOf(myPenColorSelector.getValue());
 		int imageIndex = myImages.indexOf(myImageSelector.getValue());
