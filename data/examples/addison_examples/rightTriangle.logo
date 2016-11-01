@@ -17,6 +17,6 @@ fd :c
 setxy :x :y
 setheading :head ]
 
-set :a random 100
-set :b random 300
-rightTriangle
+rightTriangle 100 300
+
+back :c

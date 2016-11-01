@@ -50,7 +50,7 @@ public class Playground implements SLOGOView, Observer{
 	private static final int TURTLE_Y_OFFSET = TURTLE_AREA_HEIGHT/2 + TURTLE_AREA_Y;
 	private static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
 	static final String[] LANGUAGES = {"Deutsche", "English", "Espanol", "Francais", "Italiano", "Portugues", 
-			"Russkiy", "Zhongwen"};
+		"Russkiy", "Zhongwen"};
 	private static final int TURTLE_HEIGHT = 25;
 
 
@@ -100,7 +100,7 @@ public class Playground implements SLOGOView, Observer{
 		myRoot.getChildren().add(myCanvas);
 	}
 
-	
+
 	public void init(){
 		myScreen.init();
 	}
@@ -146,6 +146,11 @@ public class Playground implements SLOGOView, Observer{
 	}
 
 	@Override
+	public void removeUserVariable(String userVariable){
+		// TODO
+	}
+
+	@Override
 	public SLOGOController getController(){
 		return myController;
 	}
@@ -165,7 +170,7 @@ public class Playground implements SLOGOView, Observer{
 		setPenColor(myScreen.getColors().get(index - 1));
 		myPenColorSelector.setValue(myScreen.getColors().get(index - 1));
 	}
-	
+
 	protected void setPenColor(String color){
 		myScreen.getPenOptions().setColor(myScreen.getColorsMap().get(color));
 	}
@@ -175,7 +180,7 @@ public class Playground implements SLOGOView, Observer{
 		myTurtleScreen.setFill(myScreen.getColorsMap().get(myScreen.getColors().get(index)));
 		myBackgroundSelector.setValue(myScreen.getColors().get(index));
 	}
-	
+
 	@Override
 	public void setImage(int index){
 		changeTurtleImages(myScreen.getImages().get(index));
@@ -186,7 +191,7 @@ public class Playground implements SLOGOView, Observer{
 	public void setController(SLOGOController controller){
 		myController = controller;
 	}
-	
+
 	private void setUpTurtle() {
 		Image image = new Image(getClass().getClassLoader().getResourceAsStream(myScreen.getImagesMap()
 				.get(myScreen.getImageSelector().getValue())));
@@ -270,7 +275,7 @@ public class Playground implements SLOGOView, Observer{
 	public void update(Observable o, Object arg) {
 		updateScreen();
 	}
-	
+
 	private void runAnimation(Animation animation, int index){
 		if (animation == null){
 			myCanvas.getGraphicsContext2D().clearRect(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT);
@@ -285,7 +290,7 @@ public class Playground implements SLOGOView, Observer{
 			});
 		}
 	}
-	
+
 	private void animationsChecker(int index) {
 		if (index < myAnimations.size()){
 			runAnimation(myAnimations.get(index), index + 1);
@@ -296,7 +301,7 @@ public class Playground implements SLOGOView, Observer{
 			counter = 0;
 		}
 	}
-	
+
 	protected void runCommandFromTextInput(TextInputControl tic) {
 		tic.getText();
 		myController.run(tic.getText());
@@ -308,28 +313,28 @@ public class Playground implements SLOGOView, Observer{
 		myCommandHistory.add(tic.getText());
 		tic.setText("");
 	}
-	
+
 	protected ObservableList<String> getUserCommands(){
 		return myUserCommands;
 	}
-	
+
 	protected ObservableList<String> getUserVariables(){
 		return myUserVariables;
 	}
-	
+
 	protected ArrayList<String> getOldVariables(){
 		return myOldVariables;
 	}
-	
+
 	protected ObservableList<String> getHistory(){
 		return myCommandHistory;
 	}
-	
+
 	protected void changeTurtleImages(String image){
 		visualTurtles.forEach(visT ->  visT.setImage(new Image(getClass().getClassLoader()
 				.getResourceAsStream(myScreen.getImagesMap().get(image)))));
-		}
-	
+	}
+
 	protected void changeLanguage(String language){
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 		myController.changeLanguage();

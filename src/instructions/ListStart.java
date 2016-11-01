@@ -1,8 +1,21 @@
 package instructions;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
+/**
+ * A ListStart holds everything within a List denoted by [ brackets ]
+ * These can be used to group parameter inputs or for variable scope.
+ * All :variables declared within List brackets will be deleted after
+ * everything within brackets is evaluated.
+ * 
+ * @author Addison
+ *
+ */
 public class ListStart extends Instruction{
 
 	@Override
@@ -13,12 +26,26 @@ public class ListStart extends Instruction{
 
 	@Override
 	public double evaluate(SLOGOView view, SLOGOModel model) {
+		// For a ListStart, parameters are set by the parser to include everything between brackets
 		int numParams = parameters.size();
-		// evaluate each parameter
-		for (int i = 0; i < numParams - 1; i++)
-			parameters.get(i).evaluate(view, model);
-		// return the return value of the final parameter
-		return parameters.get(numParams - 1).evaluate(view, model);
+		List<String> variablesToRemove = new ArrayList<String>();
+		AbstractMap<String, Double> varsAtStart = view.getController().getVarMap();
+		double toReturn = 0;
+		for (int i = 0; i < numParams; i++){
+			Instruction nextI = parameters.get(i);
+			if((nextI instanceof MakeVariable) && 
+					! (varsAtStart.containsKey(
+							((Variable) nextI.parameters.get(0)).getName()))){
+				// if a variable is being declared within brackets, keep track of the name
+				// so it can be deleted later
+				variablesToRemove.add(((Variable) nextI.parameters.get(0)).getName());
+			}
+			toReturn = parameters.get(i).evaluate(view, model);
+		}
+		variablesToRemove.forEach(key -> {
+			view.getController().getVarMap().remove(key);
+			view.removeUserVariable(key);
+		});
+		return toReturn;
 	}
-
 }

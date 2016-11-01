@@ -56,7 +56,7 @@ public class SLOGOParser {
 			}
 			sb.append(" ");
 		}
-		
+
 		String finalInstructionSet = sb.toString();
 		Scanner instructionScanner = new Scanner(finalInstructionSet).useDelimiter("\\s+");
 		while (instructionScanner.hasNext()){
@@ -67,26 +67,29 @@ public class SLOGOParser {
 			}
 		}
 		instructionScanner.close();
-		
+
 		return instructionList;
 	}
-	
+
 	private Instruction createNextInstructionFromText (Scanner instructionScanner, AbstractMap<String, Instruction> instrMap) throws Exception{
 		String typedInstruction = instructionScanner.next();
-		
+
 		String actualInstruction = getSymbol(typedInstruction);
-		if (instrMap.containsKey(typedInstruction)){
-			return instrMap.get(typedInstruction);
-		}
-		
+		Instruction instruction;
+
+
 		if(actualInstruction.equals(ERROR))
 			;//throw CommandNotFound error?
-
-		Instruction instruction;
-		try {
-			instruction = getInstructionType(actualInstruction, typedInstruction);
-		}catch (Exception e){
-			throw e;
+		
+		if (instrMap.containsKey(typedInstruction)){
+			instruction = instrMap.get(typedInstruction);
+		}
+		else {
+			try {
+				instruction = getInstructionType(actualInstruction, typedInstruction);
+			}catch (Exception e){
+				throw e;
+			}
 		}
 
 		List<Instruction> parameters = new ArrayList<Instruction>();
@@ -108,9 +111,10 @@ public class SLOGOParser {
 			String bracket = instructionScanner.next();
 			checkBracketSpace(bracket);
 		}
-		
+
 		for(int i = 0; i < instruction.getNumRequiredParameters(); i++){
 			if (instruction instanceof MakeUserInstruction && i == 0){
+
 				String instructionName = instructionScanner.next();
 				parameters.add(new UserInstruction(instructionName));
 				continue;
@@ -118,20 +122,20 @@ public class SLOGOParser {
 			parameters.add(createNextInstructionFromText(instructionScanner, instrMap));
 		}
 		instruction.setParameters(parameters);
-		
+
 		// If a new instruction is being made, evaluate immediately instead of adding
 		// to expression tree of instructions in case new instruction is called right away
 		if (instruction instanceof MakeUserInstruction){
 			instruction.evaluate(view, null);
 			return null;
 		}
-		
+
 		return instruction;
 	}
-	
-	
+
+
 	private Instruction getInstructionType(String instructionClassName, String typedInstruction) throws Exception{
-		
+
 		Instruction instruction = null;
 		try {
 			// instantiate a class and object for command instructions
@@ -148,11 +152,11 @@ public class SLOGOParser {
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Illegal Argument Exception!");
 		}
-		
+
 		return instruction;
 	}
-	
-	
+
+
 	private List<Instruction> groupInstructionList(Scanner s, AbstractMap<String, Instruction> instrMap) throws Exception{
 		List<Instruction> groupedList = new ArrayList<Instruction>();
 		while (s.hasNext()){
@@ -170,7 +174,7 @@ public class SLOGOParser {
 		}
 		return groupedList;
 	}
-	
+
 	private List<Instruction> groupUnlimitedParameterGroup(Scanner s, AbstractMap<String, Instruction> instrMap) throws Exception{
 		List<Instruction> groupedList = new ArrayList<Instruction>();
 		while (s.hasNext()){
@@ -209,7 +213,7 @@ public class SLOGOParser {
 	protected void clearPatterns () {
 		mySymbols.clear();
 	}
-	
+
 	// returns the language's type associated with the given text if one exists 
 	protected String getSymbol (String text) {
 		for (Entry<String, Pattern> e : mySymbols) {
@@ -225,7 +229,7 @@ public class SLOGOParser {
 		// THIS IS THE KEY LINE
 		return regex.matcher(text).matches();
 	}
-	
+
 	private void checkBracketSpace(String s) throws Exception{
 		assert(s.charAt(0) == '[');
 		if (s.length() > 1){

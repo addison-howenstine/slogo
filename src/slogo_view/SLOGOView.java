@@ -27,6 +27,8 @@ public interface SLOGOView {
 	
 	public void addUserVariable(String userVariable, double value);
 	
+	public void removeUserVariable(String userVariable);
+	
 	public SLOGOController getController();
 	
 	public double getMaxX();
