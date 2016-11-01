@@ -25,7 +25,7 @@ public class UserInstruction extends Instruction{
 			return variableParameters.size();
 	}
 
-	protected void setVariableParameters(List<Variable> variableParameters){
+	public void setVariableParameters(List<Variable> variableParameters){
 		this.variableParameters = variableParameters;
 	}
 	
@@ -34,6 +34,7 @@ public class UserInstruction extends Instruction{
 	}
 
 	public double evaluate(SLOGOView view, SLOGOModel model){
+		ListStart toEvaluate = new ListStart();
 		for (int i = 0; i < parameters.size(); i++){
 			// use MakeVariable instruction so when ListStart is evaluated, 
 			// that variable disappears afterwards
@@ -41,8 +42,9 @@ public class UserInstruction extends Instruction{
 			// match variable with value for variable passed in to UserInstruction parameters
 			makeVariableParams.add(variableParameters.get(i));
 			makeVariableParams.add(this.parameters.get(i));
-			actions.parameters.add(i, new MakeVariable(makeVariableParams));
+			toEvaluate.parameters.add(i, new MakeVariable(makeVariableParams));
 		}
-		return actions.evaluate(view, model);
+		toEvaluate.parameters.addAll(actions.parameters);
+		return toEvaluate.evaluate(view, model);
 	}
 }

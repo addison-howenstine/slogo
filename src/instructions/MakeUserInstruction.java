@@ -18,21 +18,7 @@ public class MakeUserInstruction extends ControlStructureCommand{
 
 	@Override
 	public double evaluate(SLOGOView view, SLOGOModel model){
-		if ( ! ( parameters.get(0) instanceof UserInstruction)){
-			// TODO if .get(0) isn't a UserInstruction, throw an error
-		}
-		UserInstruction uInstruction = (UserInstruction) parameters.get(0);
-
-		// parameters.get(1) is a ListStart of variable names
-		List<Variable> variableParameters = new ArrayList<Variable>();
-		parameters.get(1).parameters.forEach(i -> {
-			if (! (i instanceof Variable) ){
-				//TODO throw an error
-			}
-			variableParameters.add((Variable) i);
-		});
-		// give UserInstruction a list of the parameters it will need to look for
-		uInstruction.setVariableParameters(variableParameters);
+		UserInstruction uInstruction = (UserInstruction) view.getController().getInstrMap().get( ( (UserInstruction) parameters.get(0) ).getName() );
 
 		// parameters.get(2) is a ListStart of actions, pass to UserInstruction
 		uInstruction.setActions((ListStart) parameters.get(2));

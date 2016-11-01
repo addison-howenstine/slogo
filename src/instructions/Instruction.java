@@ -9,7 +9,7 @@ import slogo_view.SLOGOView;
 
 public abstract class Instruction implements Serializable{
 
-	protected List<Instruction> parameters;
+	public List<Instruction> parameters;
 	private static final long serialVersionUID = 7526471155622776147L;
 	
 	public Instruction(){
