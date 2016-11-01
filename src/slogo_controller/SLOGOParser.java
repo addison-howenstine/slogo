@@ -116,7 +116,21 @@ public class SLOGOParser {
 				parameters.add(new UserInstruction(instructionName));
 				continue;
 			}
-			parameters.add(createNextInstructionFromText(instructionScanner, instrMap));
+			Instruction nextParameter = createNextInstructionFromText(instructionScanner, instrMap);
+			if (instruction instanceof MakeUserInstruction && i == 1){
+				List<Variable> variableParameters = new ArrayList<Variable>();
+				nextParameter.parameters.forEach(p -> {
+					if (! (p instanceof Variable) ){
+						//TODO throw an error
+					}
+					variableParameters.add((Variable) p);
+				});
+				// give UserInstruction a list of the parameters it will need to look for
+				UserInstruction newUserInstruction = ((UserInstruction) parameters.get(0));
+				newUserInstruction.setVariableParameters(variableParameters);
+				view.getController().getInstrMap().put(newUserInstruction.getName(), newUserInstruction);
+			}
+			parameters.add(nextParameter);
 		}
 		instruction.setParameters(parameters);
 
