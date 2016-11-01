@@ -1,0 +1,718 @@
+<html>
+
+<head>
+<link href="https://fonts.googleapis.com/css?family=Inconsolata|Montserrat|Lato" rel="stylesheet">
+<style>
+html {
+background-color: #f8f8f8;
+}
+.content { 
+width: 92%;
+background-color: white;
+top: 0;
+bottom: 0;
+left: 0;
+right: 0;
+margin: 50px auto;
+padding: 10px 40px 10px 40px;
+}
+h1 {
+font-family: Montserrat;
+font-weight: 900;
+color: #0B4F6C;
+}
+h2 {
+	font-family: Montserrat;
+font-weight: 300;
+color: #81bc61;
+}
+body {
+font-family: Lato;
+text-rendering: optimizeLegibility;
+-webkit-font-smoothing: antialiased;
+}
+p {
+font-family: Lato
+font-weight: 100;
+font-size: 1.15em;
+}
+img {
+padding: 10px 10px 10px 10px;
+display: block;
+margin: auto;
+width:90%;
+border: 2px solid #333333;
+}
+
+.command-container {
+background-color: #f8f8f8;
+text-align: left;
+margin: 0;
+padding: 20px;
+height: 600px;
+margin-bottom:20px;
+}
+
+.command-inner-container {
+float:left;
+width: 50%;
+text-align: center;
+}
+
+.command {
+font-weight: 900;
+white-space: pre-wrap;
+word-break: break-all;
+word-wrap: break-word;
+font-family: Inconsolata;
+font-size: 1.2em;
+color: #6f6f6f;
+}
+
+.value {
+color: #81bc61;
+font-weight: 300;
+font-family: Inconsolata;
+font-size: 1.2em;
+}
+
+.comment {
+color: #8c8c8c;
+font-style: italic;
+box-sizing: border-box;
+text-align: left;
+font-family: Inconsolata;
+font-size: 1.2em;
+font-weight: normal;
+}
+
+.entry {
+padding-right:10px;
+padding-left:10px;
+padding-top:10px;
+padding-bottom:10px;
+}
+
+.entry:hover {
+background-color:white;
+}
+</style>
+</head>
+<body>
+<div class="content">
+<h1>Introduction to SLogo.</h1>
+<p>SLogo is a programming language environment designed to teach elementary programmers basic
+fundamentals about variables, commands, for loops, if-else statements, logic and more!</p>
+<p>The following guide will help show you how to use the SLogo GUI to write commands to move the
+turtle on screen. As you go from more simple commands to complex ones, you can create more interesting
+results.</p>
+</div>
+<div class="content">
+<h1>The environment.</h1>
+<img src="screen.png"></img>
+<p>Commands are entered in the bar at the bottom, and then the turtle will move within the display
+window accordingly. The three gray panels on the right respectively show:</p>
+<ul>
+<li><b>Command history:</b> the list of commands that were just run, also re-executable with a click.</li>
+<li><b>User-defined commands:</b> the list of commands that you defined as a user. Commands defined by the user
+can often represent a process you want to write by shorthand, i.e. a chain of base commands.</li>
+<li><b>Existing variables:</b> variables can be saved to store data that must be used in the future by other
+commands.</li>
+</ul>
+<p>To run the commands typed, simply press the Run button.</p>
+<p>On the top, there are a bunch of drop-down boxes with expandable options including changing the background color, pen color,
+the image displayed, and the language in which commands are typed.</p>
+<p>There is also a multiline input where multiple commands can be entered before execution, and an option to create a new SLogo
+instance, as well as additional options.</p>
+</div>
+<div class="content">
+<h1>Video demonstrating SLogo.</h1>
+</div>
+
+<div class="content">
+
+<h1>List of commands.</h1>
+<h2>Commands</h2>
+
+<div class="command-container">
+
+<div class="command-inner-container">
+
+<div class="entry">
+<span class="comment">// Moves the turtle forward by some pixels.</span>
+<br>
+<span class="command">fd</span>
+<span> &nbsp </span>
+<span class="value">pixels</span>
+<br>
+<span class="command">forward</span>
+<span> &nbsp </span>
+<span class="value">pixels</span>
+<br>
+</div>
+
+
+<div class="entry">
+<span class="comment">// Turns turtle counterclockwise by some degrees.</span>
+<br>
+<span class="command">lt</span>
+<span> &nbsp </span>
+<span class="value">degrees</span>
+<br>
+<span class="command">left</span>
+<span> &nbsp </span>
+<span class="value">degrees</span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Turns turtle to an absolute heading.</span>
+<br>
+<span class="command">setheading</span>
+<span> &nbsp </span>
+<span class="value">degrees</span>
+<br>
+<span class="command">seth</span>
+<span> &nbsp </span>
+<span class="value">degrees</span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Moves turtle to an absolute screen position, where (0, 0) is the center of the screen</span>
+<br>
+<span class="command">setxy</span>
+<span> &nbsp </span>
+<span class="value">x y</span>
+<br>
+<span class="command">gotoxy</span>
+<span> &nbsp </span>
+<span class="value">x y</span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Puts pen up such that when the turtle moves, it does not leave a trail.</span>
+<br>
+<span class="command">penup</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+<span class="command">pu</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Makes turtle invisible.</span>
+<br>
+<span class="command">hideturtle</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+<span class="command">ht</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Erases turtle's trails and sends it to the home position.</span>
+<br>
+<span class="command">clearscreen</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+</div>
+
+</div>
+
+
+
+
+
+
+
+<div class="command-inner-container">
+
+<div class="entry">
+<span class="comment">// Moves the turtle backward by some pixels.</span>
+<br>
+<span class="command">bk</span>
+<span> &nbsp </span>
+<span class="value">pixels</span>
+<br>
+<span class="command">back</span>
+<span> &nbsp </span>
+<span class="value">pixels</span>
+<br>
+</div>
+
+
+<div class="entry">
+<span class="comment">// Turns turtle clockwise by some degrees.</span>
+<br>
+<span class="command">rt</span>
+<span> &nbsp </span>
+<span class="value">degrees</span>
+<br>
+<span class="command">right</span>
+<span> &nbsp </span>
+<span class="value">degrees</span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Turns turtle to face the point (x, y), where (0, 0) is the center of the screen.</span>
+<br>
+<span class="command">towards</span>
+<span> &nbsp </span>
+<span class="value">x y</span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Puts pen down such that when the turtle moves, it leaves a trail.</span>
+<br>
+<span class="command">pendown</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+<span class="command">pd</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Makes turtle visible.</span>
+<br>
+<span class="command">showturtle</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+<span class="command">st</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+<br>
+</div>
+
+<div class="entry">
+<span class="comment">// Moves turtle to the center of the screen, point (0, 0)</span>
+<br>
+<span class="command">home</span>
+<span> &nbsp </span>
+<span class="value"></span>
+<br>
+</div>
+
+</div>
+</div>
+
+<h2>Queries</h2>
+
+<div class="command-container" style="height:240px;">
+	<div class="command-inner-container">
+	
+		<div class="entry">
+			<span class="comment">// Returns the turtle's X coordinate from the center of the screen.</span>
+			<br>
+			<span class="command">xcor</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns the turtle's heading in degrees.</span>
+			<br>
+			<span class="command">heading</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns 1 if turtle is showing, 0 if it is hiding.</span>
+			<br>
+			<span class="command">showing?</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+			<span class="command">showingp</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+		
+	</div>
+	<div class="command-inner-container">
+	
+        <div class="entry">
+            <span class="comment">// Returns the turtle's Y coordinate from the center of the screen.</span>
+            <br>
+            <span class="command">ycor</span>
+            <span> &nbsp </span>
+            <span class="value"></span>
+            <br>
+        </div>
+        
+        <div class="entry">
+			<span class="comment">// Returns 1 if turtle's pen is down, 0 if it is up</span>
+			<br>
+			<span class="command">pendown?</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+			<span class="command">pendownp</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+		
+	</div>
+</div>
+
+<h2>Math</h2>
+
+<div class="command-container" style="height:560px;">
+	<div class="command-inner-container">
+	
+		<div class="entry">
+			<span class="comment">// Returns sum of the values of expr1 and expr2.</span>
+			<br>
+			<span class="command">sum</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">+</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns product of the values of expr1 and expr2.</span>
+			<br>
+			<span class="command">product</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">*</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns remainder on dividing the values of expr1 by expr2.</span>
+			<br>
+			<span class="command">remainder</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">%</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns random non-negative number strictly less than max.</span>
+			<br>
+			<span class="command">random</span>
+			<span> &nbsp </span>
+			<span class="value">max</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns cosine of degrees.</span>
+			<br>
+			<span class="command">cos</span>
+			<span> &nbsp </span>
+			<span class="value">degrees</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns arctangent of degrees.</span>
+			<br>
+			<span class="command">atan</span>
+			<span> &nbsp </span>
+			<span class="value">degrees</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns base raised to the power of the exponent.</span>
+			<br>
+			<span class="command">pow</span>
+			<span> &nbsp </span>
+			<span class="value">base exponent</span>
+			<br>
+		</div>
+		
+	</div>
+	<div class="command-inner-container">
+	
+        <div class="entry">
+			<span class="comment">// Returns difference of the values of expr1 and expr2.</span>
+			<br>
+			<span class="command">difference</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">-</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns quotient of the values of expr1 and expr2.</span>
+			<br>
+			<span class="command">quotient</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">/</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns negative of the values of expr.</span>
+			<br>
+			<span class="command">remainder</span>
+			<span> &nbsp </span>
+			<span class="value">expr</span>
+			<br>
+			<span class="command">~</span>
+			<span> &nbsp </span>
+			<span class="value">expr</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns sine of degrees.</span>
+			<br>
+			<span class="command">sin</span>
+			<span> &nbsp </span>
+			<span class="value">degrees</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns tangent of degrees.</span>
+			<br>
+			<span class="command">tan</span>
+			<span> &nbsp </span>
+			<span class="value">degrees</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns natural log of expr.</span>
+			<br>
+			<span class="command">log</span>
+			<span> &nbsp </span>
+			<span class="value">expr</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Reports the number PI.</span>
+			<br>
+			<span class="command">PI</span>
+			<span> &nbsp </span>
+			<span class="value"></span>
+			<br>
+		</div>
+		
+	</div>
+</div>
+
+<h2>Boolean Operations</h2>
+
+<div class="command-container" style="height:350px;">
+	<div class="command-inner-container">
+	
+		<div class="entry">
+			<span class="comment">// Returns 1 if the value of expr1 is strictly less than the value of expr2, otherwise 0.</span>
+			<br>
+			<span class="command">less?</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">lessp</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns 1 if the value of expr1 and the value of expr2 are equal, otherwise 0.</span>
+			<br>
+			<span class="command">equal?</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">equalp</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns 1 if test1 and test2 are non-zero, otherwise 0.</span>
+			<br>
+			<span class="command">and</span>
+			<span> &nbsp </span>
+			<span class="value">test1 test2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns 1 if test is 0 and 0 if test is non-zero</span>
+			<br>
+			<span class="command">not</span>
+			<span> &nbsp </span>
+			<span class="value">test</span>
+			<br>
+		</div>
+		
+	</div>
+	<div class="command-inner-container">
+	
+        <div class="entry">
+			<span class="comment">// Returns 1 if the value of expr1 is strictly greater than the value of expr2, otherwise 0.</span>
+			<br>
+			<span class="command">greater?</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">greaterp</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns 1 if the value of expr1 and the value of expr2 are not equal, otherwise 0.</span>
+			<br>
+			<span class="command">notequal?</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+			<span class="command">notequalp</span>
+			<span> &nbsp </span>
+			<span class="value">expr1 expr2</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Returns 1 if test1 or test2 are non-zero, otherwise 0.</span>
+			<br>
+			<span class="command">or</span>
+			<span> &nbsp </span>
+			<span class="value">test1 test2</span>
+			<br>
+		</div>
+	
+	</div>
+</div>
+
+<h2>Variables, Control Structures, and User-Defined Commands</h2>
+
+<div class="command-container" style="height:360px;">
+	<div class="command-inner-container">
+	
+		<div class="entry">
+			<span class="comment">// Assigns the value of expr to variable, creating the variable if necessary.</span>
+			<br>
+			<span class="command">make</span>
+			<span> &nbsp </span>
+			<span class="value">variable expr</span>
+			<br>
+			<span class="command">set</span>
+			<span> &nbsp </span>
+			<span class="value">variable expr</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Runs command(s) for each value specified in the range, i.e., from (1 - limit) inclusive.</span>
+			<br>
+			<span class="command">dotimes</span>
+			<span> &nbsp </span>
+			<span class="value">[ variable limit ] [ commands ]</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// If expr is not 0, runs the command(s) given in the list.</span>
+			<br>
+			<span class="command">if</span>
+			<span> &nbsp </span>
+			<span class="value">expr [ commands ]</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Assigns command(s) given in the second list to commandName using parameters given in first list as variables.</span>
+			<br>
+			<span class="command">to</span>
+			<span> &nbsp </span>
+			<span class="value">commandName [ variables ] [ commands ]</span>
+			<br>
+		</div>
+		
+	</div>
+	<div class="command-inner-container">
+	
+        <div class="entry">
+			<span class="comment">// Runs command(s) given in the list the value of expr number of times.</span>
+			<br>
+			<span class="command">repeat</span>
+			<span> &nbsp </span>
+			<span class="value">expr [ commands ]</span>
+			<br>
+		</div>
+		
+		<div class="entry">
+			<span class="comment">// Runs command(s) for each value specified in the range, i.e., from (start - end), going by increment.</span>
+			<br>
+			<span class="command">for</span>
+			<span> &nbsp </span>
+			<span class="value">[ variable start end increment ] [ commands ]</span>
+			<br>
+		</div>	
+		
+		
+		<div class="entry">
+			<span class="comment">// If expr is not 0, runs the trueCommands given in the first list, otherwise runs the falseCommands given in the second list.</span>
+			<br>
+			<span class="command">ifelse</span>
+			<span> &nbsp </span>
+			<span class="value">expr [ trueCommands ] [ falseCommands ]</span>
+			<br>
+		</div>
+		
+	</div>
+</div>
+
+</div>
+
+<div class="content">
+<h1>Links to more help.</h1>
+<a href="http://www.cs.duke.edu/courses/compsci308/fall16/assign/03_slogo/commands.php">SLogo Project</a>
+
+<p>SLOGO Team 9: Addison Howenstine, Phil Foo, Noah Over, Harshil Garg</p>
+</div>
+</body>
+
+</html>
