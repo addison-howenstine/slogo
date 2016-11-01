@@ -83,6 +83,7 @@ public class TurtleController implements SLOGOController {
 	 * store current state of the SLOGO playground.
 	 * @param fileName - name of the file to be generated. Will be in format fileName.ser
 	 */
+	@Override
 	public void generateSettingsFile(String fileName){
 		SettingsGenerator generator = new SettingsGenerator();
 		try{
@@ -97,6 +98,7 @@ public class TurtleController implements SLOGOController {
 	 * @param fileName - name of file to be loaded
 	 * @param view - SLOGOView to update the UI with vars/instructions loaded from file
 	 */
+	@Override
 	public void loadSettingsFile(String fileName, SLOGOView view){
 		try{
 			SettingsLoader loader = new SettingsLoader(fileName);
