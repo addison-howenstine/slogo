@@ -3,7 +3,7 @@ package slogo_view;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.animation.Animation;
+import javafx.animation.Transition;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
 import javafx.beans.value.ChangeListener;
@@ -31,11 +31,12 @@ public class FrontEndTurtles {
 	private static final int TURTLE_AREA_WIDTH = 800;
 	private static final int TURTLE_AREA_HEIGHT = 670 - 5 - TURTLE_AREA_Y;
 	
-	private ArrayList<Animation> myAnimations = new ArrayList<Animation>();
+	private ArrayList<Transition> myAnimations = new ArrayList<Transition>();
 	private Playground myPlayground;
 	private int counter = 0;
 	private Canvas myCanvas;
 	private List<ImageView> visualTurtles;
+	private ArrayList<Integer> myShowings = new ArrayList<Integer>();
 
 	protected FrontEndTurtles(Playground playground) {
 		myPlayground = playground;
@@ -60,6 +61,7 @@ public class FrontEndTurtles {
 	}
 
 	protected void setUpRotateMethod(int i, ImageView myTurtle, SLOGOModel myModel) {
+		myShowings.add((int) myModel.showing());
 		RotateTransition rt = new RotateTransition(Duration.seconds(1));
 		rt.setNode(myTurtle);
 		rt.setToAngle(myModel.heading());
@@ -68,6 +70,7 @@ public class FrontEndTurtles {
 	}
 
 	protected void setUpPathAnimation(GraphicsContext gc, int i, ImageView myTurtle, SLOGOModel myModel) {
+		myShowings.add((int) myModel.showing());
 		Path path = new Path();
 		path.getElements().add(new MoveTo(myPlayground.getX().get(i) + TURTLE_X_OFFSET, TURTLE_Y_OFFSET - myPlayground.getY().get(i)));
 		path.getElements().add(new LineTo(myModel.xCor() + TURTLE_X_OFFSET, 
@@ -102,16 +105,36 @@ public class FrontEndTurtles {
 		myAnimations.add(pt);
 	}
 
-	protected void runAnimation(Animation animation, int index){
+	protected void runAnimation(Transition animation, int index){
 		if (animation == null){
 			myCanvas.getGraphicsContext2D().clearRect(TURTLE_AREA_X, TURTLE_AREA_Y, TURTLE_AREA_WIDTH, TURTLE_AREA_HEIGHT);
 			animationsChecker(index);
 		}
 		else {
+			boolean checker = false;
+			if (myShowings.get(index - 1) == 0){
+				if (animation instanceof PathTransition && 
+					myPlayground.getRoot().getChildren().contains(((PathTransition) animation).getNode())){
+					myPlayground.getRoot().getChildren().remove(((PathTransition) animation).getNode());
+					checker = true;
+				}
+				else if (animation instanceof RotateTransition && 
+					myPlayground.getRoot().getChildren().contains(((RotateTransition) animation).getNode())){
+					myPlayground.getRoot().getChildren().remove(((RotateTransition) animation).getNode());
+					checker = true;
+				}
+			}
+			final boolean checker2 = checker;
 			animation.setRate(myPlayground.getScreen().getSpeedSlider().getValue());
 			animation.play();
 			animation.setOnFinished(new EventHandler<ActionEvent>(){
 				public void handle(ActionEvent event){
+					if (checker2){
+						if (animation instanceof PathTransition)
+							myPlayground.getRoot().getChildren().add(((PathTransition) animation).getNode());
+						else if (animation instanceof RotateTransition)
+							myPlayground.getRoot().getChildren().add(((RotateTransition) animation).getNode());
+					}
 					animationsChecker(index);
 				}
 			});
@@ -134,7 +157,7 @@ public class FrontEndTurtles {
 				.getResourceAsStream(myPlayground.getScreen().getComboBoxesData().getImagesMap().get(image)))));
 	}
 	
-	protected ArrayList<Animation> getAnimations(){
+	protected ArrayList<Transition> getAnimations(){
 		return myAnimations;
 	}
 	
