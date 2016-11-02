@@ -23,6 +23,7 @@ import java.io.*;
  * Derived from parsing code by @author Robert Duvall
  * 
  * @author Addison
+ * @author Phil
  */
 public class SLOGOParser {
 	// "types" and the regular expression patterns that recognize those types
@@ -136,9 +137,6 @@ public class SLOGOParser {
 				
 				//Adds the ListStarts list of parameters to the UserInstruction
 				nextParameter.parameters.forEach(p -> {
-					if (! (p instanceof Variable) ){
-						//TODO throw an error
-					}
 					variableParameters.add((Variable) p);
 				});
 				// give UserInstruction a list of the parameters it will need to look for

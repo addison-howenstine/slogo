@@ -25,15 +25,10 @@ public class SavedSettings implements Serializable{
 			int background, int penColor, int penSize, int image, String language){
 		this.myVarMap = varMap;
 		this.myInstrMap = instrMap;
-		System.out.println(background);
 		this.myBackground = background;
-		System.out.println(penColor);
 		this.myPenColor = penColor;
-		System.out.println(penSize);
 		this.myPenSize = penSize;
-		System.out.println(image);
 		this.myImage = image;
-		System.out.println(language);
 		this.myLanguage = language;
 	}
 	

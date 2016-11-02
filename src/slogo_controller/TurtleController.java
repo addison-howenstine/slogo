@@ -2,8 +2,9 @@ package slogo_controller;
 
 import instructions.Instruction;
 import instructions.TurtleCommand;
-import instructions.Error;
+import instructions.UserInstruction;
 import slogo_library.*;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import slogo_view.SLOGOView;
  * instance of SLOGOParser to parse the string
  * 
  * @author Addison
+ * @author Phil
  */
 public class TurtleController implements SLOGOController {
 
@@ -64,7 +66,7 @@ public class TurtleController implements SLOGOController {
 				continue;
 			}
 			try{
-				if (inst instanceof TurtleCommand)
+				if (inst instanceof TurtleCommand || inst instanceof UserInstruction)
 					activeModels.forEach( model -> {
 						activeModelID = model;
 						inst.evaluate(view, models.get(activeModelID));

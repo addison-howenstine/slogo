@@ -5,6 +5,7 @@ import java.util.*;
  * Concrete implementation of SLOGOModel
  * 
  * @author Addison
+ * @author Phil
  */
 public class Turtle extends Observable implements SLOGOModel{
 

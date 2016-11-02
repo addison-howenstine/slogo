@@ -7,6 +7,16 @@ import java.util.List;
 import slogo_model.SLOGOModel;
 import slogo_view.SLOGOView;
 
+/**
+ * Instructions are used as nodes in a tree of Instructions 
+ * for the Controller to execute recursively by calling evaluate
+ * passing the view and model to the Instruction. Parameters are parsed in
+ * by the SLOGOParser and assigned to the Instruction before it is evaluated
+ * in the Controller.
+ * 
+ * @author Addison
+ *
+ */
 public abstract class Instruction implements Serializable{
 
 	public List<Instruction> parameters;
