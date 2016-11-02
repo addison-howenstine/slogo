@@ -39,6 +39,7 @@ public class SLOGOScreenComboBoxes {
 	private ComboBox<String> myPenColorSelector;
 	private ComboBox<String> myBackgroundSelector;
 	private ComboBox<Integer> myPenWidthSelector;
+	private ComboBox<String> myLanguageSelector;
 	private Text myBackgroundText;
 	private Text myPenColorText;
 	private Text myPenWidthText;
@@ -56,9 +57,9 @@ public class SLOGOScreenComboBoxes {
 	protected void setUpComboBoxes() {
 		setUpImagesMap();
 		setUpColorsMap();
-		setUpBackgroundSelector();
-		setUpPenColorSelector();
-		setUpImageSelector();
+		setUpBackgroundSelector(7);
+		setUpPenColorSelector(0);
+		setUpImageSelector(0);
 		setUpLanguageSelector();
 		setUpPenWidthSelector();
 	}
@@ -77,38 +78,38 @@ public class SLOGOScreenComboBoxes {
 
 	private void setUpLanguageSelector() {
 		myLanguageText = myScreen.getBuilder().addText(myScreen.getResources().getString("Languages"), LANGUAGES_X, MIN_BOUNDARY, FONT_SIZE);
-		myScreen.getBuilder().addComboBox(LANGUAGES_X, ROW_2_Y, myLanguages, myLanguage, new ChangeListener<String>() {
+		myLanguageSelector = myScreen.getBuilder().addComboBox(LANGUAGES_X, ROW_2_Y, myLanguages, myLanguage, new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String t, String t1) {
 				myScreen.changeLanguage(t1);
 			}
 		});
 	}
 
-	private void setUpImageSelector() {
+	private void setUpImageSelector(int index) {
 		myImageText = myScreen.getBuilder().addText(myScreen.getResources().getString("Image"), IMAGE_X, MIN_BOUNDARY, FONT_SIZE);
 		myImageSelector = myScreen.getBuilder().addComboBox(IMAGE_X, ROW_2_Y, myImages, 
-				"1. " + myScreen.getResources().getString(DEFAULT_IMAGE), new ChangeListener<String>() {
+				myImages.get(index), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1) {
 				myScreen.getPlayground().getFrontEndTurtles().changeTurtleImages(t1);
 			}
 		});
 	}
 
-	private void setUpPenColorSelector() {
+	private void setUpPenColorSelector(int index) {
 		myPenColorText = myScreen.getBuilder().addText(myScreen.getResources().getString("PenColor"), PEN_COLOR_X, MIN_BOUNDARY, FONT_SIZE);
 		myPenColorSelector = myScreen.getBuilder().addComboBox(PEN_COLOR_X, ROW_2_Y, myColors, 
-				"1. " + myScreen.getResources().getString(DEFAULT_PEN), new ChangeListener<String>() {
+				myColors.get(index), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myScreen.getPlayground().setPenColor(t1);
 			}
 		});
 	}
 
-	private void setUpBackgroundSelector() {
+	private void setUpBackgroundSelector(int index) {
 		myBackgroundText = myScreen.getBuilder().addText(myScreen.getResources().getString("Background"), BACKGROUND_X, MIN_BOUNDARY, 
 				FONT_SIZE);
 		myBackgroundSelector = myScreen.getBuilder().addComboBox(BACKGROUND_X, ROW_2_Y, myColors, 
-				"8. " + myScreen.getResources().getString(DEFAULT_BACKGROUND), new ChangeListener<String>() {
+				myColors.get(index), new ChangeListener<String>() {
 			public void changed(ObservableValue ov, String t, String t1){
 				myScreen.getTurtleArea().setFill(myColorsMap.get(t1));
 			}
@@ -152,16 +153,9 @@ public class SLOGOScreenComboBoxes {
 		int imageIndex = myImages.indexOf(myImageSelector.getValue());
 		setUpColorsMap();
 		setUpImagesMap();
-		changeComboBoxLanguage(myBackgroundSelector, myColors, backgroundIndex);
-		changeComboBoxLanguage(myPenColorSelector, myColors, penIndex);
-		changeComboBoxLanguage(myImageSelector, myImages, imageIndex);
-		myImageSelector.getItems().remove("5. Duke");
-	}
-	
-	private void changeComboBoxLanguage(ComboBox<String> selector, ObservableList<String> list, int index){
-		selector.getItems().addAll(list);
-		selector.setValue(list.get(index));
-		selector.getItems().retainAll(list);
+		setUpBackgroundSelector(backgroundIndex);
+		setUpPenColorSelector(penIndex);
+		setUpImageSelector(imageIndex);
 	}
 	
 	protected ComboBox<String> getImageSelector(){
@@ -205,6 +199,8 @@ public class SLOGOScreenComboBoxes {
 	}
 	
 	protected void setLanguage(String language){
+		if (myLanguageSelector != null)
+			myLanguageSelector.setValue(language);
 		myLanguage = language;
 	}
 }

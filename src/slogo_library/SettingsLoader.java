@@ -57,4 +57,12 @@ public class SettingsLoader {
 			view.addUserVariable(k, v);
 		});
 	}
+	
+	public void loadEnvironmentSettings(SLOGOView view){
+		view.setBackgroundColor(settingsToLoad.getBackground());
+		view.setPenColor(settingsToLoad.getPenColor());
+		view.setPenWidth(settingsToLoad.getPenSize());
+		view.setImage(settingsToLoad.getImage());
+		view.setLanguage(settingsToLoad.getLanguage());
+	}
 }

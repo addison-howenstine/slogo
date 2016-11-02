@@ -45,8 +45,6 @@ public class Playground implements SLOGOView, Observer{
 	private boolean errorReceived = false;
 	private FrontEndTurtles myFrontEndTurtles;
 	private ArrayList<Double> myHeadings = new ArrayList<Double>();
-	private int myPenColor = 1;
-	private int myImage = 1;
 
 
 	public Playground(Stage stage, String language) {
@@ -171,12 +169,12 @@ public class Playground implements SLOGOView, Observer{
 	
 	@Override
 	public int getPenColor(){
-		return myPenColor;
+		return myScreen.getComboBoxesData().getColors().indexOf(myScreen.getComboBoxesData().getPenColorSelector().getValue()) + 1;
 	}
 	
 	@Override
 	public int getImage(){
-		return myImage;
+		return myScreen.getComboBoxesData().getImages().indexOf(myScreen.getComboBoxesData().getImageSelector().getValue()) + 1;
 	}
 	
 	@Override
@@ -203,7 +201,6 @@ public class Playground implements SLOGOView, Observer{
 	public void setPenColor(int index){
 		setPenColor(myScreen.getComboBoxesData().getColors().get(index - 1));
 		myScreen.getComboBoxesData().getPenColorSelector().setValue(myScreen.getComboBoxesData().getColors().get(index - 1));
-		myPenColor = index;
 	}
 
 	protected void setPenColor(String color){
@@ -226,7 +223,6 @@ public class Playground implements SLOGOView, Observer{
 	public void setImage(int index){
 		myFrontEndTurtles.changeTurtleImages(myScreen.getComboBoxesData().getImages().get(index - 1));
 		myScreen.getComboBoxesData().getImageSelector().setValue(myScreen.getComboBoxesData().getImages().get(index - 1));
-		myImage = index;
 	}
 
 	@Override
@@ -272,5 +268,28 @@ public class Playground implements SLOGOView, Observer{
 	
 	protected FrontEndTurtles getFrontEndTurtles(){
 		return myFrontEndTurtles;
+	}
+
+
+	@Override
+	public int getPenSize() {
+		return myScreen.getComboBoxesData().getPenWidthSelector().getValue();
+	}
+
+
+	@Override
+	public int getBackground() {
+		return myScreen.getComboBoxesData().getColors().indexOf(myScreen.getComboBoxesData().getBackgroundSelector().getValue()) + 1;
+	}
+
+
+	@Override
+	public void setLanguage(String language) {
+		myScreen.getComboBoxesData().setLanguage(language);
+	}
+	
+	@Override
+	public String getLanguage(){
+		return myScreen.getComboBoxesData().getLanguage();
 	}
 }

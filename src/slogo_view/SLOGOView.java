@@ -54,5 +54,13 @@ public interface SLOGOView {
 	public int getPenColor();
 
 	public int getImage();
+	
+	public int getPenSize();
+	
+	public int getBackground();
+	
+	public String getLanguage();
+	
+	public void setLanguage(String language);
 
 }

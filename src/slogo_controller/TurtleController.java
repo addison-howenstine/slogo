@@ -87,7 +87,8 @@ public class TurtleController implements SLOGOController {
 	public void generateSettingsFile(String fileName){
 		SettingsGenerator generator = new SettingsGenerator();
 		try{
-			generator.generateSerializedObj(fileName, myVarMap, myInstructionMap);
+			generator.generateSerializedObj(fileName, myVarMap, myInstructionMap, view.getBackground(), 
+					view.getPenColor(), view.getPenSize(), view.getImage(), view.getLanguage());
 		}catch(Exception e){
 			view.showError(e.getMessage());
 		}
@@ -104,6 +105,7 @@ public class TurtleController implements SLOGOController {
 			SettingsLoader loader = new SettingsLoader(fileName);
 			loader.loadInstructionsToMap(myInstructionMap, view);
 			loader.loadVariablesToMap(myVarMap, view);
+			loader.loadEnvironmentSettings(view);
 		}catch(Exception e){
 			view.showError(e.getMessage());
 		}
