@@ -17,9 +17,11 @@ import java.io.Serializable;
 public class SettingsGenerator {
 
 	public void generateSerializedObj(String fileName, AbstractMap<String, Double> varMap, 
-			AbstractMap<String, Instruction> instrMap) throws Exception{
+			AbstractMap<String, Instruction> instrMap, int background, int penColor, int penSize, 
+			int image, String language) throws Exception{
 		
-		SavedSettings currentState = new SavedSettings(varMap, instrMap);
+		SavedSettings currentState = new SavedSettings(varMap, instrMap, background, penColor, penSize, image, 
+				language);
 		try{
 			FileOutputStream fout = new FileOutputStream("lib/" + fileName + ".ser");
 			ObjectOutputStream oos = new ObjectOutputStream(fout);
