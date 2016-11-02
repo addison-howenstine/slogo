@@ -13,6 +13,9 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.*;
 
 
 /**
@@ -79,7 +82,18 @@ public class SLOGOParser {
 			;//throw CommandNotFound error?
 		
 		if (instrMap.containsKey(typedInstruction)){
-			instruction = instrMap.get(typedInstruction);
+			Instruction tempInstruction = instrMap.get(typedInstruction);
+			try{
+				//Deep copy using serialization
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(tempInstruction);
+				ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+				ObjectInputStream ois = new ObjectInputStream(bais);
+				instruction = (Instruction) ois.readObject();
+			}catch(Exception e){
+				throw e;
+			}
 		}
 		else {
 			try {
@@ -119,6 +133,8 @@ public class SLOGOParser {
 			Instruction nextParameter = createNextInstructionFromText(instructionScanner, instrMap);
 			if (instruction instanceof MakeUserInstruction && i == 1){
 				List<Variable> variableParameters = new ArrayList<Variable>();
+				
+				//Adds the ListStarts list of parameters to the UserInstruction
 				nextParameter.parameters.forEach(p -> {
 					if (! (p instanceof Variable) ){
 						//TODO throw an error
