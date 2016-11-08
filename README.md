@@ -7,7 +7,7 @@ Date started: Friday, October 14
 Date finished: Monday, October 31
 ##### Estimated hours worked:
 * Phil: 45-50
-* Harshil: 
+* Harshil: 30-35
 * Addison: 80
 * Noah: 70
 
